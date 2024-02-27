@@ -1,4 +1,4 @@
-import { contractAddress, contractABI } from "../../constants";
+import { contractAddress, contractABI } from "../constants";
 
 const hre = require("hardhat");
 
