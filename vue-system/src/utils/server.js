@@ -77,6 +77,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 
 const app = express();
 
@@ -86,18 +87,22 @@ app.use(cors()); // 使用 cors 中间件处理跨域请求
 // 模拟的用户数据
 const responseData = JSON.stringify({
   users: [
-    { id: 1, username: "tang", password: "123", token: '123456' }
+    { id: 1, username: "tang", password: "123" }
   ]
 });
 
 // 登录接口
 app.post('/login', (req, res) => {
   try {
-    const userData = req.body;
+    const { username, password } = req.body;
     const users = JSON.parse(responseData).users;
-    const user = users.find(user => user.username === userData.username && user.password === userData.password);
+    // 在用户数组中查找匹配的用户
+    const user = users.find(user => user.username === username && user.password === password);
+
     if (user) {
-      res.status(200).json({ code: 1, msg: "success", data: user.token });
+      // 登录成功后，生成 token 并返回给客户端
+      const token = jwt.sign({ username }, '123456', { expiresIn: '1h' });
+      res.status(200).json({ code: 1, msg: "success", data: token });
     } else {
       res.status(200).json({ code: 0, msg: 'Invalid username or password' });
     }
@@ -116,6 +121,32 @@ app.post('/register', (req, res) => {
     res.status(400).json({ code: 0, msg: 'Invalid request body' });
   }
 });
+
+// 获取信息
+app.get('/info', (req, res) => {
+  try {
+    const token = req.headers.authorization.split(' ')[1]; // 从请求头中获取 token
+    let decodedToken;
+
+    try {
+      decodedToken = jwt.verify(token, '123456'); // 使用密钥解码 token
+    } catch (error) {
+      // 如果解码失败，返回无效 token 的响应
+      return res.status(401).json({ code: 0, msg: 'Invalid token' });
+    }
+
+    // 如果解码成功，继续处理业务逻辑
+    // 这里可以根据解码出来的信息做一些操作，例如从数据库中查询用户信息等
+
+
+    // 返回用户信息
+    res.status(200).json({ code: 1, msg: 'success', data: decodedToken.username });
+  } catch (error) {
+    // 如果出现其他错误，返回服务器错误的响应
+    res.status(500).json({ code: 0, msg: 'Server error' });
+  }
+});
+
 
 
 const PORT = process.env.PORT || 3000;

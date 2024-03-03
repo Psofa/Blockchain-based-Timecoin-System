@@ -71,6 +71,8 @@
 import axios from 'axios';
 import { Radio,Button } from 'element-ui';
 
+// 定义基本 URL
+const baseURL = 'http://localhost:3000/';
 
 export default {
   name: 'LoginForm',
@@ -136,7 +138,7 @@ export default {
       ) {
           if(this.signUpPassword===this.confirmPassword){
             // 发起 POST 请求
-            axios.post('http://localhost:3000/register', userData)
+            axios.post(baseURL+'register', userData)
               .then(response => {
                   // 处理成功响应
                 if (response.data.code===1) {
@@ -176,7 +178,7 @@ export default {
           return;
         }
 
-        axios.post('http://localhost:3000/login', userData)
+        axios.post(baseURL+'login', userData)
           .then(response => {
             if (response.data.code===1) {
               // 登录成功
@@ -185,11 +187,11 @@ export default {
                 type: 'success'
               });
               // 保存用户信息到本地存储或会话存储
-              localStorage.setItem('token', JSON.stringify(response.data.data));
+              localStorage.setItem('token', response.data.data);
               // 进行页面跳转或其他操作
               setTimeout(() => {
                 // 导航到目标路由
-                this.$router.push({ name: 'IndexView' });
+                this.$router.push({ name: 'HomeView' });
               }, 1500);
             } 
             else {
