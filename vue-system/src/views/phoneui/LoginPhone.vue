@@ -1,90 +1,104 @@
 <template>
   <div class="login-container">
-    <div class="logo">
-      <!-- Logo goes here -->
-      <img src="path/to/your/logo.png" alt="Logo">
+    <div class="login-box">
+      <h1>登录</h1>
+      <form @submit.prevent="onSubmit">
+        <div class="input-group">
+          <label for="username">用户名</label>
+          <input type="text" id="username" v-model="loginForm.username" placeholder="请输入用户名" required>
+        </div>
+        <div class="input-group">
+          <label for="password">密码</label>
+          <input type="password" id="password" v-model="loginForm.password" placeholder="请输入密码" required>
+        </div>
+        <button type="submit" class="login-btn">登录</button>
+        <div class="register-link" style="margin-top: 20px;">
+          <span style="color: white;">没有账户？</span>
+          <router-link to="/registerPhone" style="color: blue; text-decoration: none;">立即注册</router-link>
+        </div>
+      </form>
     </div>
-    <h2>Welcome Back!</h2>
-    <form @submit.prevent="login">
-      <div class="input-group">
-        <input type="text" v-model="credentials.username" placeholder="Username or Email" required>
-      </div>
-      <div class="input-group">
-        <input type="password" v-model="credentials.password" placeholder="Password" required>
-      </div>
-      <button type="submit">Login</button>
-    </form>
-    <a href="#" @click="forgotPassword">Forgot password?</a>
-    <router-link to="/register">Create New Account</router-link>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'LoginView',
+  name: 'MobileLogin',
   data() {
     return {
-      credentials: {
+      loginForm: {
         username: '',
-        password: ''
+        password: '',
       }
-    }
+    };
   },
   methods: {
-    login() {
-      // Implement your login logic here
-      console.log('Login credentials', this.credentials);
-    },
-    forgotPassword() {
-      // Navigate to forgot password view
-      console.log('Navigate to forgot password view');
+    onSubmit() {
+      // 执行登录逻辑
+      console.log('登录信息', this.loginForm);
+      // 这里可以加入登录验证逻辑，并处理成功或失败的情况
     }
   }
-}
+};
 </script>
 
-<style>
+<style scoped>
 .login-container {
-  max-width: 400px;
-  margin: 50px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 92.5vh;
+  background-color: #f7f7f7;
   padding: 20px;
-  text-align: center;
+  background-image: url('C:\Users\31744\Pictures\2.jpg');
 }
 
-.logo img {
-  max-width: 100px;
-  margin-bottom: 20px;
+.login-box {
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5px); /* 设置背景虚化效果 */
+  
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
 .input-group {
-  margin-bottom: 20px;
+  margin-bottom: 1rem;
 }
 
-input[type="text"], input[type="password"] {
-  width: 100%;
-  padding: 10px;
-  margin: 5px 0;
-  display: inline-block;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
-
-button[type="submit"] {
-  background-color: #4CAF50;
-  color: white;
-  padding: 14px 20px;
-  margin: 8px 0;
-  border: none;
-  cursor: pointer;
-  width: 100%;
-}
-
-button[type="submit"]:hover {
-  opacity: 0.8;
-}
-
-a, .router-link {
+.input-group label {
   display: block;
-  margin: 10px 0;
+  margin-bottom: .5rem;
+}
+
+.input-group input {
+  width: 95%;
+  padding: .5rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.login-btn {
+  background-color: #409EFF;
+  color: white;
+  border: none;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 4px;
+  width: 100%;
+  cursor: pointer;
+  transition: background-color .3s;
+  margin-top: 30px; /* 按钮之间的上边距 */
+}
+
+.login-btn:hover {
+  background-color: #3679ec;
 }
 </style>

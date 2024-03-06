@@ -35,8 +35,6 @@
       </div>
       <div class="form-container sign-in-container">
         <form>
-          
-          
           <h1>登录</h1>
           <div class="txtb">
             <input type="txt" v-model="signInUsername" placeholder="Username"> 
@@ -87,12 +85,12 @@ export default {
       signUpEmail: '',
       signUpPassword: '',
       confirmPassword: '',
-      signInUsername: '',
-      signInPassword: '',
       signUpName:'',
       signUpPhone:'',
       age:'',
-      radio: '1'
+      radio: '1',
+      signInUsername: '',
+      signInPassword: '',
       
     };
   },
@@ -164,7 +162,6 @@ export default {
       } else {
         this.$message.error('请完善信息');
       }
-
     },
     signIn() {
         // 构造登录请求的数据

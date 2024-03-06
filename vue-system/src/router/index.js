@@ -4,6 +4,9 @@ import LoginForm from '../views/elementui/LoginForm.vue'
 import IndexView from '../views/elementui/IndexView.vue'
 import HomeView from '../views/elementui/HomeView.vue'
 import UsersView from '../views/elementui/UsersView.vue'
+import LoginPhone from '@/views/phoneui/LoginPhone.vue'
+import RegisterPhone from '@/views/phoneui/RegisterPhone.vue'
+import AboutView from '@/views/AboutView.vue'
 import { requireAuth } from '../utils/auth.js'; // 导入 requireAuth 函数
 
 Vue.use(VueRouter)
@@ -11,6 +14,21 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
+    name: 'AboutView',
+    component: AboutView
+  },
+  {
+    path: '/loginPhone',
+    name: 'LoginPhone',
+    component: LoginPhone
+  },
+  {
+    path: '/registerPhone',
+    name: 'RegisterPhone',
+    component: RegisterPhone
+  },
+  {
+    path: '/login',
     name: 'LoginForm',
     component: LoginForm
   },
