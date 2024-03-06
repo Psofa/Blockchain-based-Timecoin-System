@@ -1,5 +1,6 @@
 node_modules
 .env
+.encryptedKey.json
 
 # Hardhat files
 /cache
