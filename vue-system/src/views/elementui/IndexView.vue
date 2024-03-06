@@ -100,10 +100,10 @@
           </div>
         </el-header>
         
-        <el-main>
+        <el-main style="border: 1px solid #ccc;border-radius: 5px; /* 设置边框圆角 */">
           <router-view></router-view>  <!-- 使用 <router-view> 渲染整个应用程序的内容 -->
         </el-main>
-        <el-footer style="background-color: rgb(187, 187, 190);height: 50px;"></el-footer>
+        <el-footer style="background-color: rgb(243, 239, 239);height: 40px;"></el-footer>
       </el-container>
     </el-container>
    </el-container>
@@ -125,9 +125,11 @@
   align-items: center;
   justify-content: space-between;
   text-align: right;
-  background-color: #B3C0D1;
+  background-color: white;
   color: #333;
   height: 30px;
+  border: 1px solid #ccc; /* 设置边框为 1px 实线 */
+  border-radius: 5px; /* 设置边框圆角 */
 }
 
 .tabs-container {
