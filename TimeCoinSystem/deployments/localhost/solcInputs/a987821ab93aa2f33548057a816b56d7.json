@@ -1,0 +1,35 @@
+{
+  "language": "Solidity",
+  "sources": {
+    "contracts/TimeCoin.sol": {
+      "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\n/**@title TimeCoin system contract 1.0\n * @author 罗政\n * @notice This contract is for managing the time coin of users\n */\ncontract TimeCoin {\n    // 管理员地址\n    address public owner;\n\n    // 用户的时间币余额\n    mapping(string => uint256) private balances;\n\n    // 事件\n    event Transfer(string from, string to, uint256 value);\n    event Mint(string to, uint256 value);\n\n    // 构造函数，设置合约的拥有者\n    constructor() {\n        owner = msg.sender;\n    }\n\n    // 确保只有合约拥有者可以调用某个函数\n    modifier onlyOwner() {\n        require(\n            msg.sender == owner,\n            \"Only the contract owner can call this function.\"\n        );\n        _;\n    }\n\n    // 发放时间币给指定用户\n    function mint(string memory userId, uint256 amount) public onlyOwner {\n        require(amount > 0, \"Amount must be greater than 0\");\n        balances[userId] += amount;\n        emit Mint(userId, amount);\n    }\n\n    // 在用户之间转移时间币\n    function transfer(\n        string memory fromUserId,\n        string memory toUserId,\n        uint256 amount\n    ) public onlyOwner {\n        require(amount <= balances[fromUserId], \"Insufficient balance.\");\n        balances[fromUserId] -= amount;\n        balances[toUserId] += amount;\n        emit Transfer(fromUserId, toUserId, amount);\n    }\n\n    // 查询用户的时间币余额\n    function balanceOf(string memory userId) public view returns (uint256) {\n        return balances[userId];\n    }\n}\n"
+    }
+  },
+  "settings": {
+    "optimizer": {
+      "enabled": false,
+      "runs": 200
+    },
+    "outputSelection": {
+      "*": {
+        "*": [
+          "abi",
+          "evm.bytecode",
+          "evm.deployedBytecode",
+          "evm.methodIdentifiers",
+          "metadata",
+          "devdoc",
+          "userdoc",
+          "storageLayout",
+          "evm.gasEstimates"
+        ],
+        "": [
+          "ast"
+        ]
+      }
+    },
+    "metadata": {
+      "useLiteralContent": true
+    }
+  }
+}
