@@ -6,7 +6,7 @@ const { PRIVATE_KEY, RPC_URL } = process.env;
 
 /** @type import('hardhat/config').HardhatUserConfig */
 module.exports = {
-  defaultNetwork: "hardhat",
+  defaultNetwork: "localhost",
   networks: {
     rinkeby: {
       url: RPC_URL,
