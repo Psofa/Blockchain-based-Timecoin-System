@@ -1,20 +1,19 @@
-async function mint() {
-  const { getNamedAccounts, ethers } = require("hardhat");
+const { getNamedAccounts, ethers } = require("hardhat");
+const { contractAddress, contractABI } = require("../constants.js");
 
-  // 1. Get the contract deployer
+async function mint() {
+  // Get the contract provider
   const { deployer } = await getNamedAccounts();
   const provider = await ethers.getSigner(deployer);
 
-  // 2. Get a reference to the TimeCoin contract Factory
-  const timeCoinFactory = await ethers.getContractFactory("TimeCoin", provider);
+  // Get the contract instance
+  const timeCoinContract = new ethers.Contract(
+    contractAddress,
+    contractABI,
+    provider
+  );
 
-  // 3. Get the address of your deployed TimeCoin contract
-  const timeCoinContractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3"; // Replace with your actual contract address
-
-  // 4. Get a reference to the deployed TimeCoin contract instance
-  const timeCoinContract = timeCoinFactory.attach(timeCoinContractAddress);
-
-  // 5 . Mint TimeCoins
+  // Mint TimeCoins
   const userId = "user1"; // Set the desired user ID
   const amount = 1; // Set the amount of TimeCoins to mint
 
