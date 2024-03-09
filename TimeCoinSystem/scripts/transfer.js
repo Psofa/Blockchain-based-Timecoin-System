@@ -1,4 +1,4 @@
-async function mint() {
+async function transfer() {
   const { getNamedAccounts, ethers } = require("hardhat");
 
   // 1. Get the contract deployer
@@ -14,17 +14,20 @@ async function mint() {
   // 4. Get a reference to the deployed TimeCoin contract instance
   const timeCoinContract = timeCoinFactory.attach(timeCoinContractAddress);
 
-  // 5 . Mint TimeCoins
-  const userId = "user1"; // Set the desired user ID
-  const amount = 1; // Set the amount of TimeCoins to mint
+  // 5 . Transfer TimeCoins
+  const fromUserId = "user1"; // Set the sender user ID
+  const toUserId = "user2"; // Set the receiver user ID
+  const amount = 1; // Set the amount to transfer
 
-  const tx = await timeCoinContract.mint(userId, amount);
+  const tx = await timeCoinContract.transfer(fromUserId, toUserId, amount);
   await tx.wait();
 
-  console.log(`Minted ${amount} TimeCoins to ${userId}`);
+  console.log(
+    `${amount} TimeCoins transferred from ${fromUserId} to ${toUserId}`
+  );
 }
 
-mint()
+transfer()
   .then(() => process.exit(0))
   .catch((error) => {
     console.error(error);
