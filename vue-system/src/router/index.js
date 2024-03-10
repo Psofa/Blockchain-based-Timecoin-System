@@ -1,36 +1,26 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import LoginForm from '../views/elementui/LoginForm.vue'
 import IndexView from '../views/elementui/IndexView.vue'
 import HomeView from '../views/elementui/HomeView.vue'
 import UsersView from '../views/elementui/UsersView.vue'
-import LoginPhone from '@/views/phoneui/LoginPhone.vue'
+import AdminView from '../views/elementui/AdminView.vue'
 import RegisterPhone from '@/views/phoneui/RegisterPhone.vue'
-import AboutView from '@/views/AboutView.vue'
-import { requireAuth } from '../utils/auth.js'; // 导入 requireAuth 函数
+import PcOrPhoneView from '@/views/PcOrPhoneView.vue'
+import { requireAuth, loginrequireAuth } from '../utils/permission'
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'AboutView',
-    component: AboutView
-  },
-  {
-    path: '/loginPhone',
-    name: 'LoginPhone',
-    component: LoginPhone
+    name: 'PcOrPhoneView',
+    component: PcOrPhoneView,
+    beforeEnter: loginrequireAuth,
   },
   {
     path: '/registerPhone',
     name: 'RegisterPhone',
     component: RegisterPhone
-  },
-  {
-    path: '/login',
-    name: 'LoginForm',
-    component: LoginForm
   },
   {
     path: '/indexView',
@@ -43,11 +33,19 @@ const routes = [
         path: '/homeView',
         name: 'HomeView',
         component: HomeView,
+        
       },
       {
         path: '/usersView',
         name: 'UsersView',
         component: UsersView,
+        
+      },
+      {
+        path: '/adminView',
+        name: 'AdminView',
+        component: AdminView,
+        
       }
     ]
   }

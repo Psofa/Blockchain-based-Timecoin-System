@@ -1,46 +1,46 @@
 <template>
   <div class="login-container">
-    <div class="container" :class="{ 'right-panel-active': isRightPanelActive }" id="login-box">
+    <div id="login-box" class="container" :class="{ 'right-panel-active': isRightPanelActive }">
       <div class="form-container sign-up-container">
         <form>
           <h1>注册</h1>
           <div class="txtb">
-            <input type="text" v-model="signUpUsername" placeholder="Useranme">
+            <input v-model="signUpUsername" type="text" placeholder="Username">
           </div>
           <div class="txtb">
-            <input type="text" v-model="signUpName" placeholder="Name">
+            <input v-model="signUpName" type="text" placeholder="Name">
           </div>
           <div class="txtb">
-            <input type="email" v-model="signUpEmail" placeholder="Email">
+            <input v-model="signUpEmail" type="email" placeholder="Email">
           </div>
           <div class="txtb">
-            <input type="text" v-model="signUpPhone" placeholder="Phone">
+            <input v-model="signUpPhone" type="text" placeholder="Phone">
           </div>
           <div class="txtb">
-            <input type="text" v-model="age" placeholder="Age">
+            <input v-model="age" type="text" placeholder="Age">
           </div>
           <div class="txtb">
-            <input type="password" v-model="signUpPassword" placeholder="Password">
+            <input v-model="signUpPassword" type="password" placeholder="Password">
           </div>
           <div class="txtb">
-            <input type="password" v-model="confirmPassword" placeholder="Confirm Password">
+            <input v-model="confirmPassword" type="password" placeholder="Confirm Password">
           </div>
-          <div >
+          <div>
             <el-radio v-model="radio" label="1">老人</el-radio>
             <el-radio v-model="radio" label="2">志愿者</el-radio>
             <el-radio v-model="radio" label="3">管理员</el-radio>
           </div>
-          <el-button  @click="signUp">注册</el-button>
+          <el-button @click="signUp">注册</el-button>
         </form>
       </div>
       <div class="form-container sign-in-container">
         <form>
           <h1>登录</h1>
           <div class="txtb">
-            <input type="txt" v-model="signInUsername" placeholder="Username"> 
+            <input v-model="signInUsername" type="text" placeholder="Username">
           </div>
-          <div class="txtb">
-            <input type="password" v-model="signInPassword" placeholder="Password">
+          <div class="txtb" prop="signInPassword">
+            <input v-model="signInPassword" type="password" placeholder="Password">
           </div>
           <a href="#">忘记密码？</a>
           <el-button :plain="true" @click="signIn">登录</el-button>
@@ -62,22 +62,16 @@
       </div>
     </div>
   </div>
-  
 </template>
 
 <script>
 import axios from 'axios';
-import { Radio,Button } from 'element-ui';
+import { setToken } from '@/utils/auth';
 
-// 定义基本 URL
 const baseURL = 'http://localhost:3000/';
 
 export default {
   name: 'LoginForm',
-  components: {
-    'el-radio': Radio,
-    'el-button': Button,
-  },
   data() {
     return {
       isRightPanelActive: false,
@@ -85,123 +79,111 @@ export default {
       signUpEmail: '',
       signUpPassword: '',
       confirmPassword: '',
-      signUpName:'',
-      signUpPhone:'',
-      age:'',
+      signUpName: '',
+      signUpPhone: '',
+      age: '',
       radio: '1',
       signInUsername: '',
       signInPassword: '',
-      
+      isLoggedIn: false // 标记用户登录状态
     };
   },
   methods: {
-    clearall(){
-      // 清空登录和注册表单数据
+    clearAll() {
       this.signUpUsername = '';
       this.signUpEmail = '';
       this.signUpPassword = '';
       this.confirmPassword = '';
-      this.signUpName='';
-      this.signUpPhone='';
-      this.age='';
-      this.radio='1';
+      this.signUpName = '';
+      this.signUpPhone = '';
+      this.age = '';
+      this.radio = '1';
       this.signInUsername = '';
       this.signInPassword = '';
     },
     togglePanel(panel) {
       this.isRightPanelActive = panel === 'signUp';
-      this.clearall();
+      this.clearAll();
     },
     signUp() {
-      // 处理注册逻辑
       const userData = {
-          username: this.signUpUsername,
-          name:this.signUpName,
-          password: this.signUpPassword,
-          role: parseInt(this.radio),
-          email: this.signUpEmail,
-          age:parseInt(this.age),
-          phone:this.signUpPhone,
-        };
-
-        // 检查是否所有属性都有值
+        username: this.signUpUsername,
+        name: this.signUpName,
+        password: this.signUpPassword,
+        role: parseInt(this.radio),
+        email: this.signUpEmail,
+        age: parseInt(this.age),
+        phone: this.signUpPhone,
+      };
       if (
-          userData.username &&
-          userData.name &&
-          userData.password &&
-          userData.role &&
-          userData.email &&
-          userData.age &&
-          userData.phone
+        userData.username &&
+        userData.name &&
+        userData.password &&
+        userData.role &&
+        userData.email &&
+        userData.age &&
+        userData.phone
       ) {
-          if(this.signUpPassword===this.confirmPassword){
-            // 发起 POST 请求
-            axios.post(baseURL+'register', userData)
-              .then(response => {
-                  // 处理成功响应
-                if (response.data.code===1) {
-                  // 进行页面跳转或其他操作
-                  this.clearall();
-                  this.$message({
-                    message: '注册成功',
-                    type: 'success'
-                  });
-                } 
-                else {
-                  this.$message.error('注册失败:',response.data.msg);
-                }    
-              })
-              .catch(error => {
-                  // 处理请求失败的情况
-                  console.error('Registration failed:', error);
-                  alert('Registration failed. Please try again later.');
-              });
-          } else{
-            this.$message.error('请验证密码是否正确');
-          }
+        if (this.signUpPassword === this.confirmPassword) {
+          axios.post(baseURL + 'register', userData)
+            .then(response => {
+              if (response.data.code === 1) {
+                this.clearAll();
+                this.$message({
+                  message: '注册成功',
+                  type: 'success'
+                });
+              }
+              else {
+                this.$message.error('注册失败:' + response.data.msg);
+              }
+            })
+            .catch(error => {
+              console.error('Registration failed:', error);
+              alert('Registration failed. Please try again later.');
+            });
+        } else {
+          this.$message.error('请验证密码是否正确');
+        }
       } else {
         this.$message.error('请完善信息');
       }
     },
     signIn() {
-        // 构造登录请求的数据
-        const userData = {
-          username: this.signInUsername,
-          password: this.signInPassword
-        };
+      const userData = {
+        username: this.signInUsername,
+        password: this.signInPassword
+      };
 
-        if (userData.username === '' || userData.password === '') {
-          this.$message.error('请输入账号或密码');
-          return;
-        }
-
-        axios.post(baseURL+'login', userData)
-          .then(response => {
-            if (response.data.code===1) {
-              // 登录成功
-              this.$message({
-                message: '登录成功',
-                type: 'success'
-              });
-              // 保存用户信息到本地存储或会话存储
-              localStorage.setItem('token', response.data.data);
-              // 进行页面跳转或其他操作
-              setTimeout(() => {
-                // 导航到目标路由
-                this.$router.push({ name: 'HomeView' });
-              }, 1500);
-            } 
-            else {
-              // 登录失败
-              this.$message.error('账户和密码不匹配');
-            }
-          })
-          .catch(error => {
-            // 处理登录请求失败的情况
-            console.error('Login request failed wwwwww:', error);
-            alert('Login request failed. Please try again later.');
-          });
+      if (userData.username === '' || userData.password === '') {
+        this.$message.error('请输入账号或密码');
+        return;
       }
+
+      axios.post(baseURL + 'login', userData)
+        .then(response => {
+          if (response.data.code === 1) {
+            this.$message({
+              message: '登录成功',
+              type: 'success'
+            });
+            setToken(response.data.data);
+            this.$store.commit('setToken', response.data.data);
+            this.isLoggedIn = true;
+            this.$store.commit('setIsLoggedIn', this.isLoggedIn);
+            setTimeout(() => {
+              this.$router.push({ name: 'HomeView' });
+            }, 1500);
+          }
+          else {
+            this.$message.error('账户和密码不匹配');
+          }
+        })
+        .catch(error => {
+          console.error('Login request failed:', error);
+          alert('Login request failed. Please try again later.');
+        });
+    }
   }
 };
 </script>
@@ -261,8 +243,8 @@ a {
     overflow: hidden;
     width: 800px;
     max-width: 100%;
-    min-height: 600px; 
-    text-align: center;  
+    min-height: 600px;
+    text-align: center;
 
 }
 

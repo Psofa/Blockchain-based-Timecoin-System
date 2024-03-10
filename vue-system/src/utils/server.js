@@ -1,79 +1,3 @@
-// // 引入 Node.js 内置的 http 模块
-// const http = require('http');
-
-// // 创建服务器
-// const server = http.createServer((req, res) => {
-//   // 设置响应头
-//   res.writeHead(200, { 'Content-Type': 'text/plain' });
-
-//   // 发送响应数据
-//   res.end('Hello, World!\n');
-// });
-
-// // 设置服务器监听的端口号
-// const PORT = process.env.PORT || 3000;
-
-// // 服务器开始监听指定的端口
-// server.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
-
-// const http = require('http');
-// // 模拟的用户数据
-// const responseData = JSON.stringify({
-//   users: [
-//     { id: 1, username: "tang", password: "123", token: '123456' }
-//   ]
-// });
-// const server = http.createServer((req, res) => {
-//   if (req.method === 'OPTIONS') {
-//     res.setHeader('Access-Control-Allow-Origin', 'http://localhost:7000');
-//     res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-//     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-//     res.writeHead(200);
-//     res.end();
-//     return;
-//   }
-
-//   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:7000');
-//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-//   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-//   res.setHeader('Content-Type', 'application/json; charset=utf-8');
-
-//   if (req.method === 'POST') {
-//     let body = '';
-//     req.on('data', chunk => {
-//       body += chunk.toString();
-//     });
-//     req.on('end', () => {
-//       try {
-//         const userData = JSON.parse(body);
-//         const users = JSON.parse(responseData).users;
-//         const user = users.find(user => user.username === userData.username && user.password === userData.password);
-//         if (user) {
-//           res.writeHead(200);
-//           res.end(JSON.stringify({ code: 1, msg: "success", data: user.token }));
-//         } else {
-//           res.writeHead(200);
-//           res.end(JSON.stringify({ code: 0, msg: 'Invalid username or password' }));
-//         }
-//       } catch (error) {
-//         res.writeHead(400);
-//         res.end(JSON.stringify({ code: 0, message: 'Invalid request body' }));
-//       }
-//     });
-//   } else {
-//     res.writeHead(405);
-//     res.end('Method Not Allowed');
-//   }
-// });
-
-// const PORT = process.env.PORT || 3000;
-
-// server.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}`);
-// });
-
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -88,10 +12,127 @@ app.use(cors()); // 使用 cors 中间件处理跨域请求
 const responseData = JSON.stringify({
   users: [
     { id: 1, username: "tang", password: "123" }
-  ]
+  ],
+  tabledate:
+    {
+      total:6,
+      rows:[{
+        id: 5,
+        title: "打扫卫生",
+        quota: 123,
+        deadline: "2022-12-23T12:12:12",
+        date: "2022-12-24",
+        begin: "12:34:23",
+        end: "12:56:12",
+        address: "重庆市",
+        oldId: 1,
+        phone: "123",
+        description: "的哈苏地方",
+        status: 1,
+        administratorId: 1,
+        createTime: "2024-03-10T15:23:04",
+        updateTime: "2024-03-10T15:23:04",
+        message: null,
+        remain: 123
+      },
+      {
+        id: 6,
+        title: "打扫卫生",
+        quota: 123,
+        deadline: "2022-12-23T12:12:12",
+        date: "2022-12-24",
+        begin: "12:34:23",
+        end: "12:56:12",
+        address: "重庆市",
+        oldId: 1,
+        phone: "123",
+        description: "的哈苏地方",
+        status: 1,
+        administratorId: 1,
+        createTime: "2024-03-10T15:23:04",
+        updateTime: "2024-03-10T15:23:04",
+        message: null,
+        remain: 123
+      },
+      {
+        id: 7,
+        title: "打扫卫生",
+        quota: 123,
+        deadline: "2022-12-23T12:12:12",
+        date: "2022-12-24",
+        begin: "12:34:23",
+        end: "12:56:12",
+        address: "重庆市",
+        oldId: 1,
+        phone: "123",
+        description: "的哈苏地方",
+        status: 1,
+        administratorId: 1,
+        createTime: "2024-03-10T15:23:04",
+        updateTime: "2024-03-10T15:23:04",
+        message: null,
+        remain: 123
+      },
+      {
+        id: 8,
+        title: "打扫卫生",
+        quota: 123,
+        deadline: "2022-12-23T12:12:12",
+        date: "2022-12-24",
+        begin: "12:34:23",
+        end: "12:56:12",
+        address: "重庆市",
+        oldId: 1,
+        phone: "123",
+        description: "的哈苏地方",
+        status: 1,
+        administratorId: 1,
+        createTime: "2024-03-10T15:23:04",
+        updateTime: "2024-03-10T15:23:04",
+        message: null,
+        remain: 123
+      },
+      {
+        id: 9,
+        title: "打扫卫生",
+        quota: 123,
+        deadline: "2022-12-23T12:12:12",
+        date: "2022-12-24",
+        begin: "12:34:23",
+        end: "12:56:12",
+        address: "重庆市",
+        oldId: 1,
+        phone: "123",
+        description: "的哈苏地方",
+        status: 1,
+        administratorId: 1,
+        createTime: "2024-03-10T15:23:04",
+        updateTime: "2024-03-10T15:23:04",
+        message: null,
+        remain: 123
+      },
+      {
+        id: 10,
+        title: "打扫卫生",
+        quota: 123,
+        deadline: "2022-12-23T12:12:12",
+        date: "2022-12-24",
+        begin: "12:34:23",
+        end: "12:56:12",
+        address: "重庆市",
+        oldId: 1,
+        phone: "123",
+        description: "的哈苏地方",
+        status: 1,
+        administratorId: 1,
+        createTime: "2024-03-10T15:23:04",
+        updateTime: "2024-03-10T15:23:04",
+        message: null,
+        remain: 123
+      }]
+    }
 });
 
-// 登录接口
 app.post('/login', (req, res) => {
   try {
     const { username, password } = req.body;
@@ -111,7 +152,6 @@ app.post('/login', (req, res) => {
   }
 });
 
-// 注册接口
 app.post('/register', (req, res) => {
   try {
     const userData = req.body;
@@ -122,14 +162,21 @@ app.post('/register', (req, res) => {
   }
 });
 
-// 获取信息
 app.get('/info', (req, res) => {
   try {
-    const token = req.headers.authorization.split(' ')[1]; // 从请求头中获取 token
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      // 如果请求头中没有 Authorization 头，返回未授权的响应
+      return res.status(401).json({ code: 0, msg: 'Unauthorized' });
+    }
+    
+    // 从请求头中获取 token
+    const token = authHeader.split(' ')[1]; 
+    
     let decodedToken;
-
     try {
-      decodedToken = jwt.verify(token, '123456'); // 使用密钥解码 token
+      // 使用密钥解码 token
+      decodedToken = jwt.verify(token, '123456'); 
     } catch (error) {
       // 如果解码失败，返回无效 token 的响应
       return res.status(401).json({ code: 0, msg: 'Invalid token' });
@@ -137,9 +184,6 @@ app.get('/info', (req, res) => {
 
     // 如果解码成功，继续处理业务逻辑
     // 这里可以根据解码出来的信息做一些操作，例如从数据库中查询用户信息等
-
-
-    // 返回用户信息
     res.status(200).json({ code: 1, msg: 'success', data: decodedToken.username });
   } catch (error) {
     // 如果出现其他错误，返回服务器错误的响应
@@ -147,7 +191,57 @@ app.get('/info', (req, res) => {
   }
 });
 
+app.get('/administrator', (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      // 如果请求头中没有 Authorization 头，返回未授权的响应
+      return res.status(401).json({ code: 0, msg: 'Unauthorized' });
+    }
+    
+    // 从请求头中获取 token
+    const token = authHeader.split(' ')[1]; 
+    
+    let decodedToken;
+    try {
+      // 使用密钥解码 token
+      decodedToken = jwt.verify(token, '123456'); 
+    } catch (error) {
+      // 如果解码失败，返回无效 token 的响应
+      return res.status(401).json({ code: 0, msg: 'Invalid token' });
+    }
+    // 如果解码成功，继续处理业务逻辑
+    const data = JSON.parse(responseData).tabledate;
+    res.status(200).json({ code: 1, msg: 'success', data: data });
+  } catch (error) {
+    // 如果出现其他错误，返回服务器错误的响应
+    res.status(500).json({ code: 0, msg: 'Server error' });
+  }
+});
 
+app.delete('/administrator/:ids', (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+      return res.status(401).json({ code: 0, msg: 'Unauthorized' });
+    }
+
+    const token = authHeader.split(' ')[1];
+    
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(token, '123456');
+    } catch (error) {
+      return res.status(401).json({ code: 0, msg: 'Invalid token' });
+    }
+
+    const activityIds = req.params.ids.split(','); // 从请求参数中获取活动ID数组
+    // 在这里可以使用活动ID数组执行相应的操作，比如从数据库中删除对应的活动记录等
+    res.status(200).json({ code: 1, msg: 'success', data: null });
+  } catch (error) {
+    res.status(500).json({ code: 0, msg: 'Server error' });
+  }
+});
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

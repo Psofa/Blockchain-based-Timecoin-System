@@ -10,7 +10,8 @@
         <el-dropdown>
           <span class="el-dropdown-link">
             <el-avatar icon="el-icon-user-solid"></el-avatar>
-            管理员<i class="el-icon-arrow-down el-icon--right"></i>
+            <div>管理员：{{ getUserInfo }}</div>
+            <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>个人中心</el-dropdown-item>
@@ -34,6 +35,8 @@
           text-color="#fff"
           active-text-color="#ffd04b"
           :collapse="isCollapse"
+          :collapse-transition="false"
+          :style="{ width: isCollapse ? asideWidth : '100%'}"
         >
           <router-link to="/homeView" class="RouterLink">
             <el-menu-item index="1">
@@ -50,7 +53,9 @@
               <router-link to="/usersView" class="RouterLink">
                 <el-menu-item>用户管理</el-menu-item>
               </router-link>
-              <el-menu-item>选项2</el-menu-item>
+              <router-link to="/adminView" class="RouterLink">
+                <el-menu-item>活动管理</el-menu-item>
+              </router-link>
             </el-menu-item-group>
           </el-submenu>
           <el-submenu index="3">
@@ -68,7 +73,9 @@
             <span v-if="!isCollapse" slot="title">Option 3</span>
           </el-menu-item>
         </el-menu>
-        <div class="collapse-toggle" @click="toggleCollapse">
+        <div class="collapse-toggle" @click="toggleCollapse"
+          
+          :style="{ width: isCollapse ? asideWidth : '100%'}">
           <i class="el-icon-arrow-left" v-if="!isCollapse"></i>
           <i class="el-icon-arrow-right" v-if="isCollapse"></i>
         </div>
@@ -76,8 +83,8 @@
       
       <el-container>
         <el-header class="second-header">
-          <div class="tabs-container">
-            <el-tabs v-model="activeTab" @tab-remove="removeTab"  @tab-click="handleTabClick" type="card" closable>
+            <el-tabs v-model="activeTab" @tab-remove="removeTab"  @tab-click="handleTabClick" type="card" closable
+           style="padding-top: 12px">
               <el-tab-pane
                 v-for="tab in openedTabs"
                 :key="tab.path"
@@ -86,20 +93,7 @@
                 closable>
               </el-tab-pane>
             </el-tabs>
-          </div>
-          <div class="user-settings">
-            <el-dropdown>
-              <i class="el-icon-setting" style="margin-right: 15px"></i>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>查看</el-dropdown-item>
-                <el-dropdown-item>新增</el-dropdown-item>
-                <el-dropdown-item>删除</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-            <span>王小虎</span>
-          </div>
         </el-header>
-        
         <el-main style="border: 1px solid #ccc;border-radius: 5px; /* 设置边框圆角 */">
           <router-view></router-view>  <!-- 使用 <router-view> 渲染整个应用程序的内容 -->
         </el-main>
@@ -125,20 +119,11 @@
   align-items: center;
   justify-content: space-between;
   text-align: right;
+  height: 42px !important;
   background-color: white;
   color: #333;
-  height: 30px;
   border: 1px solid #ccc; /* 设置边框为 1px 实线 */
   border-radius: 5px; /* 设置边框圆角 */
-}
-
-.tabs-container {
-  flex-grow: 1; /* 让标签部分占据大部分空间 */
-}
-
-.user-settings {
-  display: flex;
-  align-items: center; /* 确保王小虎部分垂直居中 */
 }
 
 .header-left {
@@ -177,28 +162,24 @@
   bottom: 0px; /* 距离底部的距离 */
   left: 50%; /* 水平居中 */
   transform: translateX(-50%); /* 结合 left 50% 使用，确保完全居中 */
-  width: 400px;
   height: 40px;
   background-color: #4f4c4c;
   color: white;
   text-align: center;
   line-height: 40px;
   cursor: pointer;
+  transition: width .4s;
 }
 
 .el-aside {
-  position: relative; /* 添加这一行 */
-  transition: width .3s;
+  position: relative;
+  transition: width .5s;
 }
 
-.el-menu-vertical-demo:not(.el-menu--collapse) {
-  width: 200px;
-  min-height: 400px;
-}
-
-.el-menu--collapse {
-  width: 64px;
-  min-height: 400px;
+.el-menu-vertical-demo{
+  width:"asideWidth";
+  transition: width .5s;
+  border: none !important;
 }
 
 /* 设置链接 */
@@ -210,33 +191,13 @@
 </style>
 
 <script>
-import { 
-    Container, Aside,Menu, Submenu, MenuItemGroup, MenuItem, Header,
-    Main, Dropdown, DropdownMenu, DropdownItem,Footer,Avatar,Tabs,TabPane
-} from 'element-ui';
 import request from '@/utils/request';
+import { mapGetters } from 'vuex';
+import { removeToken } from '@/utils/auth';
 
 export default {
     name: 'IndexView',
-    components: {
-        'el-container': Container,
-        'el-header': Header,
-        'el-main': Main,
-        'el-aside': Aside,
-        'el-menu': Menu,
-        'el-submenu': Submenu,
-        'el-menu-item-group': MenuItemGroup,
-        'el-menu-item': MenuItem,
-        'el-dropdown': Dropdown,
-        'el-dropdown-menu': DropdownMenu,
-        'el-dropdown-item': DropdownItem,
-        'el-footer': Footer,
-        'el-avatar': Avatar,
-        'el-tab-pane': TabPane,
-        'el-tabs': Tabs,
-    },
     data() {
-
       return {
           // 折叠
           isCollapse: false,
@@ -244,8 +205,7 @@ export default {
           openedTabs: [
             { title: 'Home', path: '/homeView', closable: false }, // Home标签默认打开且不可关闭
           ],
-          activeTab: '/homeView',
-          
+          activeTab: '/homeView', 
       }
     },
     created() {
@@ -267,11 +227,11 @@ export default {
       },
     },
     computed: {
-      
+      // 侧边栏宽度
       asideWidth() {
         return this.isCollapse ? '64px' : '200px';
       },
-
+      ...mapGetters(['getUserInfo']),
     },
     methods: {
       // 获取个人信息
@@ -279,7 +239,8 @@ export default {
         // 使用 Axios 实例发送请求获取个人信息
         request.get('/info')
           .then(response => {
-            console.log(response.data); // 打印返回的数据
+            // 将获取到的用户数据保存在 Vuex 中
+            this.$store.commit('setUserInfo', response.data);
           })
           .catch(error => {
             console.error('获取个人信息失败:', error);
@@ -289,12 +250,11 @@ export default {
       toggleCollapse() {
         this.isCollapse = !this.isCollapse; // 切换折叠状态
       },
-      logout() {
+      async logout() {
+        // 调用action
+        await this.$store.dispatch('logout');
         // 执行退出登录的操作，清除本地存储中的 token
-        localStorage.removeItem('token');
-        
-        // 可选的，执行其他清理工作
-        
+        removeToken('token');
         // 重定向到登录页面
         this.$router.push('/');
       },

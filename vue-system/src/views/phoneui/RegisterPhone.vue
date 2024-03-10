@@ -1,37 +1,81 @@
 <template>
-  <div class="form-container">
-    <form>
+  <div class="signup-container">
+    <div class="signup-box">
       <h1>注册</h1>
-      <div class="txtb">
-        <input type="text" v-model="signUpUsername" placeholder="Useranme">
-      </div>
-      <div class="txtb">
-        <input type="text" v-model="signUpName" placeholder="Name">
-      </div>
-      <div class="txtb">
-        <input type="email" v-model="signUpEmail" placeholder="Email">
-      </div>
-      <div class="txtb">
-        <input type="text" v-model="signUpPhone" placeholder="Phone">
-      </div>
-      <div class="txtb">
-        <input type="text" v-model="age" placeholder="Age">
-      </div>
-      <div class="txtb">
-        <input type="password" v-model="signUpPassword" placeholder="Password">
-      </div>
-      <div class="txtb">
-        <input type="password" v-model="confirmPassword" placeholder="Confirm Password">
-      </div>
-      <div >
-        <el-radio v-model="radio" label="1">老人</el-radio>
-        <el-radio v-model="radio" label="2">志愿者</el-radio>
-        <el-radio v-model="radio" label="3">管理员</el-radio>
-      </div>
-      <el-button  @click="signUp">注册</el-button>
-    </form>
+      <form>
+        <div class="form-group">
+          <input type="text" v-model="signUpUsername" placeholder="用户名" class="form-control">
+        </div>
+        <div class="form-group">
+          <input type="text" v-model="signUpName" placeholder="姓名" class="form-control">
+        </div>
+        <div class="form-group">
+          <input type="email" v-model="signUpEmail" placeholder="邮箱" class="form-control">
+        </div>
+        <div class="form-group">
+          <input type="text" v-model="signUpPhone" placeholder="电话" class="form-control">
+        </div>
+        <div class="form-group">
+          <input type="text" v-model="age" placeholder="年龄" class="form-control">
+        </div>
+        <div class="form-group">
+          <input type="password" v-model="signUpPassword" placeholder="密码" class="form-control">
+        </div>
+        <div class="form-group">
+          <input type="password" v-model="confirmPassword" placeholder="确认密码" class="form-control">
+        </div>
+        <div class="form-group" style="display: flex; justify-content: center;">
+          <el-radio v-model="radio" label="1">老人</el-radio>
+          <el-radio v-model="radio" label="2">志愿者</el-radio>
+          <el-radio v-model="radio" label="3">管理员</el-radio>
+        </div>
+        <el-button type="primary" @click="signUp" class="register-btn">注册</el-button>
+      </form>
+    </div>
   </div>
 </template>
+
+<style scoped>
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 98vh;
+  background-color: #f7f7f7;
+  background-image: url('C:\Users\31744\Pictures\2.jpg');;
+}
+
+.signup-box {
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(240, 234, 234, 0.1);
+  width: 90%;
+  max-width: 400px;
+  backdrop-filter: blur(5px); /* 设置背景虚化效果 */
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-control {
+  width: 92.5%;
+  padding: 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.register-btn {
+  width: 100%;
+}
+</style>
+
 
 <script>
 import axios from 'axios';
@@ -127,80 +171,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.form-container {
-  background: #f0f2f5;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 20px;
-}
-
-.form-container h1 {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.txtb {
-  margin-bottom: 20px;
-}
-
-.txtb .el-input,
-.el-radio-group {
-  width: 100%;
-}
-
-.el-radio-group {
-  display: flex;
-  justify-content: space-around;
-  margin: 20px 0;
-}
-
-.el-button {
-  width: 100%;
-  border: none;
-  border-radius: 5px;
-}
-
-/* 响应式设计: 对于较小屏幕的手机，调整间距和布局 */
-@media (max-width: 768px) {
-  .form-container {
-    padding: 15px;
-    margin: 20px auto;
-  }
-
-  .form-container h1 {
-    font-size: 18px; /* 调整小屏幕上的标题字体大小 */
-  }
-
-  .txtb .el-input,
-  .el-radio-group {
-    flex-direction: column;
-  }
-
-  .el-radio-group .el-radio {
-    margin-bottom: 10px; /* 增加单选按钮之间的间距 */
-  }
-  
-  .el-button {
-    padding: 12px 20px; /* 增加按钮的填充，使其在小屏幕上更容易点击 */
-  }
-}
-
-/* 更小的屏幕尺寸 */
-@media (max-width: 480px) {
-  .form-container {
-    padding: 10px;
-    margin: 15px auto;
-  }
-
-  .form-container h1 {
-    font-size: 16px; /* 更小屏幕上的标题字体大小 */
-  }
-  
-  /* 可以添加更多的样式来适应更小屏幕的布局 */
-}
-</style>
