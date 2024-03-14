@@ -1,10 +1,111 @@
 <template>
-  <div>
+  <div class="AdminContainer">
+    <!-- 查询 -->
+    <div class="search">
+      <div class="searchContainer">
+        <el-tag style="margin-right: 5px; margin-left: 10px;">活动标题</el-tag>
+        <el-input type="text" v-model="searchTitle" prefix-icon="el-icon-search" style="vertical-align: middle;margin-right: 20px;"></el-input>
+        <el-tag style="margin-right: 5px;">活动地点</el-tag>
+        <el-input type="text" v-model="searchAddress" prefix-icon="el-icon-search" style="vertical-align: middle;margin-right: 20px;"></el-input>
+        <div class="block">
+          <el-date-picker
+            v-model="searchDate"
+            align="right"
+            type="date"
+            placeholder="活动日期"
+            :picker-options="pickerOptionsofsearch"
+            style="vertical-align: middle;margin-right: 20px;">
+          </el-date-picker>
+        </div>
+      </div>
+      <div class="searchContainer">
+        <el-tag style="margin-right: 5px; margin-left: 10px;">活动开始时间</el-tag>
+        <el-time-picker
+          v-model="searchBegin"
+          style="vertical-align: middle;margin-right: 20px;">
+        </el-time-picker>
+        <el-tag style="margin-right: 5px;">活动结束时间</el-tag>
+        <el-time-picker
+          v-model="searchEnd"
+          style="vertical-align: middle;margin-right: 20px;">
+        </el-time-picker>
+        <el-tag style="margin-right: 5px;">活动状态</el-tag>
+        <el-select v-model="searchStatus" clearable placeholder="请选择" style="margin-right: 20px;">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
+        <el-button type="primary" round icon="el-icon-search" @click="search" style="height: 35px; margin-left: auto;">搜索</el-button>
+        <el-button type="primary" round icon="el-icon-refresh" @click="clearSearch" style="height: 35px;">重置</el-button>
+        <el-button type="primary" round icon="el-icon-circle-plus" @click="addTable" style="height: 35px;">添加</el-button>
+        <el-button type="primary" round icon="el-icon-delete" @click="deleteTable" style="height: 35px; margin-right: 20px;">删除</el-button>
+      </div>
+    </div>
+    <el-table
+      :data="tableData"
+      border
+      style="width: 100%;border: 1px solid #ccc;"
+      show-selection @selection-change="handleSelectionChange">
+      <!-- 表格列定义 -->
+      <el-table-column type="selection" width="45"></el-table-column>
+      <el-table-column fixed prop="id" label="id" width="80"></el-table-column>
+      <el-table-column prop="title" label="活动标题" width="100"></el-table-column>
+      <el-table-column prop="quota" label="活动名额" width="110" sortable></el-table-column>
+      <el-table-column prop="date" label="活动时期" width="110" sortable></el-table-column>
+      <el-table-column prop="begin" label="活动开始时间" width="150" sortable></el-table-column>
+      <el-table-column prop="end" label="活动结束时间" width="150" sortable></el-table-column>
+      <el-table-column prop="address" label="地址" width="300"></el-table-column>
+      <el-table-column prop="oldId" label="老人ID" width="80"></el-table-column>
+      <el-table-column prop="phone" label="发布人电话" width="100"></el-table-column>
+      <el-table-column prop="status" label="活动状态" width="100">
+        <template slot-scope="scope">
+          <el-tag :type="getTagType(scope.row.status)">
+            {{ getTagText(scope.row.status) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="description" label="活动活动描述" width="150">
+        <template slot-scope="scope">
+          <!-- 点击按钮触发打开弹窗事件 -->
+          <el-button type="text" @click="openDialog(scope.row.description)">点击查看描述</el-button>
+        </template>
+      </el-table-column>
+      <!-- 操作列 -->
+      <el-table-column
+        fixed="right"
+        label="操作"
+        width="180">
+        <template slot-scope="scope">
+          <div style="display: flex; justify-content: center;">
+            <el-button size = "small" @click="queryForm(scope.row)" style="margin-right: 10px;">查看</el-button>
+            <el-button size = "small" @click="editForm(scope.row)">编辑</el-button>
+          </div>
+        </template>
+      </el-table-column>
+    </el-table>
+    <!-- 分页组件 -->
+    <div class="pagination-container">
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="currentPage"
+        :page-sizes="[5, 10, 20, 30]" 
+        :page-size="pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="totalItems">
+      </el-pagination>
+    </div>
     <!-- 抽屉 -->
     <el-drawer
       title="活动信息"
       :visible.sync="drawer"
-      direction="ltr">
+      :before-close="handleClose"
+      direction="ltr"
+      :append-to-body="true"
+      :modal-append-to-body="false">
       <el-form ref="form" :model="form" :disabled="formDisabled" label-width="100px">
         <el-form-item label="活动ID">
           <el-input v-model="form.id" :disabled='isFormIdDisabled'></el-input>
@@ -13,7 +114,7 @@
           <el-input v-model="form.title"></el-input>
         </el-form-item>
         <el-form-item label="活动名额">
-          <el-input v-model="form.quota"></el-input>
+          <el-input-number v-model="form.quota" :min="1"></el-input-number>
         </el-form-item>
         <el-form-item label="报名截止时间">
           <div class="block">
@@ -85,7 +186,7 @@
           </div>
         </el-form-item>
         <el-form-item label="活动剩余名额">
-          <el-input v-model="form.remain" :disabled='isFormRemainDisabled'></el-input>
+          <el-input-number v-model="form.remain" :min="0" :disabled='isFormRemainDisabled'></el-input-number>
         </el-form-item>
         <el-form-item label="管理员建议">
           <el-input type="textarea" v-model="form.message"></el-input>
@@ -95,113 +196,16 @@
         </el-form-item>
       </el-form>
     </el-drawer>
-    <!-- 查询 -->
-    <div class="search">
-      <div class="searchContainer">
-        <el-tag style="margin-right: 5px; margin-left: 10px;">活动标题</el-tag>
-        <el-input type="text" v-model="searchTitle" style="vertical-align: middle;margin-right: 20px;"></el-input>
-        <el-tag style="margin-right: 5px;">活动地点</el-tag>
-        <el-input type="text" v-model="searchAddress" style="vertical-align: middle;margin-right: 20px;"></el-input>
-        <div class="block">
-          <el-date-picker
-            v-model="searchDate"
-            align="right"
-            type="date"
-            placeholder="活动日期"
-            :picker-options="pickerOptionsofsearch"
-            style="vertical-align: middle;margin-right: 20px;">
-          </el-date-picker>
-        </div>
-      </div>
-      <div class="searchContainer">
-        <el-tag style="margin-right: 5px; margin-left: 10px;">活动开始时间</el-tag>
-        <el-time-picker
-          v-model="searchBegin"
-          style="vertical-align: middle;margin-right: 20px;">
-        </el-time-picker>
-        <el-tag style="margin-right: 5px;">活动结束时间</el-tag>
-        <el-time-picker
-          v-model="searchEnd"
-          style="vertical-align: middle;margin-right: 20px;">
-        </el-time-picker>
-        <el-tag style="margin-right: 5px;">活动状态</el-tag>
-        <el-select v-model="searchStatus" clearable placeholder="请选择" style="margin-right: 20px;">
-          <el-option
-            v-for="item in options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-        <el-button type="primary" round @click="search" style="height: 35px; margin-left: auto;">搜索</el-button>
-        <el-button type="primary" round @click="clearSearch" style="height: 35px;">重置</el-button>
-        <el-button type="primary" round @click="addTable" style="height: 35px;">添加</el-button>
-        <el-button type="primary" round @click="deleteTable" style="height: 35px; margin-right: 20px;">删除</el-button>
-      </div>
-    </div>
-    <el-table
-      :data="tableData"
-      border
-      style="width: 100%;border: 1px solid #ccc;"
-      show-selection @selection-change="handleSelectionChange">
-      <!-- 表格列定义 -->
-      <el-table-column type="selection" width="45"></el-table-column>
-      <el-table-column fixed prop="id" label="id" width="100"></el-table-column>
-      <el-table-column prop="title" label="活动标题" width="100"></el-table-column>
-      <el-table-column prop="quota" label="活动名额" width="100"></el-table-column>
-      <el-table-column prop="date" label="活动时期" width="100"></el-table-column>
-      <el-table-column prop="begin" label="活动开始时间" width="150"></el-table-column>
-      <el-table-column prop="end" label="活动结束时间" width="150"></el-table-column>
-      <el-table-column prop="address" label="地址" width="300"></el-table-column>
-      <el-table-column prop="oldId" label="老人ID" width="100"></el-table-column>
-      <el-table-column prop="phone" label="发布人电话" width="100"></el-table-column>
-      <el-table-column prop="status" label="活动状态" width="100">
-        <template slot-scope="scope">
-          <el-tag :type="getTagType(scope.row.status)">
-            {{ getTagText(scope.row.status) }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="description" label="活动活动描述" width="150">
-        <template slot-scope="scope">
-          <!-- 点击按钮触发打开弹窗事件 -->
-          <el-button type="text" @click="openDialog(scope.row.description)">点击查看描述</el-button>
-        </template>
-      </el-table-column>
-      <!-- 操作列 -->
-      <el-table-column
-        fixed="right"
-        label="操作"
-        width="180">
-        <template slot-scope="scope">
-          <div style="display: flex; justify-content: center;">
-            <el-button size = "small" @click="queryForm(scope.row)" style="margin-right: 10px;">查看</el-button>
-            <el-button size = "small" @click="editForm(scope.row)">编辑</el-button>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
-    <!-- 分页组件 -->
-    <div class="pagination-container">
-      <el-pagination
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
-        :current-page="currentPage"
-        :page-sizes="[5, 10, 20, 30]" 
-        :page-size="pageSize"
-        layout="total, sizes, prev, pager, next, jumper"
-        :total="totalItems">
-      </el-pagination>
-    </div>
   </div>
 </template>
 
 <script>
 import { MessageBox } from 'element-ui';// 需要单独导入
 import request from '@/utils/request';
+import store from '@/store';
 
 export default {
-  name: 'UsersView',
+  name: 'AdminView',
   data() {
     return {
       // 日期表
@@ -250,7 +254,6 @@ export default {
       totalItems: 0, // 总条目数量
       currentPage: 1, // 当前页码
       tableData: [], // 表格数据
-      selectedItems: [], // 用于存储选中的项
       // 表单
       drawer: false,
       form: {},
@@ -398,6 +401,14 @@ export default {
       // 打开抽屉
       this.drawer = true;
     },
+    handleClose(done) {
+      this.$confirm('确认关闭？')
+        .then(() => {
+          this.formDisabled = true;
+          done();
+        })
+        .catch(() => {});
+    },
     isFormItemDisabled(){
       // 检查表单项是否禁用
       return this.formDisabled;
@@ -420,6 +431,7 @@ export default {
           data[key] = this.form[key];
         }
       }
+      data['administratorId'] = store.getters.getUserInfo.id;
       request.get('/administrator',data)
         .then(response => {
           if(response.code === 1){
@@ -446,12 +458,19 @@ export default {
     },
     // 删除
     deleteTable(){
+      const ids = this.selectedIds.join(',');
+      if(ids === ''){
+        this.$message.error("请选择要删除的用户");
+        return;
+      }
+      // 发起删除请求
       request.delete('/administrator/${this.selectedIds.join(',')}', {
-        ids: this.selectedIds
+        ids: ids
       })
         .then(response => {
           if(response.code === 1){
             this.$message.success(response.msg);
+            this.search();
           }
           else{
             this.$message.error(response.msg);
@@ -465,21 +484,33 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.AdminContainer{
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+}
 .search{
   height: 110px;
   border: 1px solid #ccc;
   margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 20px;
+  margin-bottom: 20px;
+  background-color: #fff;
 }
 .searchContainer{
   height: 50px;
   display: flex;
   align-items: center;
-  
+  justify-content: center; 
 }
 .pagination-container {
   display: flex;
   justify-content: center;
+  margin: 10px;
 }
 .el-form-item {
   margin-right: 20px;

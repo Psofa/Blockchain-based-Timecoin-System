@@ -65,10 +65,8 @@
 </template>
 
 <script>
-import axios from 'axios';
 import { setToken } from '@/utils/auth';
-
-const baseURL = 'http://localhost:3000/';
+import request from '@/utils/request';
 
 export default {
   name: 'LoginForm',
@@ -125,9 +123,9 @@ export default {
         userData.phone
       ) {
         if (this.signUpPassword === this.confirmPassword) {
-          axios.post(baseURL + 'register', userData)
+          request.post('/register', userData)
             .then(response => {
-              if (response.data.code === 1) {
+              if (response.code === 1) {
                 this.clearAll();
                 this.$message({
                   message: '注册成功',
@@ -135,7 +133,7 @@ export default {
                 });
               }
               else {
-                this.$message.error('注册失败:' + response.data.msg);
+                this.$message.error('注册失败:' + response.msg);
               }
             })
             .catch(error => {
@@ -160,15 +158,15 @@ export default {
         return;
       }
 
-      axios.post(baseURL + 'login', userData)
+      request.post('/login', userData)
         .then(response => {
-          if (response.data.code === 1) {
+          if (response.code === 1) {
             this.$message({
               message: '登录成功',
               type: 'success'
             });
-            setToken(response.data.data);
-            this.$store.commit('setToken', response.data.data);
+            setToken(response.data);
+            this.$store.commit('setToken', response.data);
             this.isLoggedIn = true;
             this.$store.commit('setIsLoggedIn', this.isLoggedIn);
             setTimeout(() => {
@@ -176,7 +174,7 @@ export default {
             }, 1500);
           }
           else {
-            this.$message.error('账户和密码不匹配');
+            this.$message.error(response.msg);
           }
         })
         .catch(error => {
@@ -235,9 +233,8 @@ a {
 }
 
 .container {
-    background: rgba(255, 255, 255, 0.15);
     backdrop-filter: blur(10px);
-    border-radius: 8px;
+    border-radius: 40px;
     box-shadow: 0 14px 28px rgba(0, 0, 0, .25), 0 10px 10px rgba(0, 0, 0, .22);
     position: relative;
     overflow: hidden;
@@ -249,7 +246,7 @@ a {
 }
 
 .form-container form {
-    background: rgba(255, 255, 255, 0.15);
+    
     backdrop-filter: blur(10px);
     display: flex;
     flex-direction: column;

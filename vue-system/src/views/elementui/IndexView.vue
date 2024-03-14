@@ -1,16 +1,15 @@
 <template>
-   <el-container>
+  <el-container class="indexContainer">
     <el-header class="first-header">
       <div class="header-left">
         <span class="header-logo"></span>
         <span style=" font-size: 20px; font-weight: bold;">System</span>
       </div>
       <div class="header-right">
-        <!-- Add your header items here -->
         <el-dropdown>
           <span class="el-dropdown-link">
-            <el-avatar icon="el-icon-user-solid"></el-avatar>
-            <div>管理员：{{ getUserInfo }}</div>
+            <el-avatar icon="el-icon-user-solid" style="margin-right: 5px;"></el-avatar>
+            <div>管理员：{{ getUserInfo.id }}</div>
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
@@ -26,169 +25,57 @@
         </el-dropdown>
       </div>
     </el-header>
-    <el-container style="height: 835px; border: 1px solid #eee">
-      <el-aside :width="asideWidth" style="background-color: #575656;">
-        <el-menu
-          default-active="1"
-          class="el-menu-vertical-demo"
-          background-color="#575656"
-          text-color="#fff"
-          active-text-color="#ffd04b"
-          :collapse="isCollapse"
-          :collapse-transition="false"
-          :style="{ width: isCollapse ? asideWidth : '100%'}"
-        >
+    <el-container class="boxContainer">
+      <el-aside class="aside" width="auto">
+        <el-menu class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" :collapse="isCollapse">
           <router-link to="/homeView" class="RouterLink">
             <el-menu-item index="1">
               <i class="el-icon-s-home"></i>
               <span v-if="!isCollapse" slot="title">Home</span> 
             </el-menu-item>
           </router-link>
-          <el-submenu index="2">
-            <template slot="title">
-              <i class="el-icon-setting"></i>
-              <span v-if="!isCollapse" slot="title">系统管理</span>
-            </template>
-            <el-menu-item-group>
-              <router-link to="/usersView" class="RouterLink">
-                <el-menu-item>用户管理</el-menu-item>
-              </router-link>
-              <router-link to="/adminView" class="RouterLink">
-                <el-menu-item>活动管理</el-menu-item>
-              </router-link>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-submenu index="3">
-            <template slot="title">
+          <router-link to="/usersView" class="RouterLink">
+            <el-menu-item index="2">
+              <i class="el-icon-user"></i>
+              <span v-if="!isCollapse" slot="title">用户管理</span> 
+            </el-menu-item>
+          </router-link>
+          <router-link to="/adminView" class="RouterLink">
+            <el-menu-item index="3">
               <i class="el-icon-menu"></i>
-              <span v-if="!isCollapse" slot="title">Option 2</span>
-            </template>
-            <el-menu-item-group>
-              <el-menu-item index="2-1">选项1</el-menu-item>
-              <el-menu-item index="2-2">选项2</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-          <el-menu-item>
-            <i class="el-icon-message"></i>
-            <span v-if="!isCollapse" slot="title">Option 3</span>
-          </el-menu-item>
+              <span v-if="!isCollapse" slot="title">活动管理</span> 
+            </el-menu-item>
+          </router-link>
         </el-menu>
-        <div class="collapse-toggle" @click="toggleCollapse"
-          
-          :style="{ width: isCollapse ? asideWidth : '100%'}">
-          <i class="el-icon-arrow-left" v-if="!isCollapse"></i>
-          <i class="el-icon-arrow-right" v-if="isCollapse"></i>
-        </div>
       </el-aside>
-      
-      <el-container>
+      <el-container class="right">
         <el-header class="second-header">
-            <el-tabs v-model="activeTab" @tab-remove="removeTab"  @tab-click="handleTabClick" type="card" closable
-           style="padding-top: 12px">
-              <el-tab-pane
-                v-for="tab in openedTabs"
-                :key="tab.path"
-                :label="tab.title"
-                :name="tab.path"
-                closable>
-              </el-tab-pane>
-            </el-tabs>
+          <el-radio-group v-model="isCollapse" style="margin-right: 20px;">
+            <el-radio-button :label="true">
+              <i class="el-icon-arrow-left"></i>
+            </el-radio-button>
+            <el-radio-button :label="false">
+              <i class="el-icon-arrow-right"></i>
+            </el-radio-button>
+          </el-radio-group>
+          <el-tabs v-model="activeTab" @tab-remove="removeTab"  @tab-click="handleTabClick" type="card" closable
+            style="padding-top: 12px">
+            <el-tab-pane
+              v-for="tab in openedTabs"
+              :key="tab.path"
+              :label="tab.title"
+              :name="tab.path"
+              closable>
+            </el-tab-pane>
+          </el-tabs>
         </el-header>
-        <el-main style="border: 1px solid #ccc;border-radius: 5px; /* 设置边框圆角 */">
-          <router-view></router-view>  <!-- 使用 <router-view> 渲染整个应用程序的内容 -->
+        <el-main class="mainBox">
+          <router-view></router-view>
         </el-main>
-        <el-footer style="background-color: rgb(243, 239, 239);height: 40px;"></el-footer>
       </el-container>
     </el-container>
-   </el-container>
-  
+  </el-container>
 </template>
-<style>
-/* 设置header */
-.first-header  {
-  background-color: #409EFF; /* Adjust the color to match your design */
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-}
-
-.second-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  text-align: right;
-  height: 42px !important;
-  background-color: white;
-  color: #333;
-  border: 1px solid #ccc; /* 设置边框为 1px 实线 */
-  border-radius: 5px; /* 设置边框圆角 */
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-}
-
-.header-logo {
-  background-image: url('../../assets/logo.png'); /* 替换为图像路径 */
-  background-size: contain; /* 控制图像大小，可以使用 cover、contain 或具体的尺寸值 */
-  background-repeat: no-repeat; /* 防止图像重复 */
-  display: inline-block; /* 设置为内联块元素，以便可以设置宽度和高度 */
-  width: 40px; /* 图像宽度 */
-  height: 30px; /* 图像高度 */
- 
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-}
-
-.el-dropdown-link {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-}
-
-.el-avatar {
-  margin-right: 5px;
-}
-
-/* 设置sider */
-.collapse-toggle {
-  position: absolute;
-  bottom: 0px; /* 距离底部的距离 */
-  left: 50%; /* 水平居中 */
-  transform: translateX(-50%); /* 结合 left 50% 使用，确保完全居中 */
-  height: 40px;
-  background-color: #4f4c4c;
-  color: white;
-  text-align: center;
-  line-height: 40px;
-  cursor: pointer;
-  transition: width .4s;
-}
-
-.el-aside {
-  position: relative;
-  transition: width .5s;
-}
-
-.el-menu-vertical-demo{
-  width:"asideWidth";
-  transition: width .5s;
-  border: none !important;
-}
-
-/* 设置链接 */
-.RouterLink{
-  color: white; /* 设置字体颜色为白色 */
-  text-decoration: none; /* 移除下划线 */
- 
-}
-</style>
 
 <script>
 import request from '@/utils/request';
@@ -227,10 +114,6 @@ export default {
       },
     },
     computed: {
-      // 侧边栏宽度
-      asideWidth() {
-        return this.isCollapse ? '64px' : '200px';
-      },
       ...mapGetters(['getUserInfo']),
     },
     methods: {
@@ -247,9 +130,13 @@ export default {
           });
       },
       // 折叠菜单
-      toggleCollapse() {
-        this.isCollapse = !this.isCollapse; // 切换折叠状态
+      handleOpen(key, keyPath) {
+        console.log(key, keyPath);
       },
+      handleClose(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      // 退出登录
       async logout() {
         // 调用action
         await this.$store.dispatch('logout');
@@ -320,8 +207,97 @@ export default {
           }
           this.activeTab = currentPath; // 更新当前激活的标签
         }
-      },
+      }
   },
-
 };
 </script>
+
+<style lang="scss" scoped>
+// 折叠效果
+.el-menu-vertical-demo:not(.el-menu--collapse) {
+  width: 200px;
+}
+.indexContainer{
+  background-image: url(C:/Users/31744/Pictures/4.jpg);
+  height: 100%;
+
+  .first-header{
+    background-color: #409EFF;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+
+    .header-left {
+      display: flex;
+      align-items: center;
+    }
+    .header-logo {
+      background-image: url('../../assets/logo.png'); /* 替换为图像路径 */
+      background-size: contain; /* 控制图像大小，可以使用 cover、contain 或具体的尺寸值 */
+      background-repeat: no-repeat; /* 防止图像重复 */
+      display: inline-block; /* 设置为内联块元素，以便可以设置宽度和高度 */
+      width: 40px; /* 图像宽度 */
+      height: 30px; /* 图像高度 */
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      .el-dropdown-link {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+      }
+    }
+  }
+  .boxContainer{
+    display: flex; /* 使用 Flexbox 实现水平布局 */
+    height: 835px; 
+    
+    .aside{
+      margin: 5px;
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+
+      .el-menu-vertical-demo{
+        backdrop-filter: blur(40px); /* 添加毛玻璃效果 */
+        border-radius: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+        background-color: rgba(255, 255, 255, 0.4);
+
+        .RouterLink{
+          color: black;
+          text-decoration: none; /* 移除下划线 */
+        }
+      }
+    }
+    
+    .right{
+      display: flex; /* 使用 Flexbox 实现垂直布局 */
+      flex-direction: column; /* 子元素在容器中垂直排列 */
+      
+      .second-header{
+        display: flex; /* 使用 Flexbox 实现水平布局 */
+        align-items: center; //垂直居中
+        margin: 5px;
+        border: 1px solid #ccc; /* 设置边框为 1px 实线 */
+        backdrop-filter: blur(10px); /* 添加毛玻璃效果 */
+        border-radius: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+        background-color: rgba(255, 255, 255, 0.4);
+      }
+      .mainBox{
+        margin: 5px;
+        height: auto;
+        border: 1px solid #ccc;
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); /* 添加阴影效果 */
+        background-color: rgba(255, 255, 255, 0.4);
+      }
+    }
+  }
+}
+</style>
