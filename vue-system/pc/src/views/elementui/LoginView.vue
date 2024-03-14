@@ -69,7 +69,7 @@ import { setToken } from '@/utils/auth';
 import request from '@/utils/request';
 
 export default {
-  name: 'LoginForm',
+  name: 'LoginView',
   data() {
     return {
       isRightPanelActive: false,

@@ -4,8 +4,8 @@ import IndexView from '../views/elementui/IndexView.vue'
 import HomeView from '../views/elementui/HomeView.vue'
 import UsersView from '../views/elementui/UsersView.vue'
 import AdminView from '../views/elementui/AdminView.vue'
-import RegisterPhone from '@/views/phoneui/RegisterPhone.vue'
-import PcOrPhoneView from '@/views/PcOrPhoneView.vue'
+import LoginView from '../views/elementui/LoginView.vue'
+
 import { requireAuth, loginrequireAuth } from '../utils/permission'
 
 Vue.use(VueRouter)
@@ -13,14 +13,9 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'PcOrPhoneView',
-    component: PcOrPhoneView,
+    name: 'LoginView',
+    component: LoginView,
     beforeEnter: loginrequireAuth,
-  },
-  {
-    path: '/registerPhone',
-    name: 'RegisterPhone',
-    component: RegisterPhone
   },
   {
     path: '/indexView',
@@ -48,7 +43,7 @@ const routes = [
         
       }
     ]
-  }
+  },
 ]
 
 const router = new VueRouter({

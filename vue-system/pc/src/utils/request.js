@@ -37,9 +37,9 @@ request.interceptors.response.use(
       // 如果响应状态为 401，表示身份验证失败
       // 在这里可以进行一些处理，比如清除本地存储的 token，并重定向到登录页面
       alert('身份验证失败，请重新登录。');
-      removeToken('token'); // 清除本地存储的 token
       store.commit('setIsLoggedIn', false);
       router.push('/'); // 重定向到登录页面
+      removeToken('token'); // 清除本地存储的 token
     }
     return Promise.reject(error);
   }
