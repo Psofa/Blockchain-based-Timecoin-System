@@ -150,7 +150,8 @@ export default {
     signIn() {
       const userData = {
         username: this.signInUsername,
-        password: this.signInPassword
+        password: this.signInPassword,
+        role: 3, // 管理员
       };
 
       if (userData.username === '' || userData.password === '') {
@@ -165,8 +166,8 @@ export default {
               message: '登录成功',
               type: 'success'
             });
-            setToken(response.data);
-            this.$store.commit('setToken', response.data);
+            setToken(response.data.token);
+            this.$store.commit('setToken', response.data.token);
             this.isLoggedIn = true;
             this.$store.commit('setIsLoggedIn', this.isLoggedIn);
             setTimeout(() => {

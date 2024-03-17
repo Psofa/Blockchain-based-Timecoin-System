@@ -3,34 +3,29 @@
     <!-- 查询 -->
     <div class="search">
       <div class="searchContainer">
-        <el-tag style="margin-right: 5px; margin-left: 10px;">活动标题</el-tag>
-        <el-input type="text" v-model="searchTitle" prefix-icon="el-icon-search" style="vertical-align: middle;margin-right: 20px;"></el-input>
-        <el-tag style="margin-right: 5px;">活动地点</el-tag>
-        <el-input type="text" v-model="searchAddress" prefix-icon="el-icon-search" style="vertical-align: middle;margin-right: 20px;"></el-input>
+        <el-input type="text" v-model="searchTitle" prefix-icon="el-icon-search" placeholder="活动标题" style="vertical-align: middle;margin-right: 20px;width: auto;"></el-input>
+        <el-input type="text" v-model="searchAddress" prefix-icon="el-icon-search" placeholder="活动地点" style="vertical-align: middle;margin-right: 20px;width: auto;"></el-input>
         <div class="block">
           <el-date-picker
             v-model="searchDate"
             align="right"
             type="date"
             placeholder="活动日期"
-            :picker-options="pickerOptionsofsearch"
-            style="vertical-align: middle;margin-right: 20px;">
+            :picker-options="pickerOptions"
+            style="vertical-align: middle;margin-right: 20px;width: auto;">
           </el-date-picker>
         </div>
-      </div>
-      <div class="searchContainer">
-        <el-tag style="margin-right: 5px; margin-left: 10px;">活动开始时间</el-tag>
         <el-time-picker
           v-model="searchBegin"
-          style="vertical-align: middle;margin-right: 20px;">
+          placeholder="活动开始时间"
+          style="vertical-align: middle;margin-right: 20px;width: auto;">
         </el-time-picker>
-        <el-tag style="margin-right: 5px;">活动结束时间</el-tag>
         <el-time-picker
           v-model="searchEnd"
+          placeholder="活动结束时间"
           style="vertical-align: middle;margin-right: 20px;">
         </el-time-picker>
-        <el-tag style="margin-right: 5px;">活动状态</el-tag>
-        <el-select v-model="searchStatus" clearable placeholder="请选择" style="margin-right: 20px;">
+        <el-select v-model="searchStatus" clearable placeholder="活动状态" style="width: auto;">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -38,6 +33,8 @@
             :value="item.value">
           </el-option>
         </el-select>
+      </div>
+      <div class="searchContainer">
         <el-button type="primary" round icon="el-icon-search" @click="search" style="height: 35px; margin-left: auto;">搜索</el-button>
         <el-button type="primary" round icon="el-icon-refresh" @click="clearSearch" style="height: 35px;">重置</el-button>
         <el-button type="primary" round icon="el-icon-circle-plus" @click="addTable" style="height: 35px;">添加</el-button>
@@ -123,7 +120,7 @@
               type="datetime"
               placeholder="选择日期时间"
               align="right"
-              :picker-options="pickerOptionsofform">
+              :picker-options="pickerOptions">
             </el-date-picker>
           </div>
         </el-form-item>
@@ -168,7 +165,7 @@
               type="datetime"
               placeholder="选择日期时间"
               align="right"
-              :picker-options="pickerOptionsofform"
+              :picker-options="pickerOptions"
               :disabled=true>
             </el-date-picker>
           </div>
@@ -180,7 +177,7 @@
               type="datetime"
               placeholder="选择日期时间"
               align="right"
-              :picker-options="pickerOptionsofform"
+              :picker-options="pickerOptions"
               :disabled=true>
             </el-date-picker>
           </div>
@@ -191,7 +188,7 @@
         <el-form-item label="管理员建议">
           <el-input type="textarea" v-model="form.message"></el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item style="display: flex; justify-content: flex-end; align-items: center;">
           <el-button type="primary" @click="onSubmitForm">提交</el-button>
         </el-form-item>
       </el-form>
@@ -209,10 +206,7 @@ export default {
   data() {
     return {
       // 日期表
-      pickerOptionsofsearch: {
-        disabledDate(time) {
-          return time.getTime() > Date.now();
-        },
+      pickerOptions: {
         shortcuts: [{
           text: '今天',
           onClick(picker) {
@@ -257,35 +251,10 @@ export default {
       // 表单
       drawer: false,
       form: {},
-      pickerOptionsofform: {
-          shortcuts: [{
-            text: '今天',
-            onClick(picker) {
-              picker.$emit('pick', new Date());
-            }
-          }, {
-            text: '昨天',
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24);
-              picker.$emit('pick', date);
-            }
-          }, {
-            text: '一周前',
-            onClick(picker) {
-              const date = new Date();
-              date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit('pick', date);
-            }
-          }]
-      },
       formDisabled: true, // 禁用整个表单
       isFormIdDisabled: false,
       isFormRemainDisabled: false,
     };
-  },
-  created(){
-    
   },
   mounted() {
     // 初始化时计算当前页的数据
@@ -294,28 +263,6 @@ export default {
     this.isFormItemDisabled();
   },
   methods: {
-    handleCurrentChange(newPage) {
-      // 更新当前页码
-      this.currentPage = newPage;
-      // 重新计算当前页的数据
-      this.calculateCurrentPageData();
-    },
-    handleSizeChange(newSize) {
-      // 更新页面大小并重新计算当前页的数据
-      this.pageSize = newSize;
-      this.calculateCurrentPageData();
-    },
-    calculateCurrentPageData() {
-      this.tableData = [];
-      // 合并原始数据到 tableData 数组中
-      this.tableData = [...this.tableData, ...this.originalData];
-      const startIdx = (this.currentPage - 1) * this.pageSize;
-      const endIdx = Math.min(startIdx + this.pageSize, this.totalItems);
-      // 选择当前页的数据
-      const currentPageData = this.tableData.slice(startIdx, endIdx);
-      // 将当前页的数据赋值给 tableData 数组
-      this.tableData = currentPageData;
-    },
     openDialog(description) {
       // 打开弹窗显示活动描述
       MessageBox.alert(description, '活动描述', {
@@ -323,32 +270,67 @@ export default {
         type: 'info'
       });
     },
-    search(){
-      // 在这个方法中获取搜索框中的数据
-      const searchData = {
-        title: this.searchTitle,
-        address: this.searchAddress,
-        date: this.searchDate,
-        begin: this.searchBegin,
-        end: this.searchEnd,
-        status: this.searchStatus,
-        pageSize: this.pageSize,
-        page: this.currentPage
+    handleCurrentChange(newPage) {
+      // 更新当前页码
+      this.currentPage = newPage;
+      // 重新搜索获取对应页的数据
+      this.search();
+    },
+    handleSizeChange(newSize) {
+      // 更新页面大小
+      this.pageSize = newSize;
+      // 重新搜索获取对应页的数据
+      this.search();
+    },
+    search() {
+      // 格式化日期
+      const formatDateString = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+        const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+        return `${year}-${month}-${day}`;
       };
-      request.get('/administrator',searchData)
+      // 格式化时间
+      const formatTimeString = (dateString) => {
+        if (!dateString) return '';
+        let hours = dateString.getHours().toString().padStart(2, '0');
+        let minutes = dateString.getMinutes().toString().padStart(2, '0');
+        let seconds = dateString.getSeconds().toString().padStart(2, '0');
+        let formattedTime = `${hours}:${minutes}:${seconds}`;
+        return formattedTime;
+      };
+      // 创建 URLSearchParams 对象
+      const params = new URLSearchParams();
+      // 添加搜索条件到 URLSearchParams 对象中
+      params.append('title', this.searchTitle);
+      params.append('address', this.searchAddress);
+      params.append('date', formatDateString(this.searchDate));
+      params.append('begin', formatTimeString(this.searchBegin));
+      params.append('end', formatTimeString(this.searchEnd));
+      params.append('status', this.searchStatus);
+      params.append('pageSize', this.pageSize);
+      params.append('page', this.currentPage);
+      // 将 URLSearchParams 对象转换为查询字符串
+      const queryString = params.toString();
+
+      // 发起请求时将查询字符串添加到URL中
+      request.get(`/administrator?${queryString}`)
         .then(response => {
           if (response.code === 1) {
             this.totalItems = response.data.total;
             this.originalData = response.data.rows;
-            this.calculateCurrentPageData();
+            this.tableData = [];
+            // 合并原始数据到 tableData 数组中
+            this.tableData = [...this.tableData, ...this.originalData];
             this.$message.success("数据获取成功");
-          }
-          else {
+          } else {
             this.$message.error(response.msg);
           }
         })
         .catch(error => {
-          console.error('获取个人信息失败:', error);
+          console.error('获取数据失败:', error);
         });
     },
     clearSearch() {
@@ -432,7 +414,8 @@ export default {
         }
       }
       data['administratorId'] = store.getters.getUserInfo.id;
-      request.get('/administrator',data)
+      console.log(data);
+      request.put('/administrator',data)
         .then(response => {
           if(response.code === 1){
             this.$message.success(response.msg);
@@ -446,11 +429,8 @@ export default {
         });
     },
     addTable(){
-      this.isFormRemainDisabled=true;
-      this.isFormIdDisabled=true;
-      this.formDisabled = false;
-      // 打开抽屉
-      this.drawer = true;
+      // 使用 $router.push() 方法进行路由跳转
+      this.$router.push('/addActivityView');
     },
     // 表格选择
     handleSelectionChange(selection) {
@@ -464,9 +444,7 @@ export default {
         return;
       }
       // 发起删除请求
-      request.delete('/administrator/${this.selectedIds.join(',')}', {
-        ids: ids
-      })
+      request.delete('/administrator/${this.selectedIds.join(',')}')
         .then(response => {
           if(response.code === 1){
             this.$message.success(response.msg);
@@ -503,6 +481,7 @@ export default {
 }
 .searchContainer{
   height: 50px;
+  margin: 10px;
   display: flex;
   align-items: center;
   justify-content: center; 

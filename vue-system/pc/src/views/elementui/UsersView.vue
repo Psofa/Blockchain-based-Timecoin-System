@@ -1,13 +1,16 @@
 <template>
   <div class="container">
     <el-dialog
-      title="添加用户"
+      title="编辑"
       :visible.sync="dialogVisible"
       :before-close="handleClose"
       width="45%"
       :append-to-body="true"
       :modal-append-to-body="false">
       <el-form ref="form" :model="form" v-if="isEdit">
+        <el-form-item label="id">
+          <el-input v-model="form.id"></el-input>
+        </el-form-item>
         <el-form-item label="用户名">
           <el-input v-model="form.username"></el-input>
         </el-form-item>
@@ -57,7 +60,7 @@
           <template slot="label">
             <i class="el-icon-s-custom"></i> 用户类型
           </template>
-          {{ form.role }}
+          {{ roleMap[form.role] || '未知' }}
         </el-descriptions-item>
 
         <!-- 邮箱 -->
@@ -118,30 +121,11 @@
       </el-descriptions>
       <div slot="footer" class="dialog-footer">
         <el-button @click="handleCancel">取 消</el-button>
-        <el-button type="primary" @click="addUser" v-if="isEdit">提 交</el-button>
+        <el-button type="primary" @click="editUser" v-if="isEdit">提 交</el-button>
       </div>
     </el-dialog>
     <div class="app-container">
       <div class="left">
-        <!-- 搜索 -->
-        <el-container class="search" v-model="searchData">
-          <el-input type="text" v-model="searchData.usename" prefix-icon="el-icon-search" style="margin-bottom: 5px;" placeholder="请输入用户名"></el-input>
-          <el-input type="text" v-model="searchData.address" prefix-icon="el-icon-search" style="margin-bottom: 5px;" placeholder="请输入地址"></el-input>
-          <el-select v-model="searchData.role" clearable placeholder="请选择身份" style="width: 250px;">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value">
-            </el-option>
-          </el-select>
-          <el-input-number v-model="searchData.minage" :min="0" prefix-icon="el-icon-search" style="margin-top: 5px; width: auto;" placeholder="请输入最小年龄"></el-input-number>
-          <el-input-number v-model="searchData.maxage" :min="0" prefix-icon="el-icon-search" style="margin-top: 5px; margin-bottom: 10px; width: auto;" placeholder="请输入最大年龄"></el-input-number>
-          <div style="margin-top: 5px; display: flex;">
-            <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
-            <el-button type="primary" icon="el-icon-refresh" @click="clearsRearch">重置</el-button>
-          </div>
-        </el-container>
         <!-- 树形组件 -->
         <el-tree
           ref="deptTree"
@@ -155,12 +139,36 @@
         />
       </div>
       <div class="right">
-        <el-row class="opeate-tools" type="flex" justify="end">
-          <el-button size="small" type="primary" icon="el-icon-circle-plus" @click="dialogVisible = true">添加</el-button>
-          <el-button size="small" type="primary" icon="el-icon-delete" @click="deleteUsrs">删除</el-button>
-          <el-button size="small">excel导入</el-button>
-          <el-button size="small">excel导出</el-button>
-        </el-row>
+        <!-- 搜索 -->
+        <div class="search">
+          <el-input type="text" v-model="usename" prefix-icon="el-icon-search" style="margin-right: 10px;width: auto;" placeholder="请输入用户名"></el-input>
+          <el-input type="text" v-model="address" prefix-icon="el-icon-search" style="margin-right: 10px;width: auto;" placeholder="请输入地址"></el-input>
+          <el-select v-model="role" clearable placeholder="请选择身份" style="width: auto;margin-right: 10px;">
+            <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <el-tag style="margin-right: 5px;">最小年龄</el-tag>
+          <el-input-number v-model="minage" :min="0" prefix-icon="el-icon-search" style="margin-right: 10px;width: auto;" placeholder="请输入最小年龄"></el-input-number>
+          <el-tag style="margin-right: 5px;">最大年龄</el-tag>
+          <el-input-number v-model="maxage" :min="0" prefix-icon="el-icon-search" style="width: auto;" placeholder="请输入最大年龄"></el-input-number>
+        </div>
+
+        <div class="opeate-tools">
+          <div class="left-tools">
+            <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
+            <el-button type="primary" icon="el-icon-refresh" @click="clearsRearch">重置</el-button>
+          </div>
+          <div class="right-tools">
+            <el-button size="small" type="primary" icon="el-icon-circle-plus" @click="addUser">添加</el-button>
+            <el-button size="small" type="primary" icon="el-icon-delete" @click="deleteUsrs">删除</el-button>
+            <el-button size="small">excel导入</el-button>
+            <el-button size="small">excel导出</el-button>
+          </div>
+        </div>
         <!-- 表格组件 -->
         <el-table :data="tableData"
           style="width: 1100px;border: 1px solid #ccc;"
@@ -214,16 +222,26 @@ export default {
         label: 'name',
         children: 'children'
       },
-      searchData: {}, // 搜索表单
+      // 搜索表单
+      username: '',
+      address: '',
+      role:'',
+      minage:0,
+      maxage:100,
       // 表格数据
       originalData: {},
-      pageSize: 10, // 每页显示的条目数量
+      pageSize: 5, // 每页显示的条目数量
       totalItems: 0, // 总条目数量
       currentPage: 1, // 当前页码
       tableData: [], // 存储员工列表数据
       // 表单
       dialogVisible: false,
       isEdit: false,
+      roleMap: {
+        1: '老人',
+        2: '志愿者',
+        3: '管理员'
+      },
       options: [
         { value: 1, label: '老人' },
         { value: 2, label: '志愿者' },
@@ -241,38 +259,44 @@ export default {
     handleCurrentChange(newPage) {
       // 更新当前页码
       this.currentPage = newPage;
-      // 重新计算当前页的数据
-      this.calculateCurrentPageData();
+      // 重新搜索获取对应页的数据
+      this.search();
     },
     handleSizeChange(newSize) {
-      // 更新页面大小并重新计算当前页的数据
+      // 更新页面大小
       this.pageSize = newSize;
-      this.calculateCurrentPageData();
+      // 重新搜索获取对应页的数据
+      this.search();
     },
-    calculateCurrentPageData(){
-      this.tableData = [];
-      // 合并原始数据到 tableData 数组中
-      this.tableData = [...this.tableData, ...this.originalData];
-      const startIdx = (this.currentPage - 1) * this.pageSize;
-      const endIdx = Math.min(startIdx + this.pageSize, this.totalItems);
-      // 选择当前页的数据
-      const currentPageData = this.tableData.slice(startIdx, endIdx);
-      // 将当前页的数据赋值给 tableData 数组
-      this.tableData = currentPageData;
-    },
-    search(){
-      // 在这个方法中获取搜索框中的数据
-      const searchData = this.searchData;
-      // 发起搜索请求
-      request.get('/administrator/users',searchData)
+    search() {
+      // 创建 URLSearchParams 对象
+      const params = new URLSearchParams();
+
+      // 将搜索数据添加到 URLSearchParams 对象中
+      params.append('username', this.username);
+      params.append('address', this.address);
+      params.append('role', this.role);
+      params.append('minAge', this.minage);
+      params.append('maxAge', this.maxage);
+
+      // 添加 pageSize 和 page 参数
+      params.append('pageSize', this.pageSize);
+      params.append('page', this.currentPage);
+
+      // 将 URLSearchParams 对象转换为查询字符串
+      const queryString = params.toString();
+      console.log(queryString);
+      // 发起请求时将查询字符串添加到URL中
+      request.get(`/administrator/users?${queryString}`)
         .then(response => {
           if (response.code === 1) {
             this.totalItems = response.data.total;
             this.originalData = response.data.rows;
-            this.calculateCurrentPageData();
+            this.tableData = [];
+            // 合并原始数据到 tableData 数组中
+            this.tableData = [...this.tableData, ...this.originalData];
             this.$message.success("数据获取成功");
-          }
-          else {
+          } else {
             this.$message.error(response.msg);
           }
         })
@@ -308,22 +332,13 @@ export default {
       // 打开
       this.dialogVisible = true;
     },
-    addUser(){
-      const data = {
-        username: this.form.username,
-        email: this.form.email,
-        phone: this.form.phone,
-        role: this.form.role,
-        password: this.form.password,
-        age: this.form.age,
-        name: this.form.name,
-        address: this.form.address
-      };
-      request.post('/administrator/users', data)
+    editUser(){
+      const data = this.form;
+      request.put('/administrator/users', data)
         .then(response => {
           if (response.code === 1) {
             this.dialogVisible = false;
-            this.$message.success("添加成功");
+            this.$message.success(response.msg);
             this.search();
           }
           else {
@@ -339,6 +354,10 @@ export default {
           }, 150); // 使用 setTimeout 延迟执行，确保关闭操作完成后再执行状态更新
         });
     },
+    addUser() {
+      // 使用 $router.push() 方法进行路由跳转
+      this.$router.push('/addUserView');
+    },
     // 删除
     deleteUsrs(){
       const ids = this.selectedIds.join(',');
@@ -346,9 +365,7 @@ export default {
         this.$message.error("请选择要删除的用户");
         return;
       }
-      request.delete('/administrator/users/${this.selectedIds.join(',')}', {
-        ids: ids
-      })
+      request.delete(`/administrator/users/${this.selectedIds.join(',')}`)
         .then(response => {
           if(response.code === 1){
             this.$message.success(response.msg);
@@ -362,29 +379,16 @@ export default {
           console.error('There was a problem with the request:', error);
         });
     },
-    // 修改
-    updateUser(id) {
-      request.get('/administrator/users/' + id)
-        .then(response => {
-          if (response.code === 1) {
-            this.form = response.data;
-            this.dialogVisible = true;
-          }
-          else {
-            this.$message.error(response.msg);
-          }
-        })
-        .catch(error => {
-          console.error('删除用户失败:', error);
-        }
-      );
-    },
     // 表格选择
     handleSelectionChange(selection) {
       this.selectedIds = selection.map(item => item.id);
     },
     clearsRearch(){
-      this.searchData = {};
+      this.username ='';
+      this.address = '';
+      this.role='';
+      this.minage=18;
+      this.maxage=100;
     }
   }
 }
@@ -399,22 +403,30 @@ export default {
     width: 300px;
     padding: 20px;
     border-right: 1px solid #d0d0d3;
-
-    .search {
-      margin-bottom: 20px;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      flex-direction: column;
-      backdrop-filter: blur(40px); /* 添加毛玻璃效果 */
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    }
   }
   .right {
     padding: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    .search {
+      padding: 10px;
+      display: flex;
+      align-items: center;
+    }
     .opeate-tools {
-      margin:10px ;
+      margin:15px;
+      width: 98%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      .left-tools {
+        display: flex;
+      }
+
+      .right-tools {
+        display: flex;
+      }
     }
     
   }

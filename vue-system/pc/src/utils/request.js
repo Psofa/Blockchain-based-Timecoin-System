@@ -6,7 +6,7 @@ import { removeToken, getToken } from './auth';
 
 // 创建 axios 实例
 const request = axios.create({
-  baseURL: 'http://localhost:3000', // 设置基础 URL
+  baseURL: 'http://10.134.114.97:8080', // 设置基础 URL
   timeout: 5000 // 设置超时时间
 });
 
@@ -16,7 +16,8 @@ request.interceptors.request.use(
     // 这里可以根据需要添加一些逻辑，比如添加 token 等
     const token = getToken();
     if (token) {
-      config.headers['Authorization'] = `Bearer ${token}`;
+      //config.headers['Authorization'] = `Bearer ${token}`;
+      config.headers.token = token; // 将token存储在请求头的token字段中
     }
     return config;
   },
@@ -30,17 +31,15 @@ request.interceptors.request.use(
 request.interceptors.response.use(
   response => {
     // 对响应数据做些什么
-    return response.data;
-  },
-  error => {
-    if (error.response && error.response.status === 401) {
-      // 如果响应状态为 401，表示身份验证失败
-      // 在这里可以进行一些处理，比如清除本地存储的 token，并重定向到登录页面
+    if(response.data.code === 0 && router.currentRoute.path !== '/' && response.data.msg === "NOT_LOGIN"){
       alert('身份验证失败，请重新登录。');
       store.commit('setIsLoggedIn', false);
       router.push('/'); // 重定向到登录页面
       removeToken('token'); // 清除本地存储的 token
     }
+    return response.data;
+  },
+  error => {
     return Promise.reject(error);
   }
 );

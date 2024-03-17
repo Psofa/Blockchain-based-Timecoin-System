@@ -217,6 +217,14 @@ export default {
 .el-menu-vertical-demo:not(.el-menu--collapse) {
   width: 200px;
 }
+.header-logo {
+  background-image: url('../../assets/logo.png'); /* 替换为图像路径 */
+  background-size: contain; /* 控制图像大小，可以使用 cover、contain 或具体的尺寸值 */
+  background-repeat: no-repeat; /* 防止图像重复 */
+  display: inline-block; /* 设置为内联块元素，以便可以设置宽度和高度 */
+  width: 40px; /* 图像宽度 */
+  height: 30px; /* 图像高度 */
+}
 .indexContainer{
   background-image: url(C:/Users/31744/Pictures/4.jpg);
   height: 100%;
@@ -232,14 +240,6 @@ export default {
     .header-left {
       display: flex;
       align-items: center;
-    }
-    .header-logo {
-      background-image: url('../../assets/logo.png'); /* 替换为图像路径 */
-      background-size: contain; /* 控制图像大小，可以使用 cover、contain 或具体的尺寸值 */
-      background-repeat: no-repeat; /* 防止图像重复 */
-      display: inline-block; /* 设置为内联块元素，以便可以设置宽度和高度 */
-      width: 40px; /* 图像宽度 */
-      height: 30px; /* 图像高度 */
     }
     .header-right {
       display: flex;

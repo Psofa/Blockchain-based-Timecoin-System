@@ -5,6 +5,8 @@ import HomeView from '../views/elementui/HomeView.vue'
 import UsersView from '../views/elementui/UsersView.vue'
 import AdminView from '../views/elementui/AdminView.vue'
 import LoginView from '../views/elementui/LoginView.vue'
+import AddUserView from '../views/elementui/AddUserView.vue'
+import AddActivityView from '@/views/elementui/AddActivityView.vue'
 
 import { requireAuth, loginrequireAuth } from '../utils/permission'
 
@@ -41,7 +43,19 @@ const routes = [
         name: 'AdminView',
         component: AdminView,
         
-      }
+      },
+      {
+        path: '/addUserView',
+        name: 'AddUserView',
+        component: AddUserView,
+        
+      },
+      {
+        path: '/addActivityView',
+        name: 'AddActivityView',
+        component: AddActivityView,
+        
+      },
     ]
   },
 ]
