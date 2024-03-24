@@ -11,7 +11,7 @@ app.use(cors()); // 使用 cors 中间件处理跨域请求
 // 模拟的用户数据
 const responseData = JSON.stringify({
   users: [
-    { id: 1, username: "tang", password: "123" }
+    { id: 1, username: "tang", password: "123",role:3 }
   ],
   tabledate:
   {
@@ -217,13 +217,15 @@ app.post('/login', (req, res) => {
 
     if (user) {
       // 登录成功后，生成 token 并返回给客户端
-      const token = jwt.sign({ username }, '123456', { expiresIn: '1h' });
-      res.status(200).json({ code: 1, msg: "success", data: token });
+      const role = user.role;
+      const token = jwt.sign({ username }, '123456', { expiresIn: '0.5h' });
+      const data = { role, token };
+      res.status(200).json({ code: 1, msg: "success", data: data });
     } else {
       res.status(200).json({ code: 0, msg: 'Invalid username or password' });
     }
   } catch (error) {
-    res.status(400).json({ code: 0, msg: 'Invalid request body' });
+    res.status(400).json({ code: 0, msg: error });
   }
 });
 
@@ -392,4 +394,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-

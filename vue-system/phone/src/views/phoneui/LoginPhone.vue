@@ -39,6 +39,7 @@ export default {
   methods: {
     onSubmit() {
       const userData = this.loginForm;
+      userData.role = 0; // 假设用户角色为普通用户
 
       if (userData.username === '' || userData.password === '') {
         this.$message.error('请输入账号或密码');
@@ -52,8 +53,8 @@ export default {
               message: '登录成功',
               type: 'success'
             });
-            setToken(response.data);
-            this.$store.commit('setToken', response.data);
+            setToken(response.data.token);
+            this.$store.commit('setToken', response.data.token);
             this.isLoggedIn = true;
             this.$store.commit('setIsLoggedIn', this.isLoggedIn);
             setTimeout(() => {

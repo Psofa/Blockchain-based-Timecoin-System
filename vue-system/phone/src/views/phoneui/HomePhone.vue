@@ -1,11 +1,366 @@
 <template>
-    <div>
-        home
-    </div>
+    <el-container class="homeBox">
+      <el-container class="activityBox">
+          <el-select v-model="value" @click="handleSelectClick">
+              <el-option
+              v-for="item in options"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+              </el-option>
+          </el-select>
+          <el-input type="text" v-model="searchTitle" prefix-icon="el-icon-search"></el-input>
+      </el-container>
+      <el-main class="mainBox">
+        <div class="blockOfImage">
+          <el-carousel height="150px">
+            <el-carousel-item v-for="item in 4" :key="item">
+              <h3 class="small">{{ item }}</h3>
+            </el-carousel-item>
+          </el-carousel>
+        </div>
+        <div class="usersData">
+          <el-row :gutter="20" style="display: flex;
+          justify-content: space-between;
+          align-items: center;">
+            <el-col :span="6">
+              <div>
+                <el-statistic title="注册志愿者人数">
+                  <template slot="formatter">
+                    456/2
+                  </template>
+                </el-statistic>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div>
+                <el-statistic title="活动数">
+                  <template slot="formatter">
+                    456/2
+                  </template>
+                </el-statistic>
+              </div>
+            </el-col>
+            <el-col :span="6">
+              <div>
+                <el-statistic title="老人数">
+                  <template slot="formatter">
+                    456/2
+                  </template>
+                </el-statistic>
+              </div>
+            </el-col>
+          </el-row>
+        </div>
+        <div class="news">
+        </div>
+        <div class="activities">
+          <el-main class="activity">
+            
+            <div v-for="(row, index) in tableData" :key="index" @click="handleCardClick(row)">
+              <el-card :body-style="{ padding: '0px' }" shadow="always">
+                <div class="cardContent">
+                  <img src="../../../src/assets/common/activity.jpg" class="image">
+                  <div class="contentBox">
+                    <div>{{ row.title }}</div>
+                    <div>剩余名额：{{ row.quota }}</div>
+                    <div style="display: flex;justify-content: space-between;align-items: center;">
+                      {{ row.deadline }}
+                      <el-tag size="mini" v-if="!isBeforeDeadline(row.deadline)" type="danger">报名结束</el-tag>
+                      <el-tag size="mini" v-else type="success">报名中</el-tag>
+                    </div>
+                    <div>{{ row.address }}</div>
+                  </div>
+                </div>
+              </el-card>
+            </div>
+            <!-- 分页组件 -->
+            <div class="pagination-container">
+              <el-pagination
+                @current-change="handleCurrentChange"
+                :current-page="currentPage"
+                :page-sizes="[5, 10, 20, 30]" 
+                :page-size="pageSize"
+                layout="total, prev, pager, next"
+                :total="totalItems"
+                style="margin-bottom: 50px;right: 0;">
+              </el-pagination>
+            </div>
+          </el-main>
+        </div>
+      </el-main>
+      <el-footer>
+        <span>
+          <router-link to="/homePhone" class="RouterLink">
+            <i class="el-icon-house"></i>用户管理
+          </router-link>
+        </span>
+        <span>
+          <router-link to="/addActivityPhone" class="RouterLink">
+            <i class="el-icon-circle-plus"></i>报名活动
+          </router-link>
+        </span>
+        <span>
+          <router-link to="/infoOfUserPhone" class="RouterLink">
+            <i class="el-icon-user-solid"></i>个人中心
+          </router-link>
+        </span>
+      </el-footer>
+    </el-container>
 </template>
 
 <script>
+import request from '@/utils/request';
+
+export default {
+  name: 'HomePhone',
+  data() {
+    return {
+      // 示例数据
+      data: {
+        total:2,
+        rows: [
+          {
+            id: 1,
+            title: "志愿者活动1",
+            quota: "20",
+            deadline: "2024-03-20",
+            date: "2024-03-21",
+            begin: "09:00:00",
+            end: "12:00:00",
+            address: "北京市朝阳区",
+            oldId: 1,
+            phone: "1234567890",
+            description: "这是志愿者活动1的描述",
+            status: 1,
+            administratorId: null,
+            createTime: "2024-03-15T08:00:00",
+            updateTime: "2024-03-15T10:00:00",
+            message: null,
+            remain: 10
+          },
+          {
+            id: 2,
+            title: "志愿者活动2",
+            quota: "15",
+            deadline: "2024-03-25",
+            date: "2024-03-26",
+            begin: "14:00:00",
+            end: "17:00:00",
+            address: "上海市浦东新区",
+            oldId: 2,
+            phone: "9876543210",
+            description: "这是志愿者活动2的描述",
+            status: 2,
+            administratorId: 1,
+            createTime: "2024-03-16T09:00:00",
+            updateTime: "2024-03-17T11:00:00",
+            message: "活动已审核通过",
+            remain: 5
+          },
+          // 添加更多的数据...
+        ],
+      },
+      // 选择器
+      options: [{
+        value: 1,
+        label: '全国'
+      }, {
+        value: 2,
+        label: '四川'
+      }, {
+        value: 3,
+        label: '重庆'
+      }, {
+        value: 4,
+        label: '山西'
+      }],
+      value: 1,
+
+      // 卡片
+      originalData: [],
+      pageSize: 5, // 每页显示的条目数量
+      totalItems: 0, // 总条目数量
+      currentPage: 1, // 当前页码
+      tableData: [], // 表格数据
+      // 搜索
+      searchAddress: '',
+      searchTitle: '',
+    }
+  },
+  mounted() {
+    // 初始化时计算当前页的数据
+    this.search();
+    
+  },
+  methods: {
+    handleCurrentChange(newPage) {
+      // 更新当前页码
+      this.currentPage = newPage;
+      // 重新搜索获取对应页的数据
+      this.search();
+    },
+    search() {
+      // 创建 URLSearchParams 对象
+      const params = new URLSearchParams();
+      // 添加搜索条件到 URLSearchParams 对象中
+      params.append('pageSize', this.pageSize);
+      params.append('page', this.currentPage);
+      params.append('address', this.searchAddress);
+      params.append('title', this.searchTitle);
+      // 将 URLSearchParams 对象转换为查询字符串
+      const queryString = params.toString();
+
+      // 发起请求时将查询字符串添加到URL中
+      request.get(`/users/vol?${queryString}`)
+        .then(response => {
+          if (response.code === 1) {
+            this.totalItems = response.data.total;
+            this.originalData = response.data.rows;
+            this.tableData = [];
+            // 合并原始数据到 tableData 数组中
+            this.tableData = [...this.tableData, ...this.originalData];
+            
+          } else {
+            this.$message.error(response.msg);
+          }
+        })
+        .catch(error => {
+          console.error('获取数据失败:', error);
+        });
+    },
+    handleCardClick(row) {
+      this.$store.commit('setCardData', row.id);
+      // 在发送路由跳转时将数据作为查询参数传递
+      this.$router.push({ 
+          name: 'TargetPage', 
+          query: { 
+              id: row.id
+          } 
+      });
+    },
+    // 判断是否在报名截止日期之前
+    isBeforeDeadline(deadline) {
+      // 将截止日期字符串转换为日期对象
+      const deadlineDate = new Date(deadline);
+      // 获取当前时间
+      const currentDate = new Date();
+      // 如果当前时间早于截止日期，则返回 true，否则返回 false
+      return currentDate < deadlineDate;
+    },
+    handleSelectClick() {
+      this.searchAddress = this.options.find(option => option.value === this.value);
+      this.search();
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
+.homeBox{
+    .Title{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 5px;
+      height: 40px !important;
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    }
+    .activityBox{
+        display: flex;
+        align-items: center;
+        margin: 10px;
+        .el-select{
+            width: 100px;
+            margin-right: 20px;
+        }
+        .el-input{
+            width: auto;
+        }
+    }
+    .mainBox{
+      // 走马灯
+      .blockOfImage{
+        .el-carousel__item h3 {
+          color: #475669;
+          font-size: 14px;
+          opacity: 0.75;
+          line-height: 150px;
+          margin: 0;
+        }
+
+        .el-carousel__item:nth-child(2n) {
+          background-color: #99a9bf;
+        }
+        
+        .el-carousel__item:nth-child(2n+1) {
+          background-color: #d3dce6;
+        }
+      }
+      .usersData{
+        margin-top: 10px;
+        backdrop-filter: blur(10px);
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      }
+      .news{
+        margin-top: 10px;
+        backdrop-filter: blur(10px);
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        height: 80px;
+      }
+      .activities{
+        .activity{
+          display: flex;
+          flex-direction: column;
+          justify-content: center; /* 水平居中 */
+          align-items: center; /* 垂直居中 */
+          padding: 0px;
+          .el-card{
+            display: flex;
+            padding: 5px;
+            height: 100px;
+            align-items: center;
+            margin-bottom: 15px;
+            .cardContent{
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              .image {
+                width: 40%;
+                display: block;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+              }
+              .contentBox {
+                padding: 8px;
+                width: 60%;
+              }
+            }
+            
+          } 
+        }
+      }
+    }
+    .el-footer{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      backdrop-filter: blur(10px);
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+      flex-shrink: 0; /* 防止底部内容被压缩 */
+      position: fixed; /* 将底部组件固定在页面底部 */
+      bottom: 0;
+      width: 100%; /* 设置宽度为 100% */
+      .RouterLink {
+        text-decoration: none;
+      }
+
+    }
+}
 </style>

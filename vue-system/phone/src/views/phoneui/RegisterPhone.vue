@@ -1,6 +1,11 @@
 <template>
-  <div class="signup-container">
-    <div class="signup-box">
+  <el-container class="signup-container">
+    <el-header>
+      <el-button class="goBackButton" @click="goBack">
+        <i class="el-icon-arrow-left"></i>
+      </el-button>
+    </el-header>
+    <el-main class="signup-box">
       <h1>注册</h1>
       <form>
         <div class="form-group">
@@ -31,8 +36,8 @@
         </div>
         <el-button type="primary" @click="signUp" class="register-btn">注册</el-button>
       </form>
-    </div>
-  </div>
+    </el-main>
+  </el-container>
 </template>
 
 <style scoped>
@@ -52,6 +57,13 @@
   width: 90%;
   max-width: 400px;
   backdrop-filter: blur(5px); /* 设置背景虚化效果 */
+}
+
+.goBackButton {
+  position: absolute;
+  left: 0;
+  background-color: transparent !important;
+  border: none !important;
 }
 
 h1 {
@@ -76,7 +88,7 @@ h1 {
 }
 </style>
 
-<script scoped>
+<script>
 import axios from 'axios';
 import { Radio,Button } from 'element-ui';
 
@@ -166,7 +178,9 @@ export default {
       } else {
         this.$message.error('请完善信息');
       }
-
+    },
+    goBack() {
+      this.$router.push('/');
     },
   }
 };

@@ -1,15 +1,14 @@
-import Cookies from 'js-cookie'
-
+// 在存储token时使用会话存储空间 sessionStorage
 const TokenKey = 'token'
 
 export function getToken() {
-  return Cookies.get(TokenKey)
+  return sessionStorage.getItem(TokenKey)
 }
 
 export function setToken(token) {
-  return Cookies.set(TokenKey, token)
+  sessionStorage.setItem(TokenKey, token)
 }
 
 export function removeToken() {
-  return Cookies.remove(TokenKey)
+  sessionStorage.removeItem(TokenKey)
 }

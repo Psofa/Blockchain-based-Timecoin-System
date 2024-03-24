@@ -7,12 +7,10 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     token: getToken(),
-    isLoggedIn: false, 
     userInfo: {},
   },
   getters: {
     getToken: (state) => state.token,
-    isLoggedIn: (state) => state.isLoggedIn,
     getUserInfo: (state) => state.userInfo,
   },
   mutations: {
@@ -23,9 +21,6 @@ export default new Vuex.Store({
     },
     setUserInfo(state, userInfo) {
       state.userInfo = userInfo;
-    },
-    setIsLoggedIn(state, isLoggedIn) {
-      state.isLoggedIn = isLoggedIn;
     },
     removeToken(state) {
       // 删除Vuex的token
@@ -42,7 +37,7 @@ export default new Vuex.Store({
     logout(context) {
       context.commit('removeToken') // 删除token
       context.commit('setUserInfo', {}) // 设置用户信息为空对象
-    }
+    },  
   },
   modules: {},
 });
