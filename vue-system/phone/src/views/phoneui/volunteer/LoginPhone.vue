@@ -33,7 +33,6 @@ export default {
         username: '',
         password: '',
       },
-      isLoggedIn: false, // 标记用户登录状态
     };
   },
   methods: {
@@ -55,10 +54,9 @@ export default {
             });
             setToken(response.data.token);
             this.$store.commit('setToken', response.data.token);
-            this.isLoggedIn = true;
-            this.$store.commit('setIsLoggedIn', this.isLoggedIn);
             setTimeout(() => {
-              this.$router.push({ name: 'HomePhone' });
+              if(response.data.role === 2) this.$router.push({ name: 'HomePhone' });
+              else this.$router.push({ name: 'HomeOld' });
             }, 1500);
           }
           else {

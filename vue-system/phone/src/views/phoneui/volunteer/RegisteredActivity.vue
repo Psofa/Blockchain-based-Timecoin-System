@@ -1,13 +1,12 @@
-<!-- TargetPage.vue -->
 <template>
     <div class="pageBox">
-      <img src="../../../src/assets/common/activity.jpg" class="image">
+      <img :src="$activityImagePath" class="image">
       <div class="content">
         <div>
-            {{ cardData.title }}
+            {{ form.title }}
         </div>
         <el-divider content-position="center">报名截止</el-divider>
-        <div style="width: 100%; display: inline-block; margin-bottom: 10px;">
+        <div v-if="deadline" style="width: 100%; display: inline-block; margin-bottom: 10px;">
             <el-statistic
               format="DD天HH小时mm分钟ss秒"
               :value="deadline"
@@ -15,7 +14,18 @@
             >
             </el-statistic>
         </div>
-        <el-button type="primary" round style="width: 80%;" @click= "signUp" >点击报名</el-button>
+        <div>
+            <div v-if="isActivityEnd">
+                <el-button round>活动结束</el-button>
+            </div>
+            <div v-if="!isActivityEnd" style="display: flex;align-items: center;width: 100%;">
+                <el-button round v-if="!isSignUp">报名结束</el-button>
+                <el-button type="primary" round @click= "quit" v-if="isSignUp">取消报名</el-button>
+                <el-button round v-if="isSignIn && this.isEndSign">已签到</el-button>
+                <el-button type="primary" round @click= "signInUser" v-else-if="isSignIn && !this.isEndSign">签到</el-button>
+                <el-button round v-else>签到未开始</el-button>
+            </div>
+        </div>
       </div>
       <div class="content">
         <el-form ref="form" :model="form" label-width="100px" style="width: 100%;">
@@ -71,31 +81,15 @@
 import request from '@/utils/request';
 
 export default {
-    name: 'TargetPage',
+    name: 'RegisteredActivity',
     data() {
         return {
-            cardData: {
-                id: 1,
-                title: "志愿者活动1",
-                quota: "20",
-                deadline: "2024-04-23T12:12:12",
-                date: "2024-03-21",
-                begin: "09:00:00",
-                end: "12:00:00",
-                address: "北京市朝阳区",
-                oldId: 1,
-                phone: "1234567890",
-                description: "这是志愿者活动1的描述",
-                status: 1,
-                administratorId: null,
-                createTime: "2024-03-15T08:00:00",
-                updateTime: "2024-03-15T10:00:00",
-                message: null,
-                remain: 10
-            },
+            form: {},
             id: null,
             pageSize: 1,
-            page: 1,
+            currentPage: 1,
+            deadline:'',
+            isEndSign:false,
             // 日期表
             pickerOptionsofsearch: {
                 disabledDate(time) {
@@ -129,7 +123,6 @@ export default {
                 { value: 3, label: '审核不同意活动' },
                 { value: 4, label: '过期活动' },
             ],
-            
             pickerOptionsofform: {
                 shortcuts: [{
                 text: '今天',
@@ -152,64 +145,151 @@ export default {
                 }
                 }]
             },
-            
         };
     },
     created() {
         // 从查询参数中获取数据
         this.id = parseInt(this.$route.query.id);
+        this.search();
+        this.getIsEndSign();
     },
     computed: {
-        deadline() {
-            return new Date(this.cardData.deadline);
-        },
-        form() {
-            return this.cardData;
-        },
         statusLabel() {
-            const selectedOption = this.options.find(option => option.value === this.cardData.status);
+            const selectedOption = this.options.find(option => option.value === this.form.status);
             return selectedOption ? selectedOption.label : '未知状态';
         },
+        isSignUp() {
+            // 获取当前时间
+            const now = new Date();
+
+            // 将截止时间字符串转换为日期对象
+            const deadlineDate = new Date(this.form.deadline);
+
+            // 比较当前时间和截止时间
+            if (deadlineDate > now) {
+                // 截止时间在当前时间之后
+                return true;
+            } else {
+                // 截止时间在当前时间之前
+                return false;
+            }
+        },
+        isSignIn() {
+            // 获取当前日期和时间
+            const now = new Date();
+
+            // 将表单中的活动日期、开始时间和结束时间转换为日期对象
+            const startTime = new Date(this.form.date + 'T' + this.form.begin);
+            const endTime = new Date(this.form.date + 'T' + this.form.end);
+
+            // 检查 startTime 和 endTime 是否为有效日期
+            if (!isNaN(startTime) && !isNaN(endTime)) {
+                // 检查当前日期是否是活动日期，并且在开始时间和结束时间之间
+                if (now >= startTime && now <= endTime) {
+                    return true;
+                }
+                return false;
+            } else {
+                // 如果其中任何一个是无效的日期，则返回 false
+                return false;
+            }
+        },
+        isActivityEnd() {
+            // 获取当前日期和时间
+            const now = new Date();
+
+            // 将表单中的活动日期、开始时间和结束时间转换为日期对象
+            const activityDate = new Date(this.form.date);
+            const endTime = new Date(this.form.date + 'T' + this.form.end);
+
+            // 检查当前日期是否是活动日期，并且在开始时间和结束时间之间
+            if (now.toDateString() === activityDate.toDateString() && now > endTime) {
+                return true;
+            } else {
+                return false;
+            }
+        }
     },
     methods: {
-        search() {
+        async search() {
+            try {
+                // 创建 URLSearchParams 对象
+                const params = new URLSearchParams();
+                // 添加搜索条件到 URLSearchParams 对象中
+                params.append('pageSize', this.pageSize);
+                params.append('page', this.currentPage);
+                params.append('id', this.id);
+                // 将 URLSearchParams 对象转换为查询字符串
+                const queryString = params.toString();
+
+                // 发起请求时将查询字符串添加到URL中
+                const response = await request.get(`users/volold/activity?${queryString}`);
+                if (response.code === 1) {
+                    this.form = response.data;
+                    this.calculateDeadline();
+                } else {
+                    this.$message.error(response.msg);
+                }
+            } catch (error) {
+                console.error('获取数据失败:', error);
+            }
+        },
+        getIsEndSign() {
             // 创建 URLSearchParams 对象
             const params = new URLSearchParams();
-            // 添加搜索条件到 URLSearchParams 对象中
-            params.append('pageSize', this.pageSize);
-            params.append('page', this.currentPage);
             params.append('id', this.id);
             // 将 URLSearchParams 对象转换为查询字符串
             const queryString = params.toString();
 
             // 发起请求时将查询字符串添加到URL中
-            request.get(`/users/vol?${queryString}`)
+            request.get(`user/vol/sign?${queryString}`).then(response => {
+                if (response.code === 1) {
+                    if (response.sign === 1) {
+                        // 在这里处理获取到的结果
+                        this.isEndSign = true;
+                    }
+                } else {
+                    this.$message.error(response.msg);
+                }
+            }).catch(error => {
+                console.error('获取数据失败:', error);
+            });
+        },
+        calculateDeadline() {
+            if (this.form.deadline) {
+                this.deadline = new Date(this.form.deadline);
+            }
+        },
+        quit() {
+            const data = {
+                id: this.id,
+            };
+            request.put(`users/vol/cancel`,data)
                 .then(response => {
                 if (response.code === 1) {
-                    this.cardData = response.data.rows[0];
-                    this.$message.success("数据获取成功");
+                    this.$message.success(response.msg);
+                    setTimeout(() => {
+                        this.$router.push({ 
+                            name: 'ActivityOfUser',
+                        });
+                    }, 1000);
                 } else {
                     this.$message.error(response.msg);
                 }
                 })
                 .catch(error => {
-                    console.error('获取数据失败:', error);
+                    console.error('取消失败:', error);
                 });
         },
-        signUp() {
-            // 发起请求时将查询字符串添加到URL中
-            request.put(`/users/vol`,this.id)
-                .then(response => {
-                if (response.code === 1) {
-                    this.$message.success("报名成功");
-                } else {
-                    this.$message.error(response.msg);
-                }
-                })
-                .catch(error => {
-                    console.error('报名失败:', error);
-                });
-        }
+        signInUser() {
+            // 在发送路由跳转时将数据作为查询参数传递
+            this.$router.push({ 
+                name: 'SignInUser', 
+                query: { 
+                    id: this.id
+                } 
+            });
+        },
     }
 }
 </script>

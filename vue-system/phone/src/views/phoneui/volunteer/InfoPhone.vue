@@ -41,53 +41,72 @@
                 <el-button @click="handleCancel" round style="width: 100%;">取 消</el-button>
             </div>
         </el-dialog>
-        <el-menu v-model="form" style="width: 100%;margin: 20px;">
-            <el-menu-item index="1">
-                <span>用户头像</span> 
-                <div>
-                    <el-avatar shape="square" :size="50" :src="squareUrl"></el-avatar>
-                    <i class="el-icon-arrow-right"></i>
-                </div>
-            </el-menu-item>
-            <el-menu-item index="2">
-                <span>用户名</span>
-                <div>
-                    {{ form.username }}
-                    <i class="el-icon-arrow-right"></i>
-                </div>
-            </el-menu-item>
-            <el-menu-item index="3">
-                <span>手机号</span>
-                <div>
-                    {{ form.phone }}
-                    <i class="el-icon-arrow-right"></i>
-                </div>
-            </el-menu-item>
-            <el-menu-item index="4">
-                <span>邮件</span>
-                <div>
-                    {{ form.email }}
-                    <i class="el-icon-arrow-right"></i>
-                </div>
-            </el-menu-item>
-            <div @click="query">
-                <el-menu-item index="5">
-                    <el-button style="background: none; border: none; padding: 0; cursor: pointer;">个人信息</el-button>
+        <div class="mainBox">
+            <el-menu v-model="form" style="width: 100%;">
+                <el-menu-item index="1">
+                    <span>用户头像</span> 
                     <div>
+                        <el-avatar shape="square" :size="50" :src="squareUrl"></el-avatar>
                         <i class="el-icon-arrow-right"></i>
                     </div>
                 </el-menu-item>
-            </div>
-            <div @click="logout">
-                <el-menu-item index="6">
-                    <el-button @click="logout" 
-                    style="background: none;border: none;padding: 0;cursor: pointer;">退出登录</el-button>
+                <el-menu-item index="2">
+                    <span>用户名</span>
                     <div>
+                        {{ form.username }}
                         <i class="el-icon-arrow-right"></i>
                     </div>
                 </el-menu-item>
-            </div>
-        </el-menu>
+                <el-menu-item index="3">
+                    <span>手机号</span>
+                    <div>
+                        {{ form.phone }}
+                        <i class="el-icon-arrow-right"></i>
+                    </div>
+                </el-menu-item>
+                <el-menu-item index="4">
+                    <span>邮件</span>
+                    <div>
+                        {{ form.email }}
+                        <i class="el-icon-arrow-right"></i>
+                    </div>
+                </el-menu-item>
+                <div @click="query">
+                    <el-menu-item index="5">
+                        <el-button style="background: none; border: none; padding: 0; cursor: pointer;">个人信息</el-button>
+                        <div>
+                            <i class="el-icon-arrow-right"></i>
+                        </div>
+                    </el-menu-item>
+                </div>
+                <div @click="logout">
+                    <el-menu-item index="6">
+                        <el-button @click="logout" 
+                        style="background: none;border: none;padding: 0;cursor: pointer;">退出登录</el-button>
+                        <div>
+                            <i class="el-icon-arrow-right"></i>
+                        </div>
+                    </el-menu-item>
+                </div>
+            </el-menu>
+        </div>
+        <el-footer>
+            <span>
+            <router-link to="/homePhone" class="RouterLink">
+                <i class="el-icon-house"></i>用户管理
+            </router-link>
+            </span>
+            <span>
+            <router-link to="/addActivityPhone" class="RouterLink">
+                <i class="el-icon-circle-plus"></i>报名活动
+            </router-link>
+            </span>
+            <span>
+            <router-link to="/infoOfUserPhone" class="RouterLink">
+                <i class="el-icon-user-solid"></i>个人中心
+            </router-link>
+            </span>
+        </el-footer>
     </div>
 </template>
 
@@ -116,7 +135,6 @@ export default {
     methods: {
         // 退出登录
         async logout() {
-            console.log("hhh");
             // 调用action
             await this.$store.dispatch('logout');
             // 执行退出登录的操作，清除本地存储中的 token
@@ -161,10 +179,31 @@ export default {
 }
 </script>
 
-<style>
-.el-menu-item{
+<style lang="scss" scoped>
+.mainBox{
+    padding: 0px;
+    border: none;
+    .el-menu-item{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+.el-footer{
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 10px;
+    backdrop-filter: blur(10px);
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    flex-shrink: 0; /* 防止底部内容被压缩 */
+    position: fixed; /* 将底部组件固定在页面底部 */
+    bottom: 0;
+    width: 100%; /* 设置宽度为 100% */
+    .RouterLink {
+        text-decoration: none;
+    }
+
 }
 </style>

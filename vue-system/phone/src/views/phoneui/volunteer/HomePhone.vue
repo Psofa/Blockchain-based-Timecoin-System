@@ -1,7 +1,7 @@
 <template>
     <el-container class="homeBox">
       <el-container class="activityBox">
-          <el-select v-model="value" @click="handleSelectClick">
+          <el-select v-model="value" @change="handleSelectClick">
               <el-option
               v-for="item in options"
               :key="item.value"
@@ -10,6 +10,9 @@
               </el-option>
           </el-select>
           <el-input type="text" v-model="searchTitle" prefix-icon="el-icon-search"></el-input>
+          <span class="searchBtn" style="margin-left: 20px;">
+              <el-button round @click = "handleSelectClick">搜索</el-button>
+          </span>
       </el-container>
       <el-main class="mainBox">
         <div class="blockOfImage">
@@ -56,20 +59,19 @@
         </div>
         <div class="activities">
           <el-main class="activity">
-            
             <div v-for="(row, index) in tableData" :key="index" @click="handleCardClick(row)">
               <el-card :body-style="{ padding: '0px' }" shadow="always">
                 <div class="cardContent">
-                  <img src="../../../src/assets/common/activity.jpg" class="image">
+                  <img :src="$activityImagePath" class="image">
                   <div class="contentBox">
-                    <div>{{ row.title }}</div>
+                    <div>活动：{{ row.title }}</div>
                     <div>剩余名额：{{ row.quota }}</div>
                     <div style="display: flex;justify-content: space-between;align-items: center;">
-                      {{ row.deadline }}
-                      <el-tag size="mini" v-if="!isBeforeDeadline(row.deadline)" type="danger">报名结束</el-tag>
-                      <el-tag size="mini" v-else type="success">报名中</el-tag>
+                    活动日期：{{ row.date }}
+                    <el-tag size="mini" v-if="!isBeforeDeadline(row.deadline)" type="danger">报名结束</el-tag>
+                    <el-tag size="mini" v-else type="success">报名中</el-tag>
                     </div>
-                    <div>{{ row.address }}</div>
+                    <div>地址：{{ row.address }}</div>
                   </div>
                 </div>
               </el-card>
@@ -116,51 +118,6 @@ export default {
   name: 'HomePhone',
   data() {
     return {
-      // 示例数据
-      data: {
-        total:2,
-        rows: [
-          {
-            id: 1,
-            title: "志愿者活动1",
-            quota: "20",
-            deadline: "2024-03-20",
-            date: "2024-03-21",
-            begin: "09:00:00",
-            end: "12:00:00",
-            address: "北京市朝阳区",
-            oldId: 1,
-            phone: "1234567890",
-            description: "这是志愿者活动1的描述",
-            status: 1,
-            administratorId: null,
-            createTime: "2024-03-15T08:00:00",
-            updateTime: "2024-03-15T10:00:00",
-            message: null,
-            remain: 10
-          },
-          {
-            id: 2,
-            title: "志愿者活动2",
-            quota: "15",
-            deadline: "2024-03-25",
-            date: "2024-03-26",
-            begin: "14:00:00",
-            end: "17:00:00",
-            address: "上海市浦东新区",
-            oldId: 2,
-            phone: "9876543210",
-            description: "这是志愿者活动2的描述",
-            status: 2,
-            administratorId: 1,
-            createTime: "2024-03-16T09:00:00",
-            updateTime: "2024-03-17T11:00:00",
-            message: "活动已审核通过",
-            remain: 5
-          },
-          // 添加更多的数据...
-        ],
-      },
       // 选择器
       options: [{
         value: 1,
@@ -230,7 +187,6 @@ export default {
         });
     },
     handleCardClick(row) {
-      this.$store.commit('setCardData', row.id);
       // 在发送路由跳转时将数据作为查询参数传递
       this.$router.push({ 
           name: 'TargetPage', 
@@ -248,6 +204,7 @@ export default {
       // 如果当前时间早于截止日期，则返回 true，否则返回 false
       return currentDate < deadlineDate;
     },
+    // 地址搜索
     handleSelectClick() {
       this.searchAddress = this.options.find(option => option.value === this.value);
       this.search();

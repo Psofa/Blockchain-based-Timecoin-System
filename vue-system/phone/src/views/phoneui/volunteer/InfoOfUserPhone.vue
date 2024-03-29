@@ -145,6 +145,11 @@ export default {
             margin: 10px;
             .el-menu{
                 width: 100%;
+                .el-menu-item{
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
             }
         }
     }

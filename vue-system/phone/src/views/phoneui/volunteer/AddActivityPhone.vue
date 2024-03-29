@@ -1,47 +1,40 @@
 <template>
     <div class="addActivityBox">
-        <el-header class="headerBox">
-            <el-button type="text">主要按钮</el-button>
-
+        <el-header class="searchBox">
+            <el-input type="text" v-model="searchTitle" placeholder="请输入活动名称" prefix-icon="el-icon-search" style="width: auto;margin-right: 10px;"></el-input>
+            <el-input type="text" v-model="searchAddress" placeholder="请输入活动地址" prefix-icon="el-icon-search" style="width: auto"></el-input>
+            <span class="searchBtn" style="margin-left: 20px;">
+                <el-button round @click = "search">搜索</el-button>
+            </span>
         </el-header>
         <el-container class="mainBox">
-            <el-header class="boxOfSearch">
-                <div class="searchBox">
-                    <el-input type="text" v-model="searchTitle" placeholder="请输入活动名称" prefix-icon="el-icon-search" style="width: auto;margin-right: 10px;"></el-input>
-                    <el-input type="text" v-model="searchAddress" placeholder="请输入活动地址" prefix-icon="el-icon-search" style="width: auto"></el-input>
-                    <span class="searchBtn" style="margin-left: 20px;">
-                        <el-button round @click = "search">搜索</el-button>
-                    </span>
-                </div>
-                <div class="searchBox">
-                    <el-date-picker type="date" v-model="searchDate" placeholder="活动日期" style="width: auto;"></el-date-picker>
-                    <el-time-picker
-                        v-model="searchBegin"
-                        placeholder="活动开始时间"
-                        style="vertical-align: middle;width: auto; margin-left: 10px;">
-                    </el-time-picker>
-                    <el-time-picker
-                        v-model="searchEnd"
-                        placeholder="活动结束时间"
-                        style="vertical-align: middle;width: auto; margin-left: 10px;">
-                    </el-time-picker>
-                </div>
+            <el-header class="groupBox">
+                <el-date-picker type="date" v-model="searchDate" placeholder="活动日期" style="width: auto;"></el-date-picker>
+                <el-time-picker
+                    v-model="searchBegin"
+                    placeholder="活动开始时间"
+                    style="vertical-align: middle;width: auto; margin-left: 10px;">
+                </el-time-picker>
+                <el-time-picker
+                    v-model="searchEnd"
+                    placeholder="活动结束时间"
+                    style="vertical-align: middle;width: auto; margin-left: 10px;">
+                </el-time-picker>
             </el-header>
             <el-main class="activity">
-                
                 <div v-for="(row, index) in tableData" :key="index" @click="handleCardClick(row)">
                 <el-card :body-style="{ padding: '0px' }" shadow="always">
                     <div class="cardContent">
-                    <img src="../../../src/assets/common/activity.jpg" class="image">
+                    <img :src="$activityImagePath" class="image">
                     <div class="contentBox">
-                        <div>{{ row.title }}</div>
+                        <div>活动：{{ row.title }}</div>
                         <div>剩余名额：{{ row.quota }}</div>
                         <div style="display: flex;justify-content: space-between;align-items: center;">
-                        {{ row.deadline }}
+                        活动日期：{{ row.date }}
                         <el-tag size="mini" v-if="!isBeforeDeadline(row.deadline)" type="danger">报名结束</el-tag>
                         <el-tag size="mini" v-else type="success">报名中</el-tag>
                         </div>
-                        <div>{{ row.address }}</div>
+                        <div>地址：{{ row.address }}</div>
                     </div>
                     </div>
                 </el-card>
@@ -85,7 +78,7 @@
 import request from '@/utils/request';
 
 export default {
-    name: 'InfoOfUserPhone',
+    name: 'AddActivityPhone',
     data() {
         return {
             // 搜索数据
@@ -263,23 +256,11 @@ export default {
         align-items: center;
     }
     .mainBox{
-        .headerBox{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .boxOfSearch{
+        .groupBox{
           display: flex;
-          flex-direction: column;
+          justify-content: space-between;
           align-items: center;
-          height: auto !important;;
-          padding: 0 2px;
-          .searchBox{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 5px;
-          }
+          padding: 0 5px;
         }
         .activity{
           display: flex;

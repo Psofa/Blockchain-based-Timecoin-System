@@ -1,18 +1,27 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import RegisterPhone from '@/views/phoneui/RegisterPhone.vue'
-import HomePhone from '@/views/phoneui/HomePhone.vue'
-import LoginPhone from '@/views/phoneui/LoginPhone.vue'
-import InfoOfUserPhone from '@/views/phoneui/InfoOfUserPhone.vue'
-import AddActivityPhone from '@/views/phoneui/AddActivityPhone.vue'
-import InfoPhone from '@/views/phoneui/InfoPhone.vue'
-import TargetPage from '@/views/phoneui/TargetPage.vue'
-import ActivityOfUser from '@/views/phoneui/activityOfUser.vue'
+import RegisterPhone from '@/views/phoneui/volunteer/RegisterPhone.vue'
+import HomePhone from '@/views/phoneui/volunteer/HomePhone.vue'
+import LoginPhone from '@/views/phoneui/volunteer/LoginPhone.vue'
+import InfoOfUserPhone from '@/views/phoneui/volunteer/InfoOfUserPhone.vue'
+import AddActivityPhone from '@/views/phoneui/volunteer/AddActivityPhone.vue'
+import InfoPhone from '@/views/phoneui/volunteer/InfoPhone.vue'
+import TargetPage from '@/views/phoneui/volunteer/TargetPage.vue'
+import ActivityOfUser from '@/views/phoneui/volunteer/ActivityOfUser.vue'
+import RegisteredActivity from '@/views/phoneui/volunteer/RegisteredActivity.vue'
+import SignInUser from '@/views/phoneui/volunteer/SignInUser.vue'
+import HomeOld from '@/views/phoneui/old/HomeOld.vue'
+import ActivityOld from '@/views/phoneui/old/ActivityOld.vue'
+import AddActivityOld from '@/views/phoneui/old/AddActivityOld.vue'
+import LocationGet from '@/views/phoneui/old/LocationGet.vue'
+import GetInfoActivity from '@/views/phoneui/old/GetInfoActivity.vue'
+import EndAddActivity from '@/views/phoneui/old/EndAddActivity.vue'
 import { requireAuth, loginrequireAuth } from '../utils/permission'
 
 Vue.use(VueRouter)
 
 const routes = [
+  // 登录
   {
     path: '/',
     name: 'LoginPhone',
@@ -24,6 +33,7 @@ const routes = [
     name: 'RegisterPhone',
     component: RegisterPhone
   },
+  // 志愿者
   {
     path: '/homePhone',
     name: 'HomePhone',
@@ -61,7 +71,57 @@ const routes = [
     component: ActivityOfUser,
     beforeEnter: requireAuth,
   },
-  
+  {
+    path: '/registeredActivity',
+    name: 'RegisteredActivity',
+    component: RegisteredActivity,
+    beforeEnter: requireAuth,
+  },
+  {
+    path: '/signInUser',
+    name: 'SignInUser',
+    component: SignInUser,
+    beforeEnter: requireAuth,
+  },
+  // 老人
+  {
+    path: '/homeOld',
+    name: 'HomeOld',
+    component: HomeOld,
+    beforeEnter: requireAuth,
+  },
+  {
+    path: '/activityOld',
+    name: 'ActivityOld',
+    component: ActivityOld,
+    beforeEnter: requireAuth,
+  },
+  {
+    path: '/addActivityOld',
+    name: 'AddActivityOld',
+    component: AddActivityOld,
+    beforeEnter: requireAuth,
+    children: [
+      {
+        path: '/locationGet',
+        name: 'LocationGet',
+        component: LocationGet,
+        beforeEnter: requireAuth,
+      },
+      {
+        path: '/getInfoActivity',
+        name: 'GetInfoActivity',
+        component: GetInfoActivity,
+        beforeEnter: requireAuth,
+      },
+      {
+        path: '/endAddActivity',
+        name: 'EndAddActivity',
+        component: EndAddActivity,
+        beforeEnter: requireAuth,
+      }
+    ]
+  },
 ]
 
 const router = new VueRouter({

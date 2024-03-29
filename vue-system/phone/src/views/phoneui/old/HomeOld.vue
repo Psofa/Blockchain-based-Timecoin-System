@@ -1,0 +1,140 @@
+<template>
+    <div class="infoBox">
+        <el-header>
+            <el-button type="text" @click="redirectToInfo" style="margin-left: auto;">
+                <i class="el-icon-setting" style="font-size:x-large;"></i>
+            </el-button>
+        </el-header>
+        <div class="mainBox">
+            <div class="titleBox">
+                <div>
+                    <el-avatar :size="80" :src="squareUrl"></el-avatar>
+                </div>
+                <div>
+                    {{infoData.username}}
+                </div>
+                <el-row :gutter="20" style="display: flex;
+                justify-content: space-between;
+                align-items: center;">
+                    <div>
+                        <el-statistic title="时间币总数">
+                        <template slot="formatter">
+                            456
+                        </template>
+                        </el-statistic>
+                    </div>
+                </el-row>
+            </div>
+            <div class="contentBox">
+                <el-menu style="width: 100%;">
+                    <el-menu-item index="1">
+                        <div>
+                            <i class="el-icon-coin"></i>
+                            <span>时间币详情</span>
+                        </div>
+                        <div>
+                            <i class="el-icon-arrow-right"></i>
+                        </div>
+                    </el-menu-item>
+                    <div @click="queryActivity">
+                        <el-menu-item index="2">
+                            <div>
+                                <i class="el-icon-s-flag"></i>
+                                <el-button style="background: none; border: none; padding: 0; cursor: pointer;">我发布的活动</el-button>
+                            </div>
+                            <div>
+                                <i class="el-icon-arrow-right"></i>
+                            </div>
+                        </el-menu-item>
+                    </div>
+                    
+                </el-menu>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+import router from '@/router';
+import request from '@/utils/request';
+
+export default {
+    name: 'HomeOld',
+    data() {
+        return{
+            infoData: {},
+            squareUrl: '',
+        }
+    },
+    created() {
+        this.search();
+    },
+    methods: {
+        redirectToInfo() {
+            router.push('infoPhone');
+        },
+        search() {    
+            request.get(`/info`)
+                .then(response => {
+                if (response.code === 1) {
+                    this.infoData = response.data;
+                    this.squareUrl = response.data.image;
+                } else {
+                    this.$message.error(response.msg);
+                }
+                })
+                .catch(error => {
+                    console.error('获取数据失败:', error);
+                });
+        },
+        queryActivity() {
+            this.$router.push('activityOld');
+        },
+    }
+}
+</script>
+
+<style lang="scss" scoped>
+.infoBox {
+    .el-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .mainBox{
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        height: 100%;
+        .titleBox{
+            width: 90%;
+            height: 150px;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0; /* 防止底部内容被压缩 */
+        }
+        .contentBox{
+            width: 100%;
+            height: auto;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+            flex-shrink: 0; /* 防止底部内容被压缩 */
+            margin: 10px;
+            .el-menu{
+                width: 100%;
+                .el-menu-item{
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+            }
+        }
+    }
+}
+</style>

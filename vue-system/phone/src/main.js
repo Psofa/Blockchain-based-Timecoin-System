@@ -6,6 +6,9 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.config.productionTip = false
+
+// 将图片路径定义为全局变量
+Vue.prototype.$activityImagePath = require('@/assets/common/activity.jpg');
 Vue.use(ElementUI);
 
 new Vue({
