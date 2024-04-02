@@ -23,7 +23,7 @@ export function requireAuth(to, from, next) {
 
 export function loginrequireAuth(to, from, next) {
     // 如果存在 token 并且目标路径是根路径并且不是登录状态，则重定向到 /homeView
-    if (checkToken() && to.path === '/' && store.getters.isLoggedIn) {
+    if (checkToken() && to.path === '/') {
         next('/homeView');
     } else {
         next();

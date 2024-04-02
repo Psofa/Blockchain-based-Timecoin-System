@@ -9,7 +9,7 @@
         <el-dropdown>
           <span class="el-dropdown-link">
             <el-avatar icon="el-icon-user-solid" style="margin-right: 5px;"></el-avatar>
-            <div>管理员：{{ getUserInfo.id }}</div>
+            <div>管理员：{{ userInfo.id }}</div>
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
@@ -31,7 +31,7 @@
           <router-link to="/homeView" class="RouterLink">
             <el-menu-item index="1">
               <i class="el-icon-s-home"></i>
-              <span v-if="!isCollapse" slot="title">Home</span> 
+              <span v-if="!isCollapse" slot="title">主页</span> 
             </el-menu-item>
           </router-link>
           <router-link to="/usersView" class="RouterLink">
@@ -79,7 +79,6 @@
 
 <script>
 import request from '@/utils/request';
-import { mapGetters } from 'vuex';
 import { removeToken } from '@/utils/auth';
 
 export default {
@@ -90,9 +89,10 @@ export default {
           isCollapse: false,
           // 打开的标签页列表
           openedTabs: [
-            { title: 'Home', path: '/homeView', closable: false }, // Home标签默认打开且不可关闭
+            { title: '主页', path: '/homeView', closable: false }, // Home标签默认打开且不可关闭
           ],
-          activeTab: '/homeView', 
+          activeTab: '/homeView',
+          userInfo: {},
       }
     },
     created() {
@@ -105,7 +105,7 @@ export default {
         let tabExists = this.openedTabs.some(tab => tab.path === to.path);
         if (!tabExists) {
           this.openedTabs.push({
-            title: to.name, // 假设路由名称用作标签标题
+            title: this.getTitle(to.path), // 假设路由名称用作标签标题
             path: to.path,
             closable: true,
           });
@@ -113,17 +113,31 @@ export default {
         this.activeTab = to.path;
       },
     },
-    computed: {
-      ...mapGetters(['getUserInfo']),
-    },
     methods: {
+      getTitle(path) {
+        // 根据路由路径返回对应的中文标题
+        switch (path) {
+          case '/homeView':
+            return '首页';
+          case '/usersView':
+            return '用户管理';
+          case '/adminView':
+            return '活动管理';
+          case '/addActivityView':
+            return '添加活动';
+          case '/addUserView':
+            return '添加用户';
+          default:
+            return path; // 默认返回路由路径
+        }
+      },
       // 获取个人信息
       fetchUserInfo() {
         // 使用 Axios 实例发送请求获取个人信息
         request.get('/info')
           .then(response => {
-            // 将获取到的用户数据保存在 Vuex 中
-            this.$store.commit('setUserInfo', response.data);
+            // 假设返回的数据中包含用户信息
+            this.userInfo = response.data;
           })
           .catch(error => {
             console.error('获取个人信息失败:', error);
@@ -226,7 +240,7 @@ export default {
   height: 30px; /* 图像高度 */
 }
 .indexContainer{
-  background-image: url(C:/Users/31744/Pictures/4.jpg);
+  background-image: url("@/assets/myResource/indexBackground.jpg");
   height: 100%;
 
   .first-header{

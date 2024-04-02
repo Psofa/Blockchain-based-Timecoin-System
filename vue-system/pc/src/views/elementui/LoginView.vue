@@ -1,62 +1,67 @@
 <template>
-  <div class="login-container">
-    <div id="login-box" class="container" :class="{ 'right-panel-active': isRightPanelActive }">
-      <div class="form-container sign-up-container">
-        <form>
-          <h1>注册</h1>
-          <div class="txtb">
-            <input v-model="signUpUsername" type="text" placeholder="Username">
-          </div>
-          <div class="txtb">
-            <input v-model="signUpName" type="text" placeholder="Name">
-          </div>
-          <div class="txtb">
-            <input v-model="signUpEmail" type="email" placeholder="Email">
-          </div>
-          <div class="txtb">
-            <input v-model="signUpPhone" type="text" placeholder="Phone">
-          </div>
-          <div class="txtb">
-            <input v-model="age" type="text" placeholder="Age">
-          </div>
-          <div class="txtb">
-            <input v-model="signUpPassword" type="password" placeholder="Password">
-          </div>
-          <div class="txtb">
-            <input v-model="confirmPassword" type="password" placeholder="Confirm Password">
-          </div>
-          <div>
-            <el-radio v-model="radio" label="1">老人</el-radio>
-            <el-radio v-model="radio" label="2">志愿者</el-radio>
-            <el-radio v-model="radio" label="3">管理员</el-radio>
-          </div>
-          <el-button @click="signUp">注册</el-button>
-        </form>
-      </div>
-      <div class="form-container sign-in-container">
-        <form>
-          <h1>登录</h1>
-          <div class="txtb">
-            <input v-model="signInUsername" type="text" placeholder="Username">
-          </div>
-          <div class="txtb" prop="signInPassword">
-            <input v-model="signInPassword" type="password" placeholder="Password">
-          </div>
-          <a href="#">忘记密码？</a>
-          <el-button :plain="true" @click="signIn">登录</el-button>
-        </form>
-      </div>
-      <div class="overlay-container">
-        <div class="overlay">
-          <div class="overlay-panel overlay-left">
-            <h1>已有账号？</h1>
-            <p>请使用您的账号进行登录</p>
-            <button class="ghost" @click="togglePanel('signIn')">登录</button>
-          </div>
-          <div class="overlay-panel overlay-right">
-            <h1>没有账号?</h1>
-            <p>立即注册加入我们，和我们一起开始旅程吧</p>
-            <button class="ghost" @click="togglePanel('signUp')">注册</button>
+  <div class="main-container">
+    <div class="image-container">
+      <!-- 这里放置你的图片 -->
+    </div>
+    <div class="login-container">
+      <div id="login-box" class="container" :class="{ 'right-panel-active': isRightPanelActive }">
+        <div class="form-container sign-up-container">
+          <form>
+            <h1>注册</h1>
+            <div class="txtb">
+              <input v-model="signUpUsername" type="text" placeholder="Username">
+            </div>
+            <div class="txtb">
+              <input v-model="signUpName" type="text" placeholder="Name">
+            </div>
+            <div class="txtb">
+              <input v-model="signUpEmail" type="email" placeholder="Email">
+            </div>
+            <div class="txtb">
+              <input v-model="signUpPhone" type="text" placeholder="Phone">
+            </div>
+            <div class="txtb">
+              <input v-model="age" type="text" placeholder="Age">
+            </div>
+            <div class="txtb">
+              <input v-model="signUpPassword" type="password" placeholder="Password">
+            </div>
+            <div class="txtb">
+              <input v-model="confirmPassword" type="password" placeholder="Confirm Password">
+            </div>
+            <div>
+              <el-radio v-model="radio" label="1">老人</el-radio>
+              <el-radio v-model="radio" label="2">志愿者</el-radio>
+              <el-radio v-model="radio" label="3">管理员</el-radio>
+            </div>
+            <el-button @click="signUp">注册</el-button>
+          </form>
+        </div>
+        <div class="form-container sign-in-container">
+          <form>
+            <h1>登录</h1>
+            <div class="txtb">
+              <input v-model="signInUsername" type="text" placeholder="Username">
+            </div>
+            <div class="txtb" prop="signInPassword">
+              <input v-model="signInPassword" type="password" placeholder="Password">
+            </div>
+            <a href="#">忘记密码？</a>
+            <el-button :plain="true" @click="signIn">登录</el-button>
+          </form>
+        </div>
+        <div class="overlay-container">
+          <div class="overlay">
+            <div class="overlay-panel overlay-left">
+              <h1>已有账号？</h1>
+              <p>请使用您的账号进行登录</p>
+              <button class="ghost" @click="togglePanel('signIn')">登录</button>
+            </div>
+            <div class="overlay-panel overlay-right">
+              <h1>没有账号?</h1>
+              <p>立即注册加入我们，和我们一起开始旅程吧</p>
+              <button class="ghost" @click="togglePanel('signUp')">注册</button>
+            </div>
           </div>
         </div>
       </div>
@@ -169,7 +174,6 @@ export default {
             setToken(response.data.token);
             this.$store.commit('setToken', response.data.token);
             this.isLoggedIn = true;
-            this.$store.commit('setIsLoggedIn', this.isLoggedIn);
             setTimeout(() => {
               this.$router.push({ name: 'HomeView' });
             }, 1500);
@@ -221,12 +225,20 @@ a {
     text-decoration: none;
     margin: 15px 0;
 }
+.main-container {
+  display: flex;
+  height: 100vh;
+}
+.image-container {
+  width: 45%; /* 左边留 60% 的空间 */
+  background: url("@/assets/myResource/login2.jpg") center center/cover;
+}
 .login-container {
-  background-image: url('C:\Users\31744\Pictures\1.jpg');
+  background: url("@/assets/myResource/login1.jpg") center center/cover;
+  flex: 1;
   background-size: cover;
   background-position: center;
   position: relative;
-  width: 100%;
   height: 100vh;
   display: flex;
   align-items: center;

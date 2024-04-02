@@ -241,7 +241,7 @@ app.post('/register', (req, res) => {
 
 app.get('/info', (req, res) => {
   try {
-    const authHeader = req.headers.token;
+    const authHeader = req.headers.authorization;
     if (!authHeader) {
       // 如果请求头中没有 Authorization 头，返回未授权的响应
       return res.status(401).json({ code: 0, msg: 'Unauthorized' });
@@ -394,4 +394,3 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-

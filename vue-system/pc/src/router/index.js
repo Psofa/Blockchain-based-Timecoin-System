@@ -20,6 +20,11 @@ const routes = [
     beforeEnter: loginrequireAuth,
   },
   {
+    path: '*',// 未定义路径
+    component: () => import('@/views/404'),
+    hidden: true
+  },
+  {
     path: '/indexView',
     name: 'IndexView',
     component: IndexView,

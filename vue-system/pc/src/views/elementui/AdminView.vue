@@ -189,7 +189,7 @@
           <el-input type="textarea" v-model="form.message"></el-input>
         </el-form-item>
         <el-form-item style="display: flex; justify-content: flex-end; align-items: center;">
-          <el-button type="primary" @click="onSubmitForm">提交</el-button>
+          <el-button type="primary" @click="onSubmitForm">提 交</el-button>
         </el-form-item>
       </el-form>
     </el-drawer>
@@ -198,8 +198,8 @@
 
 <script>
 import { MessageBox } from 'element-ui';// 需要单独导入
+import { format } from 'date-fns-tz';
 import request from '@/utils/request';
-import store from '@/store';
 
 export default {
   name: 'AdminView',
@@ -324,7 +324,6 @@ export default {
             this.tableData = [];
             // 合并原始数据到 tableData 数组中
             this.tableData = [...this.tableData, ...this.originalData];
-            this.$message.success("数据获取成功");
           } else {
             this.$message.error(response.msg);
           }
@@ -396,7 +395,7 @@ export default {
       return this.formDisabled;
     },
     onSubmitForm(){
-      // 正则表达式，用于匹配时分秒形式（HH:mm:ss）
+      // 正则表达式,用于匹配时分秒形式(HH:mm:ss)
       const timePattern = /^(?:[01]\d|2[0-3]):[0-5]\d:[0-5]\d$/;
       if(!timePattern.test(this.form.begin)){
         this.$message.warning("输入的活动开始时间格式错误");
@@ -406,6 +405,15 @@ export default {
         this.$message.warning("输入的活动结束时间格式错误");
         return;
       }
+      // 格式化日期
+      const formatDateString = (dateString) => {
+        if (!dateString) return '';
+        const date = new Date(dateString);
+        const year = date.getFullYear();
+        const month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
+        const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
+        return `${year}-${month}-${day}`;
+      };
       // 在这个方法中获取搜索框中的数据
       const data = {};
       for (const key in this.form) {
@@ -413,12 +421,17 @@ export default {
           data[key] = this.form[key];
         }
       }
-      data['administratorId'] = store.getters.getUserInfo.id;
-      console.log(data);
+      // 格式化截止时间
+      data.deadline = format(data.deadline, "yyyy-MM-dd'T'HH:mm:ss", { timeZone: 'Asia/BeiJing' });
+      // 格式化日期
+      data.date = formatDateString(data.date);
       request.put('/administrator',data)
         .then(response => {
           if(response.code === 1){
             this.$message.success(response.msg);
+            this.search();
+            this.formDisabled = true;
+            this.drawer = false;
           }
           else{
             this.$message.error(response.msg);
@@ -444,7 +457,7 @@ export default {
         return;
       }
       // 发起删除请求
-      request.delete('/administrator/${this.selectedIds.join(',')}')
+      request.delete(`/administrator/${ids}`)
         .then(response => {
           if(response.code === 1){
             this.$message.success(response.msg);

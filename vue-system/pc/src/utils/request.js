@@ -6,7 +6,7 @@ import { removeToken, getToken } from './auth';
 
 // 创建 axios 实例
 const request = axios.create({
-  baseURL: 'http://10.134.114.97:8080', // 设置基础 URL
+  baseURL: 'http://10.135.16.209:8080', // 设置基础 URL
   timeout: 5000 // 设置超时时间
 });
 
@@ -31,7 +31,9 @@ request.interceptors.request.use(
 request.interceptors.response.use(
   response => {
     // 对响应数据做些什么
-    if(response.data.code === 0 && router.currentRoute.path !== '/' && response.data.msg === "NOT_LOGIN"){
+    if (response.status === 404) {
+      router.push('/404'); // 跳转到404页面
+    } else if (response.data.code === 0 && router.currentRoute.path !== '/' && response.data.msg === "NOT_LOGIN") {
       alert('身份验证失败，请重新登录。');
       store.commit('setIsLoggedIn', false);
       router.push('/'); // 重定向到登录页面
