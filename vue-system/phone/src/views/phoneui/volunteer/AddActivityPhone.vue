@@ -1,25 +1,16 @@
 <template>
     <div class="addActivityBox">
         <el-header class="searchBox">
-            <el-input type="text" v-model="searchTitle" placeholder="请输入活动名称" prefix-icon="el-icon-search" style="width: auto;margin-right: 10px;"></el-input>
-            <el-input type="text" v-model="searchAddress" placeholder="请输入活动地址" prefix-icon="el-icon-search" style="width: auto"></el-input>
-            <span class="searchBtn" style="margin-left: 20px;">
-                <el-button round @click = "search">搜索</el-button>
-            </span>
+            <el-input type="text" v-model="searchTitle" placeholder="请输入活动名称" prefix-icon="el-icon-search" style="margin-right: 10px;"></el-input>
+            <el-button round @click = "search" style="width: auto;">搜索</el-button>
         </el-header>
         <el-container class="mainBox">
             <el-header class="groupBox">
-                <el-date-picker type="date" v-model="searchDate" placeholder="活动日期" style="width: auto;"></el-date-picker>
-                <el-time-picker
-                    v-model="searchBegin"
-                    placeholder="活动开始时间"
-                    style="vertical-align: middle;width: auto; margin-left: 10px;">
-                </el-time-picker>
-                <el-time-picker
-                    v-model="searchEnd"
-                    placeholder="活动结束时间"
-                    style="vertical-align: middle;width: auto; margin-left: 10px;">
-                </el-time-picker>
+                <el-button type="text" @click="search1">报名中</el-button>
+                <el-divider direction="vertical"></el-divider>
+                <el-button type="text" @click="search2">进行中</el-button>
+                <el-divider direction="vertical"></el-divider>
+                <el-button type="text" @click="search3">已结束</el-button>
             </el-header>
             <el-main class="activity">
                 <div v-for="(row, index) in tableData" :key="index" @click="handleCardClick(row)">
@@ -76,85 +67,19 @@
 
 <script>
 import request from '@/utils/request';
+import { format } from 'date-fns-tz';
 
 export default {
     name: 'AddActivityPhone',
     data() {
         return {
             // 搜索数据
-            // 日期表
-            pickerOptions: {
-                shortcuts: [{
-                text: '今天',
-                onClick(picker) {
-                    picker.$emit('pick', new Date());
-                }
-                }, {
-                text: '昨天',
-                onClick(picker) {
-                    const date = new Date();
-                    date.setTime(date.getTime() - 3600 * 1000 * 24);
-                    picker.$emit('pick', date);
-                }
-                }, {
-                text: '一周前',
-                onClick(picker) {
-                    const date = new Date();
-                    date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-                    picker.$emit('pick', date);
-                }
-                }]
-            },
             searchDate: '', // 活动日期
+            searchDeadline: '', // 报名截止日期
             searchEnd: '',
             searchBegin: '',
             searchTitle: '',
-            searchAddress: '',
-            // 示例数据
-            data: {
-                total:2,
-                rows: [
-                {
-                    id: 1,
-                    title: "志愿者活动1",
-                    quota: "20",
-                    deadline: "2024-03-20",
-                    date: "2024-03-21",
-                    begin: "09:00:00",
-                    end: "12:00:00",
-                    address: "北京市朝阳区",
-                    oldId: 1,
-                    phone: "1234567890",
-                    description: "这是志愿者活动1的描述",
-                    status: 1,
-                    administratorId: null,
-                    createTime: "2024-03-15T08:00:00",
-                    updateTime: "2024-03-15T10:00:00",
-                    message: null,
-                    remain: 10
-                },
-                {
-                    id: 2,
-                    title: "志愿者活动2",
-                    quota: "15",
-                    deadline: "2024-03-25",
-                    date: "2024-03-26",
-                    begin: "14:00:00",
-                    end: "17:00:00",
-                    address: "上海市浦东新区",
-                    oldId: 2,
-                    phone: "9876543210",
-                    description: "这是志愿者活动2的描述",
-                    status: 2,
-                    administratorId: 1,
-                    createTime: "2024-03-16T09:00:00",
-                    updateTime: "2024-03-17T11:00:00",
-                    message: "活动已审核通过",
-                    remain: 5
-                },
-                // 添加更多的数据...
-                ],
-            },
+            searchStatus: null,
             // 卡片
             originalData: [],
             pageSize: 5, // 每页显示的条目数量
@@ -194,16 +119,18 @@ export default {
                 let formattedTime = `${hours}:${minutes}:${seconds}`;
                 return formattedTime;
             };
+            
             // 创建 URLSearchParams 对象
             const params = new URLSearchParams();
             // 添加搜索条件到 URLSearchParams 对象中
             params.append('pageSize', this.pageSize);
             params.append('page', this.currentPage);
             params.append('title',this.searchTitle);
-            params.append('address',this.searchAddress);
+            params.append('deadline',this.searchDeadline);
             params.append('date', formatDateString(this.searchDate));
             params.append('begin', formatTimeString(this.searchBegin));
             params.append('end', formatTimeString(this.searchEnd));
+            params.append('status', this.searchStatus);
             // 将 URLSearchParams 对象转换为查询字符串
             const queryString = params.toString();
             // 发起请求时将查询字符串添加到URL中
@@ -242,6 +169,46 @@ export default {
             const currentDate = new Date();
             // 如果当前时间早于截止日期，则返回 true，否则返回 false
             return currentDate < deadlineDate;
+        },
+        search1() {
+            // 格式化截止时间
+            this.searchDeadline = new Date();
+            this.searchDeadline = format(this.searchDeadline, "yyyy-MM-dd'T'HH:mm:ss", { timeZone: 'Asia/BeiJing' });
+            this.status = 2;
+            this.search();
+            this.searchDeadline = '';
+            this.status = null;
+        },
+        search2() {
+            // 创建一个新的 Date 对象，它将自动获取当前日期和时间
+            const now = new Date();
+            // 获取当前年份
+            const year = now.getFullYear();
+            // 获取当前月份（注意：月份是从 0 开始计数的，所以要加 1）
+            const month = now.getMonth() + 1;
+            // 获取当前日期
+            const date = now.getDate();
+            // 获取当前小时数（0-23）
+            const hours = now.getHours();
+            // 获取当前分钟数（0-59）
+            const minutes = now.getMinutes();
+            // 获取当前秒数（0-59）
+            const seconds = now.getSeconds();
+            // 根据需要格式化时间
+            this.searchDate = `${year}-${month}-${date}`;
+            this.searchBegin = `${hours}:${minutes}:${seconds}`;
+            this.searchEnd = `${hours}:${minutes}:${seconds}`;
+            this.status = 2;
+            this.search();
+            this.searchDate = '';
+            this.searchBegin = '';
+            this.searchEnd = '';
+            this.status = null;
+        },
+        search3() {
+            this.status = 4;
+            this.search();
+            this.status = null;
         }
     }
 }
@@ -258,9 +225,8 @@ export default {
     .mainBox{
         .groupBox{
           display: flex;
-          justify-content: space-between;
           align-items: center;
-          padding: 0 5px;
+          margin-left: 10px;
         }
         .activity{
           display: flex;

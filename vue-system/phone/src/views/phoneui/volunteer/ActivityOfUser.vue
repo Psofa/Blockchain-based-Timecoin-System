@@ -6,57 +6,40 @@
             <el-button type="text" @click="searchEndActivity" style="margin-right: 100px;">已结束</el-button>
         </el-header>
         <el-container class="mainBox">
-            <el-header class="boxOfSearch">
-                <div class="searchBox">
-                    <el-input type="text" v-model="searchTitle" placeholder="请输入活动名称" prefix-icon="el-icon-search" style="width: auto;margin-right: 10px;"></el-input>
-                    <el-input type="text" v-model="searchAddress" placeholder="请输入活动地址" prefix-icon="el-icon-search" style="width: auto"></el-input>
-                    <span class="searchBtn" style="margin-left: 20px;">
-                        <el-button round @click = "search">搜索</el-button>
-                    </span>
-                </div>
-                <div class="searchBox">
-                    <el-date-picker type="date" v-model="searchDate" placeholder="活动日期" style="width: auto;"></el-date-picker>
-                    <el-time-picker
-                        v-model="searchBegin"
-                        placeholder="活动开始时间"
-                        style="vertical-align: middle;width: auto; margin-left: 10px;">
-                    </el-time-picker>
-                    <el-time-picker
-                        v-model="searchEnd"
-                        placeholder="活动结束时间"
-                        style="vertical-align: middle;width: auto; margin-left: 10px;">
-                    </el-time-picker>
-                </div>
-            </el-header>
             <el-main class="activity">
-                <div v-for="(row, index) in tableData" :key="index" @click="handleCardClick(row)">
-                <el-card :body-style="{ padding: '0px' }" shadow="always">
-                    <div class="cardContent">
-                    <img :src="$activityImagePath" class="image">
-                    <div class="contentBox">
-                        <div>活动：{{ row.title }}</div>
-                        <div>剩余名额：{{ row.quota }}</div>
-                        <div style="display: flex;justify-content: space-between;align-items: center;">
-                        活动日期：{{ row.date }}
-                        <el-tag size="mini" v-if="!isBeforeDeadline(row.deadline)" type="danger">报名结束</el-tag>
-                        <el-tag size="mini" v-else type="success">报名中</el-tag>
+                <div v-if="tableData && tableData.length > 0">
+                    <div v-for="(row, index) in tableData" :key="index" @click="handleCardClick(row)">
+                    <el-card :body-style="{ padding: '0px' }" shadow="always">
+                        <div class="cardContent">
+                        <img :src="$activityImagePath" class="image">
+                        <div class="contentBox">
+                            <div>活动：{{ row.title }}</div>
+                            <div>剩余名额：{{ row.quota }}</div>
+                            <div style="display: flex;justify-content: space-between;align-items: center;">
+                            活动日期：{{ row.date }}
+                            <el-tag size="mini" v-if="!isBeforeDeadline(row.deadline)" type="danger">报名结束</el-tag>
+                            <el-tag size="mini" v-else type="success">报名中</el-tag>
+                            </div>
+                            <div>地址：{{ row.address }}</div>
                         </div>
-                        <div>地址：{{ row.address }}</div>
+                        </div>
+                    </el-card>
                     </div>
+                    <!-- 分页组件 -->
+                    <div class="pagination-container" style="margin-bottom: 5px;">
+                        <el-pagination
+                            @current-change="handleCurrentChange"
+                            :current-page="currentPage"
+                            :page-sizes="[5, 10, 20, 30]" 
+                            :page-size="pageSize"
+                            layout="total, prev, pager, next"
+                            :total="totalItems"
+                            style="margin-bottom: 50px;right: 0;">
+                        </el-pagination>
                     </div>
-                </el-card>
                 </div>
-                <!-- 分页组件 -->
-                <div class="pagination-container" style="margin-bottom: 5px;">
-                    <el-pagination
-                        @current-change="handleCurrentChange"
-                        :current-page="currentPage"
-                        :page-sizes="[5, 10, 20, 30]" 
-                        :page-size="pageSize"
-                        layout="total, prev, pager, next"
-                        :total="totalItems"
-                        style="margin-bottom: 50px;right: 0;">
-                    </el-pagination>
+                <div v-else>
+                    <el-empty description="暂无数据"></el-empty>
                 </div>
             </el-main>
         </el-container>
@@ -89,34 +72,6 @@ export default {
     data() {
         return {
             // 搜索数据
-            // 日期表
-            pickerOptions: {
-                shortcuts: [{
-                text: '今天',
-                onClick(picker) {
-                    picker.$emit('pick', new Date());
-                }
-                }, {
-                text: '昨天',
-                onClick(picker) {
-                    const date = new Date();
-                    date.setTime(date.getTime() - 3600 * 1000 * 24);
-                    picker.$emit('pick', date);
-                }
-                }, {
-                text: '一周前',
-                onClick(picker) {
-                    const date = new Date();
-                    date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
-                    picker.$emit('pick', date);
-                }
-                }]
-            },
-            searchDate: '', // 活动日期
-            searchEnd: '',
-            searchBegin: '',
-            searchTitle: '',
-            searchAddress: '',
             searchStatus: 2,
             // 卡片
             originalData: [],
@@ -139,34 +94,11 @@ export default {
             this.search();
         },
         search() {
-            // 格式化日期
-            const formatDateString = (dateString) => {
-                if (!dateString) return '';
-                const date = new Date(dateString);
-                const year = date.getFullYear();
-                const month = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) : date.getMonth() + 1;
-                const day = date.getDate() < 10 ? '0' + date.getDate() : date.getDate();
-                return `${year}-${month}-${day}`;
-            };
-            // 格式化时间
-            const formatTimeString = (dateString) => {
-                if (!dateString) return '';
-                let hours = dateString.getHours().toString().padStart(2, '0');
-                let minutes = dateString.getMinutes().toString().padStart(2, '0');
-                let seconds = dateString.getSeconds().toString().padStart(2, '0');
-                let formattedTime = `${hours}:${minutes}:${seconds}`;
-                return formattedTime;
-            };
             // 创建 URLSearchParams 对象
             const params = new URLSearchParams();
             // 添加搜索条件到 URLSearchParams 对象中
             params.append('pageSize', this.pageSize);
             params.append('page', this.currentPage);
-            params.append('title',this.searchTitle);
-            params.append('address',this.searchAddress);
-            params.append('date', formatDateString(this.searchDate));
-            params.append('begin', formatTimeString(this.searchBegin));
-            params.append('end', formatTimeString(this.searchEnd));
             params.append('status',this.searchStatus);
             // 将 URLSearchParams 对象转换为查询字符串
             const queryString = params.toString();
@@ -236,21 +168,6 @@ export default {
         align-items: center;
     }
     .mainBox{
-        
-        .boxOfSearch{
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          height: auto !important;;
-          padding: 0 3px;
-          
-          .searchBox{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 5px;
-          }
-        }
         .activity{
           display: flex;
           flex-direction: column;

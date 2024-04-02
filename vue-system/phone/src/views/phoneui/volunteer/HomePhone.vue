@@ -17,8 +17,10 @@
       <el-main class="mainBox">
         <div class="blockOfImage">
           <el-carousel height="150px">
-            <el-carousel-item v-for="item in 4" :key="item">
-              <h3 class="small">{{ item }}</h3>
+            <el-carousel-item v-for="(item, index) in images" :key="index">
+              <a :href="item.link" target="_blank"> <!-- 在新标签页打开链接 -->
+                <img :src="item.url" alt="image" style="width: 100%; height: 100%; object-fit: cover;">
+              </a>
             </el-carousel-item>
           </el-carousel>
         </div>
@@ -28,9 +30,9 @@
           align-items: center;">
             <el-col :span="6">
               <div>
-                <el-statistic title="注册志愿者人数">
+                <el-statistic title="志愿者人数">
                   <template slot="formatter">
-                    456/2
+                    6
                   </template>
                 </el-statistic>
               </div>
@@ -39,7 +41,7 @@
               <div>
                 <el-statistic title="活动数">
                   <template slot="formatter">
-                    456/2
+                    10
                   </template>
                 </el-statistic>
               </div>
@@ -48,7 +50,7 @@
               <div>
                 <el-statistic title="老人数">
                   <template slot="formatter">
-                    456/2
+                    4
                   </template>
                 </el-statistic>
               </div>
@@ -59,19 +61,22 @@
         </div>
         <div class="activities">
           <el-main class="activity">
+            <ul class="infinite-list" v-infinite-scroll="load" style="overflow:auto">
+              <li v-for="i in count" class="infinite-list-item">{{ i }}</li>
+            </ul>
             <div v-for="(row, index) in tableData" :key="index" @click="handleCardClick(row)">
               <el-card :body-style="{ padding: '0px' }" shadow="always">
                 <div class="cardContent">
                   <img :src="$activityImagePath" class="image">
                   <div class="contentBox">
-                    <div>活动：{{ row.title }}</div>
-                    <div>剩余名额：{{ row.quota }}</div>
-                    <div style="display: flex;justify-content: space-between;align-items: center;">
-                    活动日期：{{ row.date }}
+                    <div style="font-size: 17px;">{{ row.title }}</div>
+                    <div style="font-size: 14px;">剩余名额：{{ row.quota }}</div>
+                    <div style="display: flex;justify-content: space-between;align-items: center;font-size: 12px;">
+                      {{ row.date }}
                     <el-tag size="mini" v-if="!isBeforeDeadline(row.deadline)" type="danger">报名结束</el-tag>
                     <el-tag size="mini" v-else type="success">报名中</el-tag>
                     </div>
-                    <div>地址：{{ row.address }}</div>
+                    <div style="font-size: 16px;">{{ row.address }}</div>
                   </div>
                 </div>
               </el-card>
@@ -121,7 +126,7 @@ export default {
       // 选择器
       options: [{
         value: 1,
-        label: '全国'
+        label: '成都'
       }, {
         value: 2,
         label: '四川'
@@ -133,7 +138,11 @@ export default {
         label: '山西'
       }],
       value: 1,
-
+      // 照片
+      images: [
+        { url: 'https://zwxt.mca.gov.cn/tyccyy_int/ucm/ucmAction!getFile.do?sysid=jmgc_nvsi&addrcode=6200&loginid=9&fileid=40ca3d98c8844c29b105236b2fc6168e&accesskey=Uuk9ASLKQvUap9AZqugH3nLEnVNJYNxtGgeDmQQfB5w&busitype=FILE&realid=518f24a46c3c440384b50eee2a09d97b&crosscity=0&fromprovince=0', link: 'https://chinavolunteer.mca.gov.cn/nvsiwebsite/XLFZYFW' },
+        { url: 'https://zwxt.mca.gov.cn/tyccyy_int/ucm/ucmAction!getFile.do?sysid=jmgc_nvsi&addrcode=6200&loginid=9&fileid=8a5ff47a40b44ced868c30fb29340c01&accesskey=mnaLouVlc4ufRhirRVEkndWjAHvUuS7feZLqpAAMA&busitype=FILE&realid=79c5ca1dcf11445bb8b29a2be8eefc80&crosscity=0&fromprovince=0', link: 'https://mp.weixin.qq.com/s/t7p-uNdgRIKcGD1s5veENA' },
+      ],
       // 卡片
       originalData: [],
       pageSize: 5, // 每页显示的条目数量
@@ -208,6 +217,9 @@ export default {
     handleSelectClick() {
       this.searchAddress = this.options.find(option => option.value === this.value);
       this.search();
+    },
+    load () {
+      this.count += 2
     }
   }
 }
@@ -261,6 +273,7 @@ export default {
         backdrop-filter: blur(10px);
         border-radius: 5px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        padding: 5px;
       }
       .news{
         margin-top: 10px;
@@ -268,6 +281,7 @@ export default {
         border-radius: 10px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         height: 80px;
+        background: url("@/assets/common/homePhone1.jpg") center center/cover;
       }
       .activities{
         .activity{

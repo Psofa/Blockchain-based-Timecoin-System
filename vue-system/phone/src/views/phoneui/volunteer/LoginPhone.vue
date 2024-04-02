@@ -80,7 +80,7 @@ export default {
   min-height: 92.5vh;
   background-color: #f7f7f7;
   padding: 20px;
-  background-image: url('C:\Users\31744\Pictures\2.jpg');
+  background-image: url('@/assets/common/login.jpg');
 }
 
 .login-box {

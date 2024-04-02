@@ -6,7 +6,7 @@ import { removeToken, getToken } from './auth';
 
 // 创建 axios 实例
 const request = axios.create({
-  baseURL: 'http://localhost:3000', // 设置基础 URL
+  baseURL: 'http://10.135.16.209:8080', // 设置基础 URL
   timeout: 5000 // 设置超时时间
 });
 

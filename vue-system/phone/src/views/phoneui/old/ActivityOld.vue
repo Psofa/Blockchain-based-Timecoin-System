@@ -1,15 +1,17 @@
 <template>
     <div class="addActivityBox">
         <el-header class="header">
-            <el-button type="text" style="margin-left: 50px;">未审核</el-button>
+            <el-button type="text" @click="search1" style="margin-left: 50px;">未审核</el-button>
             <el-divider direction="vertical"></el-divider>
-            <el-button type="text">已审核</el-button>
+            <el-button type="text" @click="search2">审核通过</el-button>
             <el-divider direction="vertical"></el-divider>
-            <el-button type="text" style="margin-right: 50px;">已结束</el-button>
+            <el-button type="text" @click="search3">审核不通过</el-button>
+            <el-divider direction="vertical"></el-divider>
+            <el-button type="text" @click="search4" style="margin-right: 50px;">过期活动</el-button>
         </el-header>
         <el-container class="mainBox">
             <el-header style="display: flex;justify-content: space-between;align-items: center;">
-                <el-input placeholder="请输入内容" style="margin-right: 20px;"></el-input>
+                <el-input placeholder="请输入内容" v-model="searchTitle" style="margin-right: 20px;"></el-input>
                 <el-button round type="primary">搜索</el-button>
                 <el-button round type="primary" @click="addActivity">增添活动</el-button>
             </el-header>
@@ -50,23 +52,6 @@
             </el-main>
         </el-container>
 
-        <el-footer class="operations">
-            <span>
-            <router-link to="/homePhone" class="RouterLink">
-                <i class="el-icon-house"></i>用户管理
-            </router-link>
-            </span>
-            <span>
-            <router-link to="/addActivityPhone" class="RouterLink">
-                <i class="el-icon-circle-plus"></i>报名活动
-            </router-link>
-            </span>
-            <span>
-            <router-link to="/infoOfUserPhone" class="RouterLink">
-                <i class="el-icon-user-solid"></i>个人中心
-            </router-link>
-            </span>
-        </el-footer>
     </div>
 </template>
 
@@ -83,6 +68,8 @@ export default {
             totalItems: 0, // 总条目数量
             currentPage: 1, // 当前页码
             tableData: [], // 表格数据
+            searchTitle: '', // 搜索文本
+            status: 1, // 状态
         }
     },
     mounted() {
@@ -103,6 +90,7 @@ export default {
             params.append('pageSize', this.pageSize);
             params.append('page', this.currentPage);
             params.append('status',this.searchStatus);
+            params.append('title',this.searchTitle);
             // 将 URLSearchParams 对象转换为查询字符串
             const queryString = params.toString();
             // 发起请求时将查询字符串添加到URL中
@@ -163,6 +151,22 @@ export default {
             // 如果当前时间早于截止日期，则返回 true，否则返回 false
             return currentDate < deadlineDate;
         },
+        search1() {
+            this.status = 1;
+            this.search();
+        },
+        search2() {
+            this.status = 2;
+            this.search();
+        },
+        search3() {
+            this.status = 3;
+            this.search();
+        },
+        search4() {
+            this.status = 4;
+            this.search();
+        },
     }
 }
 </script>
@@ -208,23 +212,6 @@ export default {
             
           } 
         }
-    }
-    .operations{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-      backdrop-filter: blur(10px);
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      flex-shrink: 0; /* 防止底部内容被压缩 */
-      position: fixed; /* 将底部组件固定在页面底部 */
-      bottom: 0;
-      width: 100%; /* 设置宽度为 100% */
-      .RouterLink {
-        text-decoration: none;
-      }
-
     }
 }
 </style>

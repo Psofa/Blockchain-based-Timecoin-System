@@ -16,6 +16,7 @@ import AddActivityOld from '@/views/phoneui/old/AddActivityOld.vue'
 import LocationGet from '@/views/phoneui/old/LocationGet.vue'
 import GetInfoActivity from '@/views/phoneui/old/GetInfoActivity.vue'
 import EndAddActivity from '@/views/phoneui/old/EndAddActivity.vue'
+import InfoActivityOld from '@/views/phoneui/old/InfoActivityOld.vue'
 import { requireAuth, loginrequireAuth } from '../utils/permission'
 
 Vue.use(VueRouter)
@@ -94,6 +95,12 @@ const routes = [
     path: '/activityOld',
     name: 'ActivityOld',
     component: ActivityOld,
+    beforeEnter: requireAuth,
+  },
+  {
+    path: '/infoActivityOld',
+    name: 'InfoActivityOld',
+    component: InfoActivityOld,
     beforeEnter: requireAuth,
   },
   {

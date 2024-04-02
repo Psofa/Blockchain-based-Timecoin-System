@@ -242,7 +242,7 @@ export default {
             const queryString = params.toString();
 
             // 发起请求时将查询字符串添加到URL中
-            request.get(`user/vol/sign?${queryString}`).then(response => {
+            request.get(`users/vol/sign?${queryString}`).then(response => {
                 if (response.code === 1) {
                     if (response.sign === 1) {
                         // 在这里处理获取到的结果
