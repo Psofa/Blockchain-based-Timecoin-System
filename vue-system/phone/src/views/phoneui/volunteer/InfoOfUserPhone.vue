@@ -8,7 +8,12 @@
         <div class="mainBox">
             <div class="titleBox">
                 <div>
-                    <el-avatar :size="80" :src="squareUrl"></el-avatar>
+                    <img v-if="squareUrl" class="avatar1" :src="squareUrl">
+                    <span v-else class="username1">
+                        <div style="font-size: 30px;">
+                            {{ infoData.username?.charAt(0) }}
+                        </div>
+                    </span>
                 </div>
                 <div>
                     {{infoData.username}}
@@ -134,6 +139,26 @@ export default {
             justify-content: center;
             align-items: center;
             flex-shrink: 0; /* 防止底部内容被压缩 */
+            .avatar1 {
+                display: inline-block;
+                width: 60px;
+                height: 60px;
+                border-radius: 12px;
+                background-color: #d9d9d9;
+                line-height: 48px;
+                text-align: center;
+            }
+            .username1 {
+                display: inline-block;
+                width: 60px;
+                height: 60px;
+                text-align: center;
+                line-height: 60px;
+                border-radius: 50%;
+                background: #04c9be;
+                color: #fff;
+                margin-right: 4px;
+            }
         }
         .contentBox{
             width: 100%;

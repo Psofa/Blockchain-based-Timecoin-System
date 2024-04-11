@@ -7,40 +7,31 @@
         </el-header>
         <el-container class="mainBox">
             <el-main class="activity">
-                <div v-if="tableData && tableData.length > 0">
-                    <div v-for="(row, index) in tableData" :key="index" @click="handleCardClick(row)">
-                    <el-card :body-style="{ padding: '0px' }" shadow="always">
-                        <div class="cardContent">
-                        <img :src="$activityImagePath" class="image">
-                        <div class="contentBox">
-                            <div>活动：{{ row.title }}</div>
-                            <div>剩余名额：{{ row.quota }}</div>
-                            <div style="display: flex;justify-content: space-between;align-items: center;">
-                            活动日期：{{ row.date }}
-                            <el-tag size="mini" v-if="!isBeforeDeadline(row.deadline)" type="danger">报名结束</el-tag>
-                            <el-tag size="mini" v-else type="success">报名中</el-tag>
+                <ul class="infinite-list" v-infinite-scroll="load" infinite-scroll-disabled="busy" infinite-scroll-distance="5" style="overflow:auto;padding-inline-start:0px">
+                    <div v-if="tableData && tableData.length > 0">
+                        <div v-for="(row, index) in tableData" :key="index" @click="handleCardClick(row)">
+                        <el-card :body-style="{ padding: '0px' }" shadow="always">
+                            <div class="cardContent">
+                            <img :src="$activityImagePath" class="image">
+                            <div class="contentBox">
+                                <div>活动：{{ row.title }}</div>
+                                <div>剩余名额：{{ row.quota }}</div>
+                                <el-progress :percentage="Number(((parseFloat(row.quota) - parseFloat(row.remain)) / parseFloat(row.quota) * 100).toFixed(1))"></el-progress>
+                                <div style="display: flex;justify-content: space-between;align-items: center;">
+                                活动日期：{{ row.date }}
+                                <el-tag size="mini" v-if="!isBeforeDeadline(row.deadline)" type="danger">报名结束</el-tag>
+                                <el-tag size="mini" v-else type="success">报名中</el-tag>
+                                </div>
+                                <div style="font-size: 12px;">地址：{{ row.address }}</div>
                             </div>
-                            <div>地址：{{ row.address }}</div>
+                            </div>
+                        </el-card>
                         </div>
-                        </div>
-                    </el-card>
                     </div>
-                    <!-- 分页组件 -->
-                    <div class="pagination-container" style="margin-bottom: 5px;">
-                        <el-pagination
-                            @current-change="handleCurrentChange"
-                            :current-page="currentPage"
-                            :page-sizes="[5, 10, 20, 30]" 
-                            :page-size="pageSize"
-                            layout="total, prev, pager, next"
-                            :total="totalItems"
-                            style="margin-bottom: 50px;right: 0;">
-                        </el-pagination>
+                    <div v-else>
+                        <el-empty description="暂无数据"></el-empty>
                     </div>
-                </div>
-                <div v-else>
-                    <el-empty description="暂无数据"></el-empty>
-                </div>
+                </ul>
             </el-main>
         </el-container>
 
@@ -79,6 +70,8 @@ export default {
             totalItems: 0, // 总条目数量
             currentPage: 1, // 当前页码
             tableData: [], // 表格数据
+            // 无限滚动
+            busy: false,
         }
     },
     mounted() {
@@ -87,11 +80,24 @@ export default {
         
     },
     methods: {
-        handleCurrentChange(newPage) {
-            // 更新当前页码
-            this.currentPage = newPage;
-            // 重新搜索获取对应页的数据
-            this.search();
+        load() {
+            if (this.tableData.length >= this.totalItems) {
+                this.$notify({
+                title: '警告',
+                message: '没有更多数据了',
+                type: 'warning',
+                position: 'bottom-right',
+                });
+                return;
+            }
+            if (this.busy) return;
+            this.busy = true;
+
+            // 调用你的search方法来获取新的数据
+            this.search().then(() => {
+                this.currentPage++;
+                this.busy = false;
+            });
         },
         search() {
             // 创建 URLSearchParams 对象
@@ -117,7 +123,7 @@ export default {
                 }
                 })
                 .catch(error => {
-                console.error('获取数据失败:', error);
+                    console.error('获取数据失败:', error);
                 });
         },
         handleCardClick(row) {
@@ -176,8 +182,10 @@ export default {
           padding: 0px;
           .el-card{
             display: flex;
-            padding: 5px;
-            height: 100px;
+            padding: 8px;
+            margin-left: 10px;
+            margin-right: 10px;
+            height: 140px;
             align-items: center;
             margin-bottom: 15px;
             .cardContent{
@@ -194,9 +202,8 @@ export default {
                 padding: 8px;
                 width: 60%;
               }
-            }
-            
-          } 
+            } 
+          }
         }
     }
     .operations{

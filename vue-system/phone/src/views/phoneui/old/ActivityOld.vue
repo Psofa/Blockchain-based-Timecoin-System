@@ -16,42 +16,49 @@
                 <el-button round type="primary" @click="addActivity">增添活动</el-button>
             </el-header>
             <el-main class="activity">
-                <div v-for="(row, index) in tableData" :key="index" @click="handleCardClick(row)" style="width: 95%;">
-                    <el-card :body-style="{ padding: '0px' }" shadow="always">
-                        <div class="cardContent">
-                            <img :src="$activityImagePath" class="image">
-                            <div class="contentBox">
-                                <div>活动：{{ row.title }}</div>
-                                <div>剩余名额：{{ row.quota }}</div>
-                                <div style="display: flex;justify-content: space-between;align-items: center;">
-                                活动日期：{{ row.date }}
-                                <el-tag size="mini" v-if="!isBeforeDeadline(row.deadline)" type="danger">报名结束</el-tag>
-                                <el-tag size="mini" v-else type="success">报名中</el-tag>
-                                </div>
-                                <div>地址：{{ row.address }}</div>
-                                <!-- 删除按钮 -->
-                                <div style="display: flex;justify-content: center;align-items: center;">
-                                    <el-button type="danger" round size="mini" @click="deleteActivity(row.id)" style="margin-top: 5px;width: 80%;">删除</el-button>
+                <ul class="infinite-list" v-infinite-scroll="load" infinite-scroll-disabled="busy" infinite-scroll-distance="5" style="overflow:auto;padding-inline-start:0px">
+                    <div v-for="(row, index) in tableData" :key="index" @click="handleCardClick(row)">
+                        <el-card :body-style="{ padding: '0px' }" shadow="always">
+                            <div class="cardContent">
+                                <img :src="$activityImagePath" class="image">
+                                <div class="contentBox">
+                                    <div style="font-size: 17px;">{{ row.title }}</div>
+                                    <div style="font-size: 14px;">剩余名额：{{ row.remain }}</div>
+                                    <el-progress :percentage="Number(((parseFloat(row.quota) - parseFloat(row.remain)) / parseFloat(row.quota) * 100).toFixed(1))"></el-progress>
+                                    <div style="display: flex;justify-content: space-between;align-items: center;font-size: 12px;">
+                                        {{ row.date }}
+                                    <el-tag size="mini" v-if="!isBeforeDeadline(row.deadline)" type="danger">报名结束</el-tag>
+                                    <el-tag size="mini" v-else type="success">报名中</el-tag>
+                                    </div>
+                                    <div style="font-size: 12px;">{{ row.address }}</div>
+                                    <!-- 删除按钮 -->
+                                    <div style="display: flex;justify-content: center;align-items: center;">
+                                        <el-button type="danger" round size="mini" @click="deleteActivity(row.id)" style="margin-top: 5px;width: 80%;">删除</el-button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </el-card>
-                </div>
-                <!-- 分页组件 -->
-                <div class="pagination-container" style="margin-bottom: 5px;">
-                    <el-pagination
-                        @current-change="handleCurrentChange"
-                        :current-page="currentPage"
-                        :page-sizes="[5, 10, 20, 30]" 
-                        :page-size="pageSize"
-                        layout="total, prev, pager, next"
-                        :total="totalItems"
-                        style="margin-bottom: 50px;right: 0;">
-                    </el-pagination>
-                </div>
+                        </el-card>
+                    </div>
+                </ul>
             </el-main>
         </el-container>
-
+        <el-footer>
+            <span>
+                <router-link to="/serverOld" class="RouterLink">
+                    <i class="el-icon-menu"></i>服务中心
+                </router-link>
+            </span>
+            <span>
+                <router-link to="/artificialOld" class="RouterLink">
+                    <i class="el-icon-s-comment"></i>人工服务
+                </router-link>
+            </span>
+            <span>
+                <router-link to="/homeOld" class="RouterLink">
+                    <i class="el-icon-user-solid"></i>个人中心
+                </router-link>
+            </span>
+        </el-footer>
     </div>
 </template>
 
@@ -70,6 +77,8 @@ export default {
             tableData: [], // 表格数据
             searchTitle: '', // 搜索文本
             status: 1, // 状态
+            // 无限滚动
+            busy: false,
         }
     },
     mounted() {
@@ -77,39 +86,56 @@ export default {
         this.search();
     },
     methods: {
-        handleCurrentChange(newPage) {
-            // 更新当前页码
-            this.currentPage = newPage;
-            // 重新搜索获取对应页的数据
-            this.search();
+        load() {
+            if (this.tableData.length >= this.totalItems) {
+                this.$notify({
+                title: '警告',
+                message: '没有更多数据了',
+                type: 'warning',
+                position: 'bottom-right',
+                });
+                return;
+            }
+            if (this.busy) return;
+            this.busy = true;
+
+            // 调用你的search方法来获取新的数据
+            this.search().then(() => {
+                this.currentPage++;
+                this.busy = false;
+            });
         },
         search() {
-            // 创建 URLSearchParams 对象
-            const params = new URLSearchParams();
-            // 添加搜索条件到 URLSearchParams 对象中
-            params.append('pageSize', this.pageSize);
-            params.append('page', this.currentPage);
-            params.append('status',this.searchStatus);
-            params.append('title',this.searchTitle);
-            // 将 URLSearchParams 对象转换为查询字符串
-            const queryString = params.toString();
-            // 发起请求时将查询字符串添加到URL中
-            request.get(`/users/old?${queryString}`)
-                .then(response => {
-                if (response.code === 1) {
-                    this.totalItems = response.data.total;
-                    this.originalData = response.data.rows;
-                    this.tableData = [];
-                    // 合并原始数据到 tableData 数组中
-                    this.tableData = [...this.tableData, ...this.originalData];
-                    
-                } else {
-                    this.$message.error(response.msg);
-                }
-                })
-                .catch(error => {
-                console.error('获取数据失败:', error);
-                });
+            return new Promise((resolve, reject) => {
+                // 创建 URLSearchParams 对象
+                const params = new URLSearchParams();
+                // 添加搜索条件到 URLSearchParams 对象中
+                params.append('pageSize', this.pageSize);
+                params.append('page', this.currentPage);
+                params.append('status',this.status);
+                params.append('title',this.searchTitle);
+                // 将 URLSearchParams 对象转换为查询字符串
+                const queryString = params.toString();
+                // 发起请求时将查询字符串添加到URL中
+                request.get(`/users/old?${queryString}`)
+                    .then(response => {
+                        if (response.code === 1) {
+                            this.totalItems = response.data.total;
+                            this.originalData = response.data.rows;
+                            this.tableData = [];
+                            // 合并原始数据到 tableData 数组中
+                            this.tableData = [...this.tableData, ...this.originalData];
+                            // 将新的数据作为Promise的结果返回
+                            resolve(this.tableData);
+                        } else {
+                            this.$message.error(response.msg);
+                            reject(response.msg);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('获取数据失败:', error);
+                    });
+            });
         },
         deleteActivity(id) {
             let ids = [];
@@ -136,7 +162,7 @@ export default {
         handleCardClick(row) {
             // 在发送路由跳转时将数据作为查询参数传递
             this.$router.push({ 
-                name: 'RegisteredActivity', 
+                name: 'IdActivityOld', 
                 query: { 
                     id: row.id
                 } 
@@ -190,8 +216,10 @@ export default {
           padding: 0px;
           .el-card{
             display: flex;
-            padding: 5px;
-            height: 120px;
+            padding: 8px;
+            margin-left: 10px;
+            margin-right: 10px;
+            height: 140px;
             align-items: center;
             margin-bottom: 15px;
             .cardContent{
@@ -211,6 +239,22 @@ export default {
             }
             
           } 
+        }
+    }
+    .el-footer{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        backdrop-filter: blur(10px);
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        flex-shrink: 0; /* 防止底部内容被压缩 */
+        position: fixed; /* 将底部组件固定在页面底部 */
+        bottom: 0;
+        width: 100%; /* 设置宽度为 100% */
+        .RouterLink {
+            text-decoration: none;
         }
     }
 }

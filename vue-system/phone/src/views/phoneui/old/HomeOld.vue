@@ -8,7 +8,12 @@
         <div class="mainBox">
             <div class="titleBox">
                 <div>
-                    <el-avatar :size="80" :src="squareUrl"></el-avatar>
+                    <img v-if="squareUrl" class="avatar1" :src="squareUrl">
+                    <span v-else class="username1">
+                        <div style="font-size: 30px;">
+                            {{ infoData.username?.charAt(0) }}
+                        </div>
+                    </span>
                 </div>
                 <div>
                     {{infoData.username}}
@@ -47,10 +52,26 @@
                             </div>
                         </el-menu-item>
                     </div>
-                    
                 </el-menu>
             </div>
         </div>
+        <el-footer>
+            <span>
+                <router-link to="/serverOld" class="RouterLink">
+                    <i class="el-icon-menu"></i>服务中心
+                </router-link>
+            </span>
+            <span>
+                <router-link to="/artificialOld" class="RouterLink">
+                    <i class="el-icon-s-comment"></i>人工服务
+                </router-link>
+            </span>
+            <span>
+                <router-link to="/homeOld" class="RouterLink">
+                    <i class="el-icon-user-solid"></i>个人中心
+                </router-link>
+            </span>
+        </el-footer>
     </div>
 </template>
 
@@ -117,6 +138,26 @@ export default {
             justify-content: center;
             align-items: center;
             flex-shrink: 0; /* 防止底部内容被压缩 */
+            .avatar1 {
+                display: inline-block;
+                width: 60px;
+                height: 60px;
+                border-radius: 12px;
+                background-color: #d9d9d9;
+                line-height: 48px;
+                text-align: center;
+            }
+            .username1 {
+                display: inline-block;
+                width: 60px;
+                height: 60px;
+                text-align: center;
+                line-height: 60px;
+                border-radius: 50%;
+                background: #04c9be;
+                color: #fff;
+                margin-right: 4px;
+            }
         }
         .contentBox{
             width: 100%;
@@ -134,6 +175,22 @@ export default {
                     align-items: center;
                 }
             }
+        }
+    }
+    .el-footer{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+        backdrop-filter: blur(10px);
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        flex-shrink: 0; /* 防止底部内容被压缩 */
+        position: fixed; /* 将底部组件固定在页面底部 */
+        bottom: 0;
+        width: 100%; /* 设置宽度为 100% */
+        .RouterLink {
+            text-decoration: none;
         }
     }
 }

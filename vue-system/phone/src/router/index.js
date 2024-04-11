@@ -17,6 +17,9 @@ import LocationGet from '@/views/phoneui/old/LocationGet.vue'
 import GetInfoActivity from '@/views/phoneui/old/GetInfoActivity.vue'
 import EndAddActivity from '@/views/phoneui/old/EndAddActivity.vue'
 import InfoActivityOld from '@/views/phoneui/old/InfoActivityOld.vue'
+import ServerOld from '@/views/phoneui/old/ServerOld.vue'
+import ArtificialOld from '@/views/phoneui/old/ArtificialOld.vue'
+import IdActivityOld from '@/views/phoneui/old/IdActivityOld.vue'
 import { requireAuth, loginrequireAuth } from '../utils/permission'
 
 Vue.use(VueRouter)
@@ -33,6 +36,11 @@ const routes = [
     path: '/registerPhone',
     name: 'RegisterPhone',
     component: RegisterPhone
+  },
+  {
+    path: '*',// 未定义路径
+    component: () => import('@/views/phoneui/404'),
+    hidden: true
   },
   // 志愿者
   {
@@ -128,6 +136,24 @@ const routes = [
         beforeEnter: requireAuth,
       }
     ]
+  },
+  {
+    path: '/serverOld',
+    name: 'ServerOld',
+    component: ServerOld,
+    beforeEnter: requireAuth,
+  },
+  {
+    path: '/artificialOld',
+    name: 'ArtificialOld',
+    component: ArtificialOld,
+    beforeEnter: requireAuth,
+  },
+  {
+    path: '/idActivityOld',
+    name: 'IdActivityOld',
+    component: IdActivityOld,
+    beforeEnter: requireAuth,
   },
 ]
 

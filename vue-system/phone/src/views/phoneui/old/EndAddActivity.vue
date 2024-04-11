@@ -13,7 +13,7 @@ export default {
     name: 'EndAddActivity',
     methods: {
         pushBack() {
-            this.$router.push('/addActivityOld');
+            this.$router.push('/serverOld');
         }
     }
 };

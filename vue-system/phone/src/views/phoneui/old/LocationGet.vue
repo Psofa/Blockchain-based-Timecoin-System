@@ -15,13 +15,13 @@
             </tr>
           </table>
         </div>
-        <div id="container" style="width: 100%; height: 700px;"></div>
+        <div id="container" style="width: 100%; height: 500px;"></div>
       </div>
       <div style="display: flex;margin-top: 10px;flex-direction: column;">
         <div style="margin: 20px;">
           当前位置：{{ address }}
         </div>
-        <el-button type="primary" @click="signIn" style="margin: 20px;">签 到</el-button>
+        <el-button type="primary" @click="signIn" style="margin: 20px;">确 定</el-button>
         <el-button type="primary" @click="initAMap" style="margin: 20px;">刷新位置</el-button>
       </div>
     </div>
@@ -73,28 +73,27 @@
                   center: [longitude, latitude], // 将用户位置设为地图中心点
                 });
 
-                // 监听地图的点击事件
-                this.map.on('click', function(e) {
+                this.map.on('click', (e) => {
                   // 获取点击位置的经纬度坐标
                   const lnglat = e.lnglat;
 
                   // 创建逆地理编码对象
                   const geocoder = new AMap.Geocoder({
-                    // 可选参数设置
+                      // 可选参数设置
                   });
 
                   // 逆地理编码，将经纬度坐标转换为地址信息
-                  geocoder.getAddress(lnglat, function(status, result) {
-                    if (status === 'complete' && result.info === 'OK') {
-                      // 获取地址信息
-                      const address = result.regeocode.formattedAddress;
-                      // 在这里可以对获取到的地址信息进行处理，例如显示在页面上或者进行其他操作
-                      console.log('点击位置的地址信息：', address);
-                    } else {
-                      console.error('逆地理编码失败：', result);
-                    }
+                  geocoder.getAddress(lnglat, (status, result) => {
+                      if (status === 'complete' && result.info === 'OK') {
+                          // 获取地址信息
+                          let address = result.regeocode.formattedAddress;
+                          this.address = address;
+                      } else {
+                          console.error('逆地理编码失败：', result);
+                      }
                   });
                 });
+
   
                 // 创建逆地理编码对象
                 AMap.plugin('AMap.Geocoder', () => {
@@ -128,22 +127,9 @@
                     // 将地图中心点移动到选中的位置
                     this.map.setCenter(e.poi.location);
                     // 在地图上添加标记
-                    const marker = new AMap.Marker({
+                    new AMap.Marker({
                       position: e.poi.location,
                       map: this.map
-                    });
-                    // 添加标记点击事件
-                    marker.on('click', (e) => {
-                      // 获取标记位置的地址信息
-                      geocoder.getAddress(e.lnglat, (status, result) => {
-                        if (status === "error") {
-                          console.error("Failed to get address. Error:", result);
-                        } else if (status === "complete" && result.info === "OK") {
-                          console.log("Marker address:", result.regeocode.formattedAddress);
-                        } else {
-                          console.error("Failed to get address. Status:", status, "Result info:", result.info);
-                        }
-                      });
                     });
                   });
                 });

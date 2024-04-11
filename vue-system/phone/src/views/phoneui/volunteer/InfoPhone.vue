@@ -3,53 +3,89 @@
         <el-dialog
             title="个人信息"
             :visible.sync="dialogVisible"
-            :before-close="handleClose"
             width="80%"
             :append-to-body="true"
             :modal-append-to-body="false">
-            <el-form ref="form" :model="form">
-                <el-form-item label="用户id">
-                    <el-input v-model="form.id" readonly></el-input>
-                </el-form-item>
-                <el-form-item label="用户名">
+            <el-descriptions :model="form" :column="1" border>
+                <el-descriptions-item>
+                    <template slot="label">
+                        <i class="el-icon-user"></i>
+                        用户名
+                    </template>
                     <el-input v-model="form.username" readonly></el-input>
-                </el-form-item>
-                <el-form-item label="用户类型">
-                    <el-input v-model="statusLabel" readonly></el-input>
-                </el-form-item>
-                <el-form-item label="邮箱">
-                    <el-input v-model="form.email" readonly></el-input>
-                </el-form-item>
-                <el-form-item label="年龄">
-                    <el-input v-model="form.age" readonly></el-input>
-                </el-form-item>
-                <el-form-item label="电话">
-                    <el-input v-model="form.phone" readonly></el-input>
-                </el-form-item>
-                <el-form-item label="地址">
-                    <el-input v-model="form.address" readonly></el-input>
-                </el-form-item>
-                <el-form-item label="姓名">
+                </el-descriptions-item>
+                <el-descriptions-item>
+                    <template slot="label">
+                        <i class="el-icon-user-solid"></i>
+                        姓名
+                    </template>
                     <el-input v-model="form.name" readonly></el-input>
-                </el-form-item>
-                <el-form-item label="密码">
-                    <el-input v-model="form.password" readonly></el-input>
-                </el-form-item>
-            </el-form>
+                </el-descriptions-item>
+                <el-descriptions-item>
+                    <template slot="label">
+                        <i class="el-icon-message"></i>
+                        邮箱
+                    </template>
+                    <el-input v-model="form.email" readonly></el-input>
+                </el-descriptions-item>
+                <el-descriptions-item>
+                    <template slot="label">
+                        <i class="el-icon-time"></i>
+                        年龄
+                    </template>
+                    <el-input v-model="form.age" readonly></el-input>
+                </el-descriptions-item>
+                <el-descriptions-item>
+                    <template slot="label">
+                        <i class="el-icon-phone"></i>
+                        电话
+                    </template>
+                    <el-input v-model="form.phone" readonly></el-input>
+                </el-descriptions-item>
+                <el-descriptions-item>
+                    <template slot="label">
+                        <i class="el-icon-location"></i>地址
+                    </template>
+                    <el-input v-model="form.address" readonly></el-input>
+                </el-descriptions-item>
+            </el-descriptions>
             <div  style="display: flex; justify-content: space-between; margin-top: 10px;">
-                
                 <el-button @click="handleCancel" round style="width: 100%;">取 消</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog
+            title="修改头像"
+            :visible.sync="dialogVisible1"
+            width="80%"
+            :append-to-body="true"
+            :modal-append-to-body="false">
+            <div class="avatar-wrapper" style="display: flex; justify-content: center;">
+                <el-upload
+                    class="avatar-uploader"
+                    :action="baseUrl + '/info'"
+                    :show-file-list="false"
+                    :on-success="handleAvatarSuccess"
+                    :before-upload="beforeAvatarUpload">
+                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                    <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                </el-upload>
+            </div>
+            <div>
+                <el-button @click="handleCancel" type="primary" round style="width: 100%;margin-top: 10px;">确 定</el-button>
             </div>
         </el-dialog>
         <div class="mainBox">
             <el-menu v-model="form" style="width: 100%;">
-                <el-menu-item index="1">
-                    <span>用户头像</span> 
-                    <div>
-                        <el-avatar shape="square" :size="50" :src="squareUrl"></el-avatar>
-                        <i class="el-icon-arrow-right"></i>
-                    </div>
-                </el-menu-item>
+                <div @click="editAvatar">
+                    <el-menu-item index="1">
+                        <span>用户头像</span> 
+                        <div>
+                            <img v-if="form.image" class="avatar1" :src="form.image" alt="">
+                            <span v-else class="username1">{{ form.username?.charAt(0) }}</span>
+                            <i class="el-icon-arrow-right"></i>
+                        </div>
+                    </el-menu-item>
+                </div>
                 <el-menu-item index="2">
                     <span>用户名</span>
                     <div>
@@ -90,23 +126,6 @@
                 </div>
             </el-menu>
         </div>
-        <el-footer>
-            <span>
-            <router-link to="/homePhone" class="RouterLink">
-                <i class="el-icon-house"></i>用户管理
-            </router-link>
-            </span>
-            <span>
-            <router-link to="/addActivityPhone" class="RouterLink">
-                <i class="el-icon-circle-plus"></i>报名活动
-            </router-link>
-            </span>
-            <span>
-            <router-link to="/infoOfUserPhone" class="RouterLink">
-                <i class="el-icon-user-solid"></i>个人中心
-            </router-link>
-            </span>
-        </el-footer>
     </div>
 </template>
 
@@ -118,19 +137,15 @@ export default {
     name: 'InfoPhone',
     data() {
         return{
+            baseUrl: "http://10.134.116.30:8080",
             form: {},
-            squareUrl:'',
             dialogVisible: false,
-            options: [
-                { value: 1, label: '老人' },
-                { value: 2, label: '志愿者' },
-                { value: 3, label: '管理员' },
-            ],
+            dialogVisible1: false,
+            imageUrl: '',
         }
     },
     created() {
         this.search();
-        this.statusLabel();
     },
     methods: {
         // 退出登录
@@ -145,13 +160,11 @@ export default {
         search() {    
             request.get(`/info`)
                 .then(response => {
-                if (response.code === 1) {
-                    this.form = response.data;
-                    this.squareUrl = response.data.image;
-                    
-                } else {
-                    this.$message.error(response.msg);
-                }
+                    if (response.code === 1) {
+                        this.form = response.data;
+                    } else {
+                        this.$message.error(response.msg);
+                    }
                 })
                 .catch(error => {
                     console.error('获取数据失败:', error);
@@ -159,27 +172,80 @@ export default {
         },
         handleCancel(){
             this.dialogVisible = false;
+            this.dialogVisible1 = false;
         },
         query() {
             // 打开
             this.dialogVisible = true;
         },
-        handleClose(done) {
-            this.$confirm('确认关闭？')
-                .then(() => {
-                done();
-                })
-                .catch(() => {});
+        editAvatar() {
+            // 打开
+            this.dialogVisible1 = true;
         },
-        statusLabel() {
-            const selectedOption = this.options.find(option => option.value === this.form.role);
-            return selectedOption ? selectedOption.label : '未知状态';
+        handleAvatarSuccess(res) {
+            const imageUrl = this.baseUrl + res.data; // 假设返回的响应中包含了文件的 URL 地址
+            console.log(imageUrl);
+            // 将文件 URL 赋值给 imageUrl
+            this.imageUrl = imageUrl;
         },
+        beforeAvatarUpload(file) {
+            const isJPG = file.type === 'image/jpeg';
+            const isLt2M = file.size / 1024 / 1024 < 2;
+
+            if (!isJPG) {
+                this.$message.error('上传头像图片只能是 JPG 格式!');
+            }
+            if (!isLt2M) {
+                this.$message.error('上传头像图片大小不能超过 2MB!');
+            }
+            let image = new FormData();
+            image.append('file', file); // 将文件添加到 FormData 中
+
+            if (isJPG && isLt2M) {
+                request.post(`/info`, image)
+                    .then(response => {
+                        if (response.code === 1) {
+                            // 处理成功响应
+                            this.handleAvatarSuccess(response);
+                            this.$message.success('上传头像成功!');
+                        } else {
+                            this.$message.error(response.msg);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('获取数据失败:', error);
+                    });
+            }
+            return false;
+        }
     }
 }
 </script>
 
 <style lang="scss" scoped>
+.avatar-wrapper {
+    border: 1px dashed #d9d9d9;
+    border-radius: 6px;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+    .avatar-uploader-icon {
+        font-size: 28px;
+        color: #737576;
+        width: 178px;
+        height: 178px;
+        line-height: 178px;
+        text-align: center;
+    }
+    .avatar {
+        width: 178px;
+        height: 178px;
+        display: block;
+    }
+}
 .mainBox{
     padding: 0px;
     border: none;
@@ -187,23 +253,26 @@ export default {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        .avatar1 {
+            display: inline-block;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background-color: #d9d9d9;
+            line-height: 48px;
+            text-align: center;
+        }
+        .username1 {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            border-radius: 50%;
+            background: #04c9be;
+            color: #fff;
+            margin-right: 4px;
+        }
     }
-}
-.el-footer{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-    backdrop-filter: blur(10px);
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    flex-shrink: 0; /* 防止底部内容被压缩 */
-    position: fixed; /* 将底部组件固定在页面底部 */
-    bottom: 0;
-    width: 100%; /* 设置宽度为 100% */
-    .RouterLink {
-        text-decoration: none;
-    }
-
 }
 </style>

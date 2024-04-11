@@ -2,40 +2,48 @@
   <el-container class="signup-container">
     <el-header>
       <el-button class="goBackButton" @click="goBack">
-        <i class="el-icon-arrow-left"></i>
+        <i class="el-icon-arrow-left" style="font-size: 2em;"></i>
       </el-button>
     </el-header>
     <el-main class="signup-box">
       <h1>注册</h1>
-      <form>
-        <div class="form-group">
-          <input type="text" v-model="signUpUsername" placeholder="用户名" class="form-control">
+      <el-form ref="form" :model="form" :rules="formRules">
+        <el-form-item prop="username">
+          <el-input v-model="form.username" placeholder="用户名"></el-input>
+        </el-form-item>
+        <el-form-item prop="name">
+          <el-input v-model="form.name" placeholder="姓名"></el-input>
+        </el-form-item>
+        <el-form-item prop="email">
+          <el-input v-model="form.email" placeholder="邮箱"></el-input>
+        </el-form-item>
+        <el-form-item prop="age">
+          <el-input-number v-model="form.age" :min="0" placeholder="年龄" :style="{ width: '100%' }"></el-input-number>
+        </el-form-item>
+        <el-form-item prop="phone">
+          <el-input v-model="form.phone" placeholder="电话"></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+          <el-input type="password" v-model="form.password" placeholder="密码" autocomplete="new-password"></el-input>
+        </el-form-item>
+        <el-form-item prop="confirmPassword">
+          <el-input type="password" v-model="form.confirmPassword" placeholder="确认密码" autocomplete="new-password"></el-input>
+        </el-form-item>
+        <el-form-item prop="role">
+          <el-select v-model="form.role" clearable placeholder="请选择用户类型" style="width:100%">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="signUp" class="register-btn">注册</el-button>
+        </el-form-item>
+        <div class="loginIcon">
+          <div class="login-icon wechat"/>
+          <div class="login-icon QQ"/>
+          <div class="login-icon alipay"/>
         </div>
-        <div class="form-group">
-          <input type="text" v-model="signUpName" placeholder="姓名" class="form-control">
-        </div>
-        <div class="form-group">
-          <input type="email" v-model="signUpEmail" placeholder="邮箱" class="form-control">
-        </div>
-        <div class="form-group">
-          <input type="text" v-model="signUpPhone" placeholder="电话" class="form-control">
-        </div>
-        <div class="form-group">
-          <input type="text" v-model="age" placeholder="年龄" class="form-control">
-        </div>
-        <div class="form-group">
-          <input type="password" v-model="signUpPassword" placeholder="密码" class="form-control">
-        </div>
-        <div class="form-group">
-          <input type="password" v-model="confirmPassword" placeholder="确认密码" class="form-control">
-        </div>
-        <div class="form-group" style="display: flex; justify-content: center;">
-          <el-radio v-model="radio" label="1">老人</el-radio>
-          <el-radio v-model="radio" label="2">志愿者</el-radio>
-          <el-radio v-model="radio" label="3">管理员</el-radio>
-        </div>
-        <el-button type="primary" @click="signUp" class="register-btn">注册</el-button>
-      </form>
+      </el-form>
     </el-main>
   </el-container>
 </template>
@@ -47,7 +55,9 @@
   align-items: center;
   min-height: 98vh;
   background-color: #f7f7f7;
-  background-image: url('C:\Users\31744\Pictures\2.jpg');;
+  background-image: url('@/assets/common/login.jpg');
+  background-size: cover; /* 或者 "contain" */
+  background-position: center center;
 }
 
 .signup-box {
@@ -71,113 +81,114 @@ h1 {
   margin-bottom: 20px;
 }
 
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-control {
-  width: 92.5%;
-  padding: 12px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
-
 .register-btn {
   width: 100%;
+}
+
+.loginIcon {
+  display: flex;
+  justify-content: center;
+}
+.login-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 20px;
+  background: #f5f6f8;
+  background-size: cover;
+  margin: 10px;
+  &.wechat {
+    background-image: url('~@/assets/common/wechat.png');
+  }
+  &.QQ {
+    background-image: url('~@/assets/common/QQ.png');
+  }
+  &.alipay {
+    background-image: url('~@/assets/common/alipay.png');
+  }
 }
 </style>
 
 <script>
-import axios from 'axios';
-import { Radio,Button } from 'element-ui';
-
-// 定义基本 URL
-const baseURL = 'http://localhost:3000/';
+import request from '@/utils/request';
 
 export default {
   name: 'RegisterPhone',
-  components: {
-    'el-radio': Radio,
-    'el-button': Button,
-  },
   data() {
     return {
-      signUpUsername: '',
-      signUpEmail: '',
-      signUpPassword: '',
-      confirmPassword: '',
-      signUpName:'',
-      signUpPhone:'',
-      age:'',
-      radio: '1',
+      form: {}, // 定义 form 对象
+      options: [
+        { value: 1, label: '老人' },
+        { value: 2, label: '志愿者' },
+      ],
+      formRules: { // 表单校验规则
+        username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
+        role: [{ required: true, message: '请选择用户类型', trigger: 'change' }],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur,change' }
+        ],
+        age: [{ required: true, message: '请输入年龄', trigger: 'blur' }],
+        phone: [
+          { required: true, message: '请输入电话', trigger: 'blur' },
+          { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的11位电话号码', trigger: 'blur' }
+        ],
+        name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { min: 6, message: '密码长度至少为6位', trigger: 'blur' }
+        ],
+        confirmPassword: [
+          { required: true, message: '请再次输入密码', trigger: 'blur' },
+          { validator: this.validateConfirmPassword, trigger: 'blur' }
+        ]
+      }
     };
   },
   methods: {
     clearall(){
       // 清空登录和注册表单数据
-      this.signUpUsername = '';
-      this.signUpEmail = '';
-      this.signUpPassword = '';
-      this.confirmPassword = '';
-      this.signUpName='';
-      this.signUpPhone='';
-      this.age='';
-      this.radio='1';
+      this.form = {};
+    },
+    validateConfirmPassword(rule, value, callback) {
+      if (value !== this.form.password) {
+        callback(new Error('两次输入密码不一致'));
+      } else {
+        callback();
+      }
     },
     signUp() {
-      // 处理注册逻辑
-      const userData = {
-          username: this.signUpUsername,
-          name:this.signUpName,
-          password: this.signUpPassword,
-          role: parseInt(this.radio),
-          email: this.signUpEmail,
-          age:parseInt(this.age),
-          phone:this.signUpPhone,
-        };
-
-        // 检查是否所有属性都有值
-      if (
-          userData.username &&
-          userData.name &&
-          userData.password &&
-          userData.role &&
-          userData.email &&
-          userData.age &&
-          userData.phone
-      ) {
-          if(this.signUpPassword===this.confirmPassword){
-            // 发起 POST 请求
-            axios.post(baseURL+'register', userData)
-              .then(response => {
-                  // 处理成功响应
-                if (response.data.code===1) {
-                  // 进行页面跳转或其他操作
-                  this.clearall();
-                  this.$message({
-                    message: '注册成功',
-                    type: 'success'
-                  });
-                  setTimeout(() => {
-                    this.$router.push('/');
-                  }, 2000); // 2000 毫秒后执行
-                } 
-                else {
-                  this.$message.error('注册失败:',response.data.msg);
-                }    
-              })
-              .catch(error => {
-                  // 处理请求失败的情况
-                  console.error('Registration failed:', error);
-                  alert('Registration failed. Please try again later.');
-              });
-          } else{
-            this.$message.error('请验证密码是否正确');
-          }
-      } else {
-        this.$message.error('请完善信息');
-      }
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          const userData = this.form;
+          request.post('/register', userData)
+            .then(response => {
+                // 处理成功响应
+              if (response.code===1) {
+                // 进行页面跳转或其他操作
+                this.clearall();
+                this.$message({
+                  message: '注册成功',
+                  type: 'success'
+                });
+                setTimeout(() => {
+                  this.$router.push('/');
+                }, 2000); // 2000 毫秒后执行
+              } 
+              else {
+                this.$message.error('注册失败:',response.msg);
+              }    
+            })
+            .catch(error => {
+                // 处理请求失败的情况
+                console.error('Registration failed:', error);
+                alert('Registration failed. Please try again later.');
+            });
+        }
+        else {
+          this.$message.error('请完善信息');
+          return false;
+        }
+      });
     },
     goBack() {
       this.$router.push('/');
