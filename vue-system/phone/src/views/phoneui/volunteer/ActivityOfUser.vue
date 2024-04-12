@@ -82,12 +82,7 @@ export default {
     methods: {
         load() {
             if (this.tableData.length >= this.totalItems) {
-                this.$notify({
-                title: '警告',
-                message: '没有更多数据了',
-                type: 'warning',
-                position: 'bottom-right',
-                });
+                
                 return;
             }
             if (this.busy) return;

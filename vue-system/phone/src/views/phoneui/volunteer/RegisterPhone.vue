@@ -11,6 +11,9 @@
         <el-form-item prop="username">
           <el-input v-model="form.username" placeholder="用户名"></el-input>
         </el-form-item>
+        <el-form-item prop="IdCard">
+          <el-input v-model="form.idCard" placeholder="身份证号"></el-input>
+        </el-form-item>
         <el-form-item prop="name">
           <el-input v-model="form.name" placeholder="姓名"></el-input>
         </el-form-item>
@@ -140,6 +143,10 @@ export default {
         confirmPassword: [
           { required: true, message: '请再次输入密码', trigger: 'blur' },
           { validator: this.validateConfirmPassword, trigger: 'blur' }
+        ],
+        idCard: [
+          { required: true, message: '请输入身份证号', trigger: 'blur' },
+          { pattern: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/, message: '请输入正确的身份证号', trigger: 'blur' }
         ]
       }
     };
@@ -167,7 +174,7 @@ export default {
                 // 进行页面跳转或其他操作
                 this.clearall();
                 this.$message({
-                  message: '注册成功',
+                  message: '用户审核中，请耐心等待！',
                   type: 'success'
                 });
                 setTimeout(() => {
@@ -175,7 +182,10 @@ export default {
                 }, 2000); // 2000 毫秒后执行
               } 
               else {
-                this.$message.error('注册失败:',response.msg);
+                this.$message({
+                  message: '注册失败:'+response.msg,
+                  type: 'error'
+                });
               }    
             })
             .catch(error => {

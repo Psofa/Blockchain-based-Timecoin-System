@@ -1,5 +1,12 @@
 <template>
     <div class="addActivityBox">
+        <el-dialog :visible.sync="dialogVisible" title="增添活动">
+            <el-result icon="warning" title="是否确认" subTitle="该活动需要消耗200时间币">
+                <template slot="extra">
+                    <el-button type="primary" size="medium" @click="addActivity">确 定</el-button>
+                </template>
+            </el-result>
+        </el-dialog>
         <el-header class="header">
             <el-button type="text" @click="search1" style="margin-left: 50px;">未审核</el-button>
             <el-divider direction="vertical"></el-divider>
@@ -13,7 +20,7 @@
             <el-header style="display: flex;justify-content: space-between;align-items: center;">
                 <el-input placeholder="请输入内容" v-model="searchTitle" style="margin-right: 20px;"></el-input>
                 <el-button round type="primary">搜索</el-button>
-                <el-button round type="primary" @click="addActivity">增添活动</el-button>
+                <el-button round type="primary" @click="addOpen">增添活动</el-button>
             </el-header>
             <el-main class="activity">
                 <ul class="infinite-list" v-infinite-scroll="load" infinite-scroll-disabled="busy" infinite-scroll-distance="5" style="overflow:auto;padding-inline-start:0px">
@@ -42,23 +49,6 @@
                 </ul>
             </el-main>
         </el-container>
-        <el-footer>
-            <span>
-                <router-link to="/serverOld" class="RouterLink">
-                    <i class="el-icon-menu"></i>服务中心
-                </router-link>
-            </span>
-            <span>
-                <router-link to="/artificialOld" class="RouterLink">
-                    <i class="el-icon-s-comment"></i>人工服务
-                </router-link>
-            </span>
-            <span>
-                <router-link to="/homeOld" class="RouterLink">
-                    <i class="el-icon-user-solid"></i>个人中心
-                </router-link>
-            </span>
-        </el-footer>
     </div>
 </template>
 
@@ -69,6 +59,8 @@ export default {
     name: 'ActivityOld',
     data() {
         return {
+            // 弹窗
+            dialogVisible: false,
             // 卡片
             originalData: [],
             pageSize: 5, // 每页显示的条目数量
@@ -76,7 +68,7 @@ export default {
             currentPage: 1, // 当前页码
             tableData: [], // 表格数据
             searchTitle: '', // 搜索文本
-            status: 1, // 状态
+            status: 2, // 状态,默认为审核通过
             // 无限滚动
             busy: false,
         }
@@ -88,12 +80,7 @@ export default {
     methods: {
         load() {
             if (this.tableData.length >= this.totalItems) {
-                this.$notify({
-                title: '警告',
-                message: '没有更多数据了',
-                type: 'warning',
-                position: 'bottom-right',
-                });
+                
                 return;
             }
             if (this.busy) return;
@@ -104,6 +91,9 @@ export default {
                 this.currentPage++;
                 this.busy = false;
             });
+        },
+        addOpen() {
+            this.dialogVisible = true;
         },
         search() {
             return new Promise((resolve, reject) => {
@@ -140,7 +130,7 @@ export default {
         deleteActivity(id) {
             let ids = [];
             ids.push(id);
-            request.delete(`/administrator/users/${ids.join(',')}`)
+            request.delete(`/users/old/${ids.join(',')}`)
                 .then(response => {
                 if(response.code === 1){
                     this.$message.success(response.msg);
@@ -151,7 +141,7 @@ export default {
                 }
                 })
                 .catch(error => {
-                console.error('There was a problem with the request:', error);
+                    console.error('There was a problem with the request:', error);
                 });
         },
         addActivity() {
@@ -239,22 +229,6 @@ export default {
             }
             
           } 
-        }
-    }
-    .el-footer{
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
-        backdrop-filter: blur(10px);
-        border-radius: 5px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-        flex-shrink: 0; /* 防止底部内容被压缩 */
-        position: fixed; /* 将底部组件固定在页面底部 */
-        bottom: 0;
-        width: 100%; /* 设置宽度为 100% */
-        .RouterLink {
-            text-decoration: none;
         }
     }
 }

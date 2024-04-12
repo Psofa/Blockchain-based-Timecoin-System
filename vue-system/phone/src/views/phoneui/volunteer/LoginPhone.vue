@@ -62,7 +62,7 @@ export default {
             this.$store.commit('setToken', response.data.token);
             setTimeout(() => {
               if(response.data.role === 2) this.$router.push({ name: 'HomePhone' });
-              else this.$router.push({ name: 'HomeOld' });
+              else this.$router.push({ name: 'ServerOld' });
             }, 1500);
           }
           else {

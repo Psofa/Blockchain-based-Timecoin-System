@@ -16,10 +16,12 @@ import AddActivityOld from '@/views/phoneui/old/AddActivityOld.vue'
 import LocationGet from '@/views/phoneui/old/LocationGet.vue'
 import GetInfoActivity from '@/views/phoneui/old/GetInfoActivity.vue'
 import EndAddActivity from '@/views/phoneui/old/EndAddActivity.vue'
-import InfoActivityOld from '@/views/phoneui/old/InfoActivityOld.vue'
 import ServerOld from '@/views/phoneui/old/ServerOld.vue'
 import ArtificialOld from '@/views/phoneui/old/ArtificialOld.vue'
 import IdActivityOld from '@/views/phoneui/old/IdActivityOld.vue'
+import DashOld from '@/views/phoneui/old/DashOld.vue'
+import CoinInfo from '@/views/phoneui/CoinInfo.vue'
+import DashPhone from '@/views/phoneui/volunteer/DashPhone.vue'
 import { requireAuth, loginrequireAuth } from '../utils/permission'
 
 Vue.use(VueRouter)
@@ -44,23 +46,32 @@ const routes = [
   },
   // 志愿者
   {
-    path: '/homePhone',
-    name: 'HomePhone',
-    component: HomePhone,
+    path: '/dashPhone',
+    name: 'DashPhone',
+    component: DashPhone,
     // 使用 requireAuth 路由守卫检查 token 是否存在
     beforeEnter: requireAuth,
-  },
-  {
-    path: '/infoOfUserPhone',
-    name: 'InfoOfUserPhone',
-    component: InfoOfUserPhone,
-    beforeEnter: requireAuth,
-  },
-  {
-    path: '/addActivityPhone',
-    name: 'AddActivityPhone',
-    component: AddActivityPhone,
-    beforeEnter: requireAuth,
+    children: [
+      {
+        path: '/homePhone',
+        name: 'HomePhone',
+        component: HomePhone,
+        // 使用 requireAuth 路由守卫检查 token 是否存在
+        beforeEnter: requireAuth,
+      },
+      {
+        path: '/addActivityPhone',
+        name: 'AddActivityPhone',
+        component: AddActivityPhone,
+        beforeEnter: requireAuth,
+      },
+      {
+        path: '/infoOfUserPhone',
+        name: 'InfoOfUserPhone',
+        component: InfoOfUserPhone,
+        beforeEnter: requireAuth,
+      },
+    ]
   },
   {
     path: '/infoPhone',
@@ -94,23 +105,38 @@ const routes = [
   },
   // 老人
   {
-    path: '/homeOld',
-    name: 'HomeOld',
-    component: HomeOld,
+    path: '/dashOld',
+    name: 'DashOld',
+    component: DashOld,
     beforeEnter: requireAuth,
+    children: [
+      {
+        path: '/homeOld',
+        name: 'HomeOld',
+        component: HomeOld,
+        beforeEnter: requireAuth,
+      },
+      {
+        path: '/serverOld',
+        name: 'ServerOld',
+        component: ServerOld,
+        beforeEnter: requireAuth,
+      },
+      {
+        path: '/artificialOld',
+        name: 'ArtificialOld',
+        component: ArtificialOld,
+        beforeEnter: requireAuth,
+      },
+      {
+        path: '/activityOld',
+        name: 'ActivityOld',
+        component: ActivityOld,
+        beforeEnter: requireAuth,
+      },
+    ] 
   },
-  {
-    path: '/activityOld',
-    name: 'ActivityOld',
-    component: ActivityOld,
-    beforeEnter: requireAuth,
-  },
-  {
-    path: '/infoActivityOld',
-    name: 'InfoActivityOld',
-    component: InfoActivityOld,
-    beforeEnter: requireAuth,
-  },
+  // 添加活动
   {
     path: '/addActivityOld',
     name: 'AddActivityOld',
@@ -121,38 +147,31 @@ const routes = [
         path: '/locationGet',
         name: 'LocationGet',
         component: LocationGet,
-        beforeEnter: requireAuth,
       },
       {
         path: '/getInfoActivity',
         name: 'GetInfoActivity',
         component: GetInfoActivity,
-        beforeEnter: requireAuth,
       },
       {
         path: '/endAddActivity',
         name: 'EndAddActivity',
         component: EndAddActivity,
-        beforeEnter: requireAuth,
       }
     ]
   },
-  {
-    path: '/serverOld',
-    name: 'ServerOld',
-    component: ServerOld,
-    beforeEnter: requireAuth,
-  },
-  {
-    path: '/artificialOld',
-    name: 'ArtificialOld',
-    component: ArtificialOld,
-    beforeEnter: requireAuth,
-  },
+  // 查看活动信息
   {
     path: '/idActivityOld',
     name: 'IdActivityOld',
     component: IdActivityOld,
+    beforeEnter: requireAuth,
+  },
+  // 查看时间币信息
+  {
+    path: '/coinInfo',
+    name: 'CoinInfo',
+    component: CoinInfo,
     beforeEnter: requireAuth,
   },
 ]

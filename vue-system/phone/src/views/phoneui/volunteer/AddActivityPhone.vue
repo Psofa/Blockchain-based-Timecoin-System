@@ -2,7 +2,7 @@
     <div class="addActivityBox">
         <el-header class="searchBox">
             <el-input type="text" v-model="searchTitle" placeholder="请输入活动名称" prefix-icon="el-icon-search" style="margin-right: 10px;"></el-input>
-            <el-button round @click = "search" style="width: auto;">搜索</el-button>
+            <el-button round @click = "search4" style="width: auto;">搜索</el-button>
         </el-header>
         <el-container class="mainBox">
             <el-header class="groupBox">
@@ -35,24 +35,6 @@
                 </ul>
             </el-main>
         </el-container>
-
-        <el-footer class="operations">
-            <span>
-            <router-link to="/homePhone" class="RouterLink">
-                <i class="el-icon-house"></i>用户管理
-            </router-link>
-            </span>
-            <span>
-            <router-link to="/addActivityPhone" class="RouterLink">
-                <i class="el-icon-circle-plus"></i>报名活动
-            </router-link>
-            </span>
-            <span>
-            <router-link to="/infoOfUserPhone" class="RouterLink">
-                <i class="el-icon-user-solid"></i>个人中心
-            </router-link>
-            </span>
-        </el-footer>
     </div>
 </template>
 
@@ -82,12 +64,12 @@ export default {
     },
     mounted() {
         // 初始化时计算当前页的数据
-        this.search1();
+        this.search();
     },
     methods: {
         load() {
             if (this.tableData.length >= this.totalItems) {
-                this.$message.warning('没有更多数据了');
+                
                 return;
             }
             if (this.busy) return;
@@ -120,6 +102,7 @@ export default {
                         if (response.code === 1) {
                             this.totalItems = response.data.total;
                             this.originalData = response.data.rows;
+                            
                             // 合并原始数据到 tableData 数组中
                             this.tableData = [...this.tableData, ...this.originalData];
                             // 将新的数据作为Promise的结果返回
@@ -200,6 +183,10 @@ export default {
             this.tableData = [];
             this.search();
             
+        },
+        search4() {
+            this.tableData = [];
+            this.search();
         }
     }
 }
@@ -224,7 +211,7 @@ export default {
           flex-direction: column;
           justify-content: center; /* 水平居中 */
           align-items: center; /* 垂直居中 */
-          padding: 0px;
+          padding: 10px;
           .el-card{
             display: flex;
             padding: 5px;
@@ -249,23 +236,6 @@ export default {
             
           } 
         }
-    }
-    .operations{
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-      backdrop-filter: blur(10px);
-      border-radius: 5px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      flex-shrink: 0; /* 防止底部内容被压缩 */
-      position: fixed; /* 将底部组件固定在页面底部 */
-      bottom: 0;
-      width: 100%; /* 设置宽度为 100% */
-      .RouterLink {
-        text-decoration: none;
-      }
-
     }
 }
 </style>

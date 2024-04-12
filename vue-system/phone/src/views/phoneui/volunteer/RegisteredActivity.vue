@@ -21,7 +21,7 @@
             <div v-if="!isActivityEnd" style="display: flex;align-items: center;width: 100%;">
                 <el-button round v-if="!isSignUp">报名结束</el-button>
                 <el-button type="primary" round @click= "quit" v-if="isSignUp">取消报名</el-button>
-                <el-button round v-if="isSignIn && this.isEndSign">已签到</el-button>
+                <el-button round v-else-if="isSignIn && this.isEndSign">已签到</el-button>
                 <el-button type="primary" round @click= "signInUser" v-else-if="isSignIn && !this.isEndSign">签到</el-button>
                 <el-button round v-else>签到未开始</el-button>
             </div>
@@ -226,6 +226,7 @@ export default {
                 const response = await request.get(`users/volold/activity?${queryString}`);
                 if (response.code === 1) {
                     this.form = response.data;
+                    this.$message("已经报名成功，请尽快联系老人");
                     this.calculateDeadline();
                 } else {
                     this.$message.error(response.msg);
@@ -237,16 +238,17 @@ export default {
         getIsEndSign() {
             // 创建 URLSearchParams 对象
             const params = new URLSearchParams();
-            params.append('id', this.id);
+            params.append('activityId', this.id);
             // 将 URLSearchParams 对象转换为查询字符串
             const queryString = params.toString();
 
             // 发起请求时将查询字符串添加到URL中
             request.get(`users/vol/sign?${queryString}`).then(response => {
                 if (response.code === 1) {
-                    if (response.sign === 1) {
+                    if (response.data.sign === 1) {
                         // 在这里处理获取到的结果
                         this.isEndSign = true;
+                        console.log('已签到');
                     }
                 } else {
                     this.$message.error(response.msg);
@@ -302,7 +304,7 @@ export default {
   align-items: center;
   padding: 10px;
   .image {
-    width: 100%;
+    width: 95%;
     height: auto;
   }
   .content{
@@ -311,7 +313,7 @@ export default {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     height: auto;
-    width: 100%;
+    width: 90%;
     display: flex;
     flex-direction: column;
     justify-content: center;

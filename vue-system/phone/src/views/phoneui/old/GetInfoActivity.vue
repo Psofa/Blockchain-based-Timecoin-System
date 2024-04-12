@@ -26,16 +26,6 @@
                   style="vertical-align: middle;margin-right: 20px;width: auto;">
               </el-time-picker>
           </el-form-item>
-          <el-form-item prop="end">
-              <el-time-picker
-                  v-model="form.end"
-                  placeholder="活动结束时间"
-                  style="vertical-align: middle;margin-right: 20px;width: auto;">
-              </el-time-picker>
-          </el-form-item>
-          <el-form-item prop="phone">
-            <el-input v-model="form.phone" placeholder="发布人电话"></el-input>
-          </el-form-item>
           <el-form-item prop="description">
             <el-input type="textarea" v-model="form.description" placeholder="活动描述"></el-input>
           </el-form-item>
@@ -172,16 +162,12 @@ export default {
                 const data = this.form;
                 data['status'] = 5;
                 data.begin = formatTimeString(data.begin);
-                data.end = formatTimeString(data.end);
+                data.end = '23:49:49';
                 data.date = formatDateString(data.date);
                 data.deadline = format(data.deadline, "yyyy-MM-dd'T'HH:mm:ss", { timeZone: 'Asia/BeiJing' });
-                
+                data.phone = "15245678901";
                 // 存储表单数据
                 localStorage.setItem('form', JSON.stringify(data));
-                this.$message({
-                    message: 'success',
-                    type: 'success'
-                });
                 this.$emit('next');
                 this.$router.push('/locationGet');
                 this.resetForm();
@@ -189,7 +175,7 @@ export default {
             });
         },
         handleCancel() {
-            this.$router.push('/activityOld');
+            this.$router.push('/serverOld');
         },
         resetForm() {
             this.$refs.form.resetFields();

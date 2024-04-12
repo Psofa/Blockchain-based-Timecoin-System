@@ -229,7 +229,7 @@ export default {
   align-items: center;
   padding: 10px;
   .image {
-    width: 100%;
+    width: 95%;
     height: auto;
   }
   .content{
@@ -238,7 +238,7 @@ export default {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     height: auto;
-    width: 100%;
+    width: 90%;
     display: flex;
     flex-direction: column;
     justify-content: center;

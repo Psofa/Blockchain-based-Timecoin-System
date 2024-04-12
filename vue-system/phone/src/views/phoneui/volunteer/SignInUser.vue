@@ -99,7 +99,7 @@ export default {
                     this.$message.success(response.msg);
                     setTimeout(() => {
                         this.$router.push({ 
-                            name: 'RegisteredActivity',
+                            name: 'ActivityOfUser',
                             query: { 
                                 id: this.id,
                             } 

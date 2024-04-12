@@ -11,7 +11,7 @@
           </el-select>
           <el-input type="text" v-model="searchTitle" prefix-icon="el-icon-search"></el-input>
           <span class="searchBtn" style="margin-left: 20px;">
-              <el-button round @click = "handleSelectClick">搜索</el-button>
+              <el-button round>搜索</el-button>
           </span>
       </el-container>
       <el-main class="mainBox">
@@ -84,23 +84,6 @@
           </el-main>
         </div>
       </el-main>
-      <el-footer>
-        <span>
-          <router-link to="/homePhone" class="RouterLink">
-            <i class="el-icon-house"></i>用户管理
-          </router-link>
-        </span>
-        <span>
-          <router-link to="/addActivityPhone" class="RouterLink">
-            <i class="el-icon-circle-plus"></i>报名活动
-          </router-link>
-        </span>
-        <span>
-          <router-link to="/infoOfUserPhone" class="RouterLink">
-            <i class="el-icon-user-solid"></i>个人中心
-          </router-link>
-        </span>
-      </el-footer>
     </el-container>
 </template>
 
@@ -151,12 +134,7 @@ export default {
   methods: {
     load() {
       if (this.tableData.length >= this.totalItems) {
-        this.$notify({
-          title: '警告',
-          message: '没有更多数据了',
-          type: 'warning',
-          position: 'bottom-right',
-        });
+        
         return;
       }
       if (this.busy) return;
@@ -230,6 +208,10 @@ export default {
 
 <style lang="scss" scoped>
 .homeBox{
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
   .Title{
     display: flex;
     justify-content: space-between;
@@ -253,6 +235,7 @@ export default {
       }
   }
   .mainBox{
+    width: 100%;
     // 走马灯
     .blockOfImage{
       .el-carousel__item h3 {
@@ -316,22 +299,6 @@ export default {
           }
         } 
       }
-    }
-  }
-  .el-footer{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-    backdrop-filter: blur(10px);
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-    flex-shrink: 0; /* 防止底部内容被压缩 */
-    position: fixed; /* 将底部组件固定在页面底部 */
-    bottom: 0;
-    width: 100%; /* 设置宽度为 100% */
-    .RouterLink {
-      text-decoration: none;
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-result icon="success" title="成功提示" subTitle="请根据提示进行操作">
+        <el-result icon="success" title="成功提交" subTitle="请根据提示进行操作">
             <template slot="extra">
                 <el-button type="primary" size="medium" @click="pushBack">返回</el-button>
             </template>

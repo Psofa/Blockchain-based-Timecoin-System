@@ -1,5 +1,14 @@
 <template>
     <div>
+      <el-dialog :visible.sync="dialogVisible" title="增添活动" :append-to-body="true"
+        :modal-append-to-body="false">
+          <el-result icon="warning" title="是否确认" subTitle="该活动预估消耗4个时间币">
+              <template slot="extra">
+                  <el-button type="primary" size="medium" @click="signIn">确 定</el-button>
+              </template>
+          </el-result>
+      </el-dialog>
+      
       <div id="mapContainer" style="position: relative;">
         <div id="myPageTop" style="position: absolute;right: 0; z-index: 1000;">
           <table style="background-color: white;">
@@ -21,7 +30,7 @@
         <div style="margin: 20px;">
           当前位置：{{ address }}
         </div>
-        <el-button type="primary" @click="signIn" style="margin: 20px;">确 定</el-button>
+        <el-button type="primary" @click="dialogVisible=true" style="margin: 20px;">确 定</el-button>
         <el-button type="primary" @click="initAMap" style="margin: 20px;">刷新位置</el-button>
       </div>
     </div>
@@ -35,6 +44,7 @@
     name: "LocationGet",
     data() {
       return {
+        dialogVisible: false,
         map: null,
         address: "",
         keyword: "",
@@ -159,7 +169,7 @@
             localStorage.removeItem('form');
             this.$emit('next');
             this.$message({
-                message: 'success',
+                message: '活动申请成功请耐心等待审核！',
                 type: 'success'
             });
             this.$router.push('/endAddActivity');
