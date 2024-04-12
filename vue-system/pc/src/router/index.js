@@ -7,6 +7,8 @@ import AdminView from '../views/elementui/AdminView.vue'
 import LoginView from '../views/elementui/LoginView.vue'
 import AddUserView from '../views/elementui/AddUserView.vue'
 import AddActivityView from '@/views/elementui/AddActivityView.vue'
+import SystemView from '@/views/elementui/SystemView.vue'
+import CoinView from '@/views/elementui/CoinView.vue'
 
 import { requireAuth, loginrequireAuth } from '../utils/permission'
 
@@ -59,6 +61,18 @@ const routes = [
         path: '/addActivityView',
         name: 'AddActivityView',
         component: AddActivityView,
+        
+      },
+      {
+        path: '/systemView',
+        name: 'SystemView',
+        component: SystemView,
+        
+      },
+      {
+        path: '/coinView',
+        name: 'CoinView',
+        component: CoinView,
         
       },
     ]

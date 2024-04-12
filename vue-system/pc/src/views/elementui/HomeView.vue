@@ -10,7 +10,7 @@
             <span v-else class="username">{{ name?.charAt(0) }}</span>
             <div class="company-info">
               <div class="title">
-                江苏传智播客教育科技股份有限公司
+                杭州云象网络技术有限公司
                 <span>体验版</span>
               </div>
               <div class="depart">{{ name }} ｜ {{ company }}-{{ departmentName }}</div>
@@ -28,7 +28,7 @@
               />
             </div>
             <div class="todo-item">
-              <span>正式员工</span>
+              <span>员工人数</span>
               <count-to
                 :start-val="0"
                 :end-val="homeData.regularEmployeeTotal"
@@ -36,15 +36,7 @@
               />
             </div>
             <div class="todo-item">
-              <span>合同待签署</span>
-              <count-to
-                :start-val="0"
-                :end-val="homeData.contractSignTotal"
-                :duration="1000"
-              />
-            </div>
-            <div class="todo-item">
-              <span>待入职</span>
+              <span>系统参与人数</span>
               <count-to
                 :start-val="0"
                 :end-val="homeData.toBeEmployed"
@@ -52,7 +44,7 @@
               />
             </div>
             <div class="todo-item">
-              <span>本月待转正</span>
+              <span>活动个数</span>
               <count-to
                 :start-val="0"
                 :end-val="homeData.toBeConfirmed"
@@ -60,7 +52,15 @@
               />
             </div>
             <div class="todo-item">
-              <span>本月待离职</span>
+              <span>志愿者人数</span>
+              <count-to
+                :start-val="0"
+                :end-val="homeData.toBeDismissed"
+                :duration="1000"
+              />
+            </div>
+            <div class="todo-item">
+              <span>老人人数</span>
               <count-to
                 :start-val="0"
                 :end-val="homeData.toBeDismissed"
@@ -82,45 +82,48 @@
           <div class="panel-title">快捷入口</div>
           <div class="quick-entry">
             <div class="entry-item">
-              <div class="entry-icon approval" />
-              <span>假期审批</span>
-            </div>
-            <div class="entry-item">
-              <div class="entry-icon social" />
-              <span>社保管理</span>
-            </div>
-            <div class="entry-item">
               <div class="entry-icon role" />
-              <span>角色管理</span>
+              <span>用户管理</span>
             </div>
             <div class="entry-item">
               <div class="entry-icon salary" />
-              <span>薪资设置</span>
+              <span>时间币管理</span>
             </div>
             <div class="entry-item">
               <div class="entry-icon bpm" />
-              <span>流程设置</span>
+              <span>服务管理</span>
+            </div>
+            <div class="entry-item">
+              <div class="entry-icon departMent" />
+              <span>活动管理</span>
+            </div>
+            <div class="entry-item">
+              <div class="entry-icon support" />
+              <span>人工服务</span>
+            </div>
+            <div class="entry-item">
+              <div class="entry-icon home" />
+              <span>系统管理</span>
             </div>
           </div>
         </div>
         <!-- 图表数据 -->
         <div class="panel">
-          <div class="panel-title">社保申报数据</div>
+          <div class="panel-title">用户注册数据</div>
           <div class="chart-container">
             <div class="chart-info">
               <div class="info-main">
-                <span>申报人数</span>
+                <span>注册人数</span>
                 <!-- homeData: {} -->
                 <count-to
                   :start-val="0"
                   :end-val="homeData.socialInsurance?.declarationTotal"
                   :duration="1000"
                 />
-
               </div>
               <div class="info-list">
                 <div class="info-list-item">
-                  <span>待申报(人)</span>
+                  <span>志愿者(人)</span>
                   <count-to
                     :start-val="0"
                     :end-val="homeData.socialInsurance?.toDeclareTotal"
@@ -128,7 +131,7 @@
                   />
                 </div>
                 <div class="info-list-item">
-                  <span>申报中(人)</span>
+                  <span>老人(人)</span>
                   <count-to
                     :start-val="0"
                     :end-val="homeData.socialInsurance?.declaringTotal"
@@ -136,7 +139,7 @@
                   />
                 </div>
                 <div class="info-list-item">
-                  <span>已申报(人)</span>
+                  <span>管理员(人)</span>
                   <count-to
                     :start-val="0"
                     :end-val="homeData.socialInsurance?.declaredTotal"
@@ -146,17 +149,17 @@
               </div>
             </div>
             <div class="chart">
-              <!-- 图表 -->
+              <div id="myChart0" style="width: 600px; height: 400px;"></div>
             </div>
           </div>
         </div>
         <!-- 图表数据 -->
         <div class="panel">
-          <div class="panel-title">公积金申报数据</div>
+          <div class="panel-title">活动服务数据</div>
           <div class="chart-container">
             <div class="chart-info">
               <div class="info-main">
-                <span>申报人数</span>
+                <span>活动个数</span>
                 <count-to
                   :start-val="0"
                   :end-val="homeData.providentFund?.declarationTotal"
@@ -165,7 +168,7 @@
               </div>
               <div class="info-list">
                 <div class="info-list-item">
-                  <span>待申报(人)</span>
+                  <span>待审核(个)</span>
                   <count-to
                     :start-val="0"
                     :end-val="homeData.providentFund?.toDeclareTotal"
@@ -173,7 +176,7 @@
                   />
                 </div>
                 <div class="info-list-item">
-                  <span>申报中(人)</span>
+                  <span>报名中(个)</span>
                   <count-to
                     :start-val="0"
                     :end-val="homeData.providentFund?.declaringTotal"
@@ -181,7 +184,15 @@
                   />
                 </div>
                 <div class="info-list-item">
-                  <span>已申报(人)</span>
+                  <span>进行中(个)</span>
+                  <count-to
+                    :start-val="0"
+                    :end-val="homeData.providentFund?.declaredTotal"
+                    :duration="1000"
+                  />
+                </div>
+                <div class="info-list-item">
+                  <span>已结束(个)</span>
                   <count-to
                     :start-val="0"
                     :end-val="homeData.providentFund?.declaredTotal"
@@ -191,7 +202,11 @@
               </div>
             </div>
             <div class="chart">
-              <!-- 图表 -->
+              <div
+                class="HelloWorld echart-box"
+                id="myChart1"
+                :style="{ width: '520px', height: '400px',background:'#ffffff'}"
+              ></div>
             </div>
           </div>
         </div>
@@ -235,12 +250,14 @@
           <div class="panel-title">通知公告</div>
           <div class="information-list">
             <div v-for="(item,index) in list" :key="index" class="information-list-item">
-              <img :src="item.icon" alt="">
-              <div>
-                <p>
+              <img :src="require('@/assets/myResource/information1.jpg')" />
+              <div style="margin-left:30px">
+                <p style="margin-bottom: 0px !important;margin-top: 15px !important;">
                   {{ item.notice }}
                 </p>
-                <p>{{ item.createTime }}</p>
+                <p style="margin-top: 3px !important;">
+                  {{ item.createTime }}
+                </p>
               </div>
             </div>
           </div>
@@ -252,28 +269,140 @@
 
 <script>
 import CountTo from 'vue-count-to'
-import { mapGetters } from 'vuex'
+import * as echarts from "echarts";
 
 export default {
+  name: 'HomeView',
   components: {
-    CountTo
+    CountTo,
   },
   data() {
     return {
       homeData: {}, // 存放首页数据的对象
-      list: []
+      list: [],
+      name: '张三',
+      avatar: '',
+      company: '杭州云象网络技术有限公司',
+      departmentName: '技术部',
+      // 柱状图
+      
+      // 扇形图
+      datas: [
+        { value: 20, name: '未审核' },
+        { value: 30, name: '报名中' },
+        { value: 40, name: '进行中' },
+        { value: 10, name: '已结束' },
+      ],
     }
   },
-  // 计算属性
-  computed: {
-    ...mapGetters(['name', 'avatar', 'company', 'departmentName']) // 映射给了计算属性
+  mounted() {
+    this.renderBarChart();
+    this.drawLine();
+    // 生成示例数据
+    this.generateSampleData();
   },
   created() {
     
   },
   methods: {
-   
-  }
+    renderBarChart() {
+      // 初始化 ECharts 实例
+      let myChart = echarts.init(document.getElementById('myChart0'));
+
+      // 配置图表参数
+      let options = {
+        title: {
+          text: '老人和志愿者的登录人数最近6周',
+          left: 'center',
+        },
+        tooltip: {
+          trigger: 'axis',
+          axisPointer: {
+            type: 'shadow'
+          }
+        },
+        legend: {
+          left: 'left', // 设置图例左对齐
+          data: ['老人', '志愿者']
+        },
+        xAxis: {
+          type: 'category',
+          data: ['第1周', '第2周', '第3周', '第4周', '第5周', '第6周']
+        },
+        yAxis: {
+          type: 'value'
+        },
+        series: [
+          {
+            name: '老人',
+            type: 'bar',
+            data: [100, 200, 150, 80, 70, 110]
+          },
+          {
+            name: '志愿者',
+            type: 'bar',
+            data: [80, 130, 100, 60, 50, 90]
+          }
+        ]
+      };
+
+      // 绘制图表
+      myChart.setOption(options);
+    },
+    drawLine() {
+      // 初始化 ECharts 实例
+      let myChart = echarts.init(document.getElementById('myChart1'));
+
+      // 配置图表参数
+      let options = {
+        title: {
+          text: '活动状态分析',
+          left: 'center',
+        },
+        tooltip: {
+          trigger: 'item',
+          formatter: '{a} <br/>{b} : {c} ({d}%)',
+        },
+        legend: {
+          orient: 'vertical',
+          left: 'left',
+          data: ['未审核', '报名中', '进行中', '已结束'],
+        },
+        series: [
+          {
+            name: '活动状态',
+            type: 'pie',
+            radius: '55%',
+            center: ['50%', '60%'],
+            data: this.datas,
+            emphasis: {
+              itemStyle: {
+                shadowBlur: 10,
+                shadowOffsetX: 0,
+                shadowColor: 'rgba(0, 0, 0, 0.5)',
+              },
+            },
+          },
+        ],
+      };
+
+      // 绘制图表
+      myChart.setOption(options);
+    },
+    generateSampleData() {
+      // 生成示例数据
+      const sampleData = [
+        { notice: '通知公告1', createTime: '2024-04-08' },
+        { notice: '通知公告2', createTime: '2024-04-07' },
+        { notice: '通知公告3', createTime: '2024-04-06' },
+        { notice: '通知公告4', createTime: '2024-04-05' },
+        { notice: '通知公告5', createTime: '2024-04-04' }
+      ];
+
+      // 将示例数据赋值给列表
+      this.list = sampleData;
+    },
+  },
 }
 </script>
 
@@ -450,8 +579,17 @@ export default {
             &.role {
               background-image: url('~@/assets/common/role.png');
             }
-             &.bpm {
+            &.bpm {
               background-image: url('~@/assets/common/bpm.png');
+            }
+            &.departMent {
+              background-image: url('~@/assets/common/departMent.png');
+            }
+            &.support {
+              background-image: url('~@/assets/common/support.png');
+            }
+            &.home {
+              background-image: url('~@/assets/common/home.png');
             }
           }
           span {

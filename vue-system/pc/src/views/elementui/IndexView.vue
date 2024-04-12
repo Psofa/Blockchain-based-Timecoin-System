@@ -3,13 +3,20 @@
     <el-header class="first-header">
       <div class="header-left">
         <span class="header-logo"></span>
-        <span style=" font-size: 20px; font-weight: bold;">System</span>
+        <span style=" font-size: 20px; font-weight: bold;">SYSTEM</span>
       </div>
       <div class="header-right">
         <el-dropdown>
           <span class="el-dropdown-link">
-            <el-avatar icon="el-icon-user-solid" style="margin-right: 5px;"></el-avatar>
-            <div>管理员：{{ userInfo.id }}</div>
+            <div style="margin-rignt=10px;">
+                <img v-if="squareUrl" class="avatar1" :src="squareUrl">
+                <span v-else class="username1">
+                    <div style="font-size: 30px;">
+                        {{ userInfo.username?.charAt(0) }}
+                    </div>
+                </span>
+            </div>
+            <div style="color: white">管理员：{{ userInfo.username }}</div>
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
@@ -46,6 +53,26 @@
               <span v-if="!isCollapse" slot="title">活动管理</span> 
             </el-menu-item>
           </router-link>
+          <router-link to="/coinView" class="RouterLink">
+            <el-menu-item index="4">
+              <i class="el-icon-coin"></i>
+              <span v-if="!isCollapse" slot="title">时间币管理</span> 
+            </el-menu-item>
+          </router-link>
+          <router-link to="/systemView" class="RouterLink">
+            <el-menu-item index="5">
+              <i class="el-icon-s-platform"></i>
+              <span v-if="!isCollapse" slot="title">系统管理</span> 
+            </el-menu-item>
+          </router-link>
+          <el-menu-item index="6">
+            <i class="el-icon-pie-chart"></i>
+            <span v-if="!isCollapse" slot="title">服务管理</span> 
+          </el-menu-item>
+          <el-menu-item index="7">
+            <i class="el-icon-chat-line-round"></i>
+            <span v-if="!isCollapse" slot="title">人工服务</span> 
+          </el-menu-item>
         </el-menu>
       </el-aside>
       <el-container class="right">
@@ -86,13 +113,14 @@ export default {
     data() {
       return {
           // 折叠
-          isCollapse: false,
+          isCollapse: true,
           // 打开的标签页列表
           openedTabs: [
             { title: '主页', path: '/homeView', closable: false }, // Home标签默认打开且不可关闭
           ],
           activeTab: '/homeView',
           userInfo: {},
+          squareUrl: '',
       }
     },
     created() {
@@ -127,6 +155,10 @@ export default {
             return '添加活动';
           case '/addUserView':
             return '添加用户';
+          case '/systemView':
+            return '系统管理';
+          case '/coinView':
+            return '时间币管理';
           default:
             return path; // 默认返回路由路径
         }
@@ -206,7 +238,6 @@ export default {
       // 刷新之后变化
       initializeTabFromCurrentRoute() {
         const currentPath = this.$route.path;
-        const currentRouteName = this.$route.name;
 
         // 如果当前路由已经是打开的标签之一，则不执行任何操作
         const tabExists = this.openedTabs.some(tab => tab.path === currentPath);
@@ -214,7 +245,7 @@ export default {
           // 除非是默认的 homeView 路由，否则添加到 openedTabs
           if (currentPath !== '/homeView') {
             this.openedTabs.push({
-              title: currentRouteName || 'No Name', // 使用路由名称或备用标题
+              title: this.getTitle(currentPath), // 使用路由名称或备用标题
               path: currentPath,
               closable: true, // 除 homeView 外的标签应该是可关闭的
             });
@@ -232,19 +263,19 @@ export default {
   width: 200px;
 }
 .header-logo {
-  background-image: url('../../assets/logo.png'); /* 替换为图像路径 */
+  background-image: url('@/assets/myResource/system.jpg'); /* 替换为图像路径 */
   background-size: contain; /* 控制图像大小，可以使用 cover、contain 或具体的尺寸值 */
   background-repeat: no-repeat; /* 防止图像重复 */
   display: inline-block; /* 设置为内联块元素，以便可以设置宽度和高度 */
-  width: 40px; /* 图像宽度 */
-  height: 30px; /* 图像高度 */
+  width: 50px;
+  height: 50px;
 }
 .indexContainer{
-  background-image: url("@/assets/myResource/indexBackground.jpg");
+  background-image: url("@/assets/myResource/indexbackground5.jpg");
   height: 100%;
 
   .first-header{
-    background-color: #409EFF;
+    background-color: #006FBE;
     color: white;
     display: flex;
     justify-content: space-between;
@@ -258,10 +289,31 @@ export default {
     .header-right {
       display: flex;
       align-items: center;
+      .avatar1 {
+          display: inline-block;
+          width: 40px;
+          height: 40px;
+          border-radius: 12px;
+          background-color: #d9d9d9;
+          line-height: 48px;
+          text-align: center;
+      }
+      .username1 {
+          display: inline-block;
+          width: 40px;
+          height: 40px;
+          text-align: center;
+          line-height: 40px;
+          border-radius: 50%;
+          background: #04c9be;
+          color: #fff;
+          margin-right: 4px;
+      }
       .el-dropdown-link {
         display: flex;
         align-items: center;
         cursor: pointer;
+        color: white;
       }
     }
   }

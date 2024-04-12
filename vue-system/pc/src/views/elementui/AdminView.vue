@@ -41,48 +41,69 @@
         <el-button type="primary" round icon="el-icon-delete" @click="deleteTable" style="height: 35px; margin-right: 20px;">删除</el-button>
       </div>
     </div>
-    <el-table
-      :data="tableData"
-      border
-      style="width: 100%;border: 1px solid #ccc;"
-      show-selection @selection-change="handleSelectionChange">
-      <!-- 表格列定义 -->
-      <el-table-column type="selection" width="45"></el-table-column>
-      <el-table-column fixed prop="id" label="id" width="80"></el-table-column>
-      <el-table-column prop="title" label="活动标题" width="100"></el-table-column>
-      <el-table-column prop="quota" label="活动名额" width="110" sortable></el-table-column>
-      <el-table-column prop="date" label="活动时期" width="110" sortable></el-table-column>
-      <el-table-column prop="begin" label="活动开始时间" width="150" sortable></el-table-column>
-      <el-table-column prop="end" label="活动结束时间" width="150" sortable></el-table-column>
-      <el-table-column prop="address" label="地址" width="300"></el-table-column>
-      <el-table-column prop="oldId" label="老人ID" width="80"></el-table-column>
-      <el-table-column prop="phone" label="发布人电话" width="100"></el-table-column>
-      <el-table-column prop="status" label="活动状态" width="100">
-        <template slot-scope="scope">
-          <el-tag :type="getTagType(scope.row.status)">
-            {{ getTagText(scope.row.status) }}
-          </el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="description" label="活动活动描述" width="150">
-        <template slot-scope="scope">
-          <!-- 点击按钮触发打开弹窗事件 -->
-          <el-button type="text" @click="openDialog(scope.row.description)">点击查看描述</el-button>
-        </template>
-      </el-table-column>
-      <!-- 操作列 -->
-      <el-table-column
-        fixed="right"
-        label="操作"
-        width="180">
-        <template slot-scope="scope">
-          <div style="display: flex; justify-content: center;">
-            <el-button size = "small" @click="queryForm(scope.row)" style="margin-right: 10px;">查看</el-button>
-            <el-button size = "small" @click="editForm(scope.row)">编辑</el-button>
-          </div>
-        </template>
-      </el-table-column>
-    </el-table>
+    <div class="contentBox">
+      <!-- 树控件 -->
+      <div class="left">
+        <el-input
+          placeholder="输入关键字进行过滤"
+          v-model="filterText">
+        </el-input>
+
+        <el-tree
+          class="filter-tree"
+          :data="treeData"
+          :props="defaultProps"
+          default-expand-all
+          :filter-node-method="filterNode"
+          ref="tree">
+        </el-tree>
+      </div>
+      <div class="right">
+        <!-- 表格 -->
+        <el-table
+          :data="tableData"
+          border
+          style="border: 1px solid #ccc;"
+          show-selection @selection-change="handleSelectionChange">
+          <!-- 表格列定义 -->
+          <el-table-column type="selection" width="45"></el-table-column>
+          <el-table-column fixed prop="id" label="id" width="80"></el-table-column>
+          <el-table-column prop="title" label="活动标题" width="100"></el-table-column>
+          <el-table-column prop="quota" label="活动名额" width="110" sortable></el-table-column>
+          <el-table-column prop="date" label="活动时期" width="110" sortable></el-table-column>
+          <el-table-column prop="begin" label="活动开始时间" width="150" sortable></el-table-column>
+          <el-table-column prop="end" label="活动结束时间" width="150" sortable></el-table-column>
+          <el-table-column prop="address" label="地址" width="300"></el-table-column>
+          <el-table-column prop="oldId" label="老人ID" width="80"></el-table-column>
+          <el-table-column prop="phone" label="发布人电话" width="100"></el-table-column>
+          <el-table-column prop="status" label="活动状态" width="100">
+            <template slot-scope="scope">
+              <el-tag :type="getTagType(scope.row.status)">
+                {{ getTagText(scope.row.status) }}
+              </el-tag>
+            </template>
+          </el-table-column>
+          <el-table-column prop="description" label="活动活动描述" width="150">
+            <template slot-scope="scope">
+              <!-- 点击按钮触发打开弹窗事件 -->
+              <el-button type="text" @click="openDialog(scope.row.description)">点击查看描述</el-button>
+            </template>
+          </el-table-column>
+          <!-- 操作列 -->
+          <el-table-column
+            fixed="right"
+            label="操作"
+            width="180">
+            <template slot-scope="scope">
+              <div style="display: flex; justify-content: center;">
+                <el-button size = "small" @click="queryForm(scope.row)" style="margin-right: 10px;">查看</el-button>
+                <el-button size = "small" @click="editForm(scope.row)">编辑</el-button>
+              </div>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+    </div>
     <!-- 分页组件 -->
     <div class="pagination-container">
       <el-pagination
@@ -198,7 +219,6 @@
 
 <script>
 import { MessageBox } from 'element-ui';// 需要单独导入
-import { format } from 'date-fns-tz';
 import request from '@/utils/request';
 
 export default {
@@ -254,6 +274,55 @@ export default {
       formDisabled: true, // 禁用整个表单
       isFormIdDisabled: false,
       isFormRemainDisabled: false,
+      // 树控组件
+      filterText: '',
+      treeData: [{
+        id: 1,
+        label: '专业类',
+        children: [{
+          id: 4,
+          label: '医疗康复',
+        }, {
+          id: 5,
+          label: '健康管理'
+        }]
+      }, {
+        id: 2,
+        label: '非专业类',
+        children: [{
+          id: 6,
+          label: '清洁整理'
+        }, {
+          id: 7,
+          label: '购物陪同'
+        }, {
+          id: 8,
+          label: '问诊陪护'
+        }, {
+          id: 9,
+          label: '物品代购'
+        }, {
+          id: 10,
+          label: '衣服缝补'
+        }, {
+          id: 11,
+          label: '欢庆联欢'
+        }]
+      }, {
+        id: 3,
+        label: '特色类',
+        children: [{
+          id: 12,
+          label: '美容美发、运动等指导'
+        }, {
+          id: 13,
+          label: '棋牌、花茶花艺等陪伴'
+        }]
+      }],
+      defaultProps: {
+        children: 'children',
+        label: 'label'
+      },
     };
   },
   mounted() {
@@ -262,7 +331,17 @@ export default {
     // 交表的时候使用
     this.isFormItemDisabled();
   },
+  watch: {
+    filterText(val) {
+      this.$refs.tree.filter(val);
+    }
+  },
   methods: {
+    // 过滤树节点
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
     openDialog(description) {
       // 打开弹窗显示活动描述
       MessageBox.alert(description, '活动描述', {
@@ -422,7 +501,7 @@ export default {
         }
       }
       // 格式化截止时间
-      data.deadline = format(data.deadline, "yyyy-MM-dd'T'HH:mm:ss", { timeZone: 'Asia/BeiJing' });
+      //data.deadline = format(data.deadline, "yyyy-MM-dd'T'HH:mm:ss", { timeZone: 'Asia/BeiJing' });
       // 格式化日期
       data.date = formatDateString(data.date);
       request.put('/administrator',data)
@@ -479,8 +558,6 @@ export default {
 .AdminContainer{
   display: flex;
   flex-direction: column;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
 }
 .search{
   height: 110px;
@@ -508,5 +585,22 @@ export default {
   margin-right: 20px;
   margin-left: 20px;
 }
-
+.contentBox{
+  display: flex;
+  flex-direction: row;
+}
+.left{
+  width: 18%;
+  border-right: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 20px;
+  background-color: #fff;
+  margin-right: 20px;
+}
+.right{
+  width: 80%;
+  padding: 10px;
+  border-radius: 20px;
+  background-color: #fff;
+}
 </style>

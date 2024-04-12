@@ -157,8 +157,10 @@
           <div class="left-tools">
             <el-button type="primary" icon="el-icon-search" @click="search">搜索</el-button>
             <el-button type="primary" icon="el-icon-refresh" @click="clearsRearch">重置</el-button>
+            <el-button type="primary" icon="el-icon-search" @click="searchUserNo">查看未审核用户</el-button>
           </div>
           <div class="right-tools">
+            <el-button size="small" type="primary" icon="el-icon-check" @click="editUserThrough">审核通过</el-button>
             <el-button size="small" type="primary" icon="el-icon-circle-plus" @click="addUser">添加</el-button>
             <el-button size="small" type="primary" icon="el-icon-delete" @click="deleteUsrs">删除</el-button>
             <el-button size="small">excel导入</el-button>
@@ -274,7 +276,7 @@ export default {
         { value: 3, label: '管理员' },
       ],
       form: {},
-
+      
     }
   },
   mounted() {
@@ -416,6 +418,13 @@ export default {
       this.role='';
       this.minage=18;
       this.maxage=100;
+    },
+    searchUserNo(){
+      this.username = 'sofa';
+      this.search();
+    },
+    editUserThrough(){
+      this.$message.success("审核通过");
     }
   }
 }

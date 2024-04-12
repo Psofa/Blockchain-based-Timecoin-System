@@ -1,40 +1,40 @@
 <template>
-  <div>
-    <el-form ref="form" :model="form" :rules="formRules">
-      <el-form-item label="用户名" prop="username">
-        <el-input v-model="form.username"></el-input>
-      </el-form-item>
-      <el-form-item label="用户类型" prop="role">
-        <el-select v-model="form.role" clearable placeholder="请选择" style="margin-right: 20px;">
-          <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="邮箱" prop="email">
-        <el-input v-model="form.email"></el-input>
-      </el-form-item>
-      <el-form-item label="年龄" prop="age">
-        <el-input-number v-model="form.age" :min="0"></el-input-number>
-      </el-form-item>
-      <el-form-item label="电话" prop="phone">
-        <el-input v-model="form.phone"></el-input>
-      </el-form-item>
-      <el-form-item label="地址" prop="address">
-        <el-input v-model="form.address"></el-input>
-      </el-form-item>
-      <el-form-item label="姓名" prop="name">
-        <el-input v-model="form.name"></el-input>
-      </el-form-item>
-      <el-form-item label="密码" prop="password">
-        <el-input type="password" v-model="form.password" autocomplete="new-password"></el-input>
-      </el-form-item>
-      <el-form-item label="确认密码" prop="confirmPassword">
-        <el-input type="password" v-model="form.confirmPassword" autocomplete="new-password"></el-input>
-      </el-form-item>
-    </el-form>
-    <div slot="footer" class="footer">
-      <el-button @click="handleCancel">取消</el-button>
-      <el-button type="primary" @click="addUser">提交</el-button>
+  <div class="AddBox">
+    <div class="BOX">
+      <h2>添加用户</h2>
+      <el-form ref="form" :model="form" :rules="formRules">
+        <el-form-item label="用户名" prop="username" label-width="100px">
+          <el-input v-model="form.username"></el-input>
+        </el-form-item>
+        <el-form-item label="用户类型" prop="role" label-width="100px">
+          <el-select v-model="form.role" clearable placeholder="请选择" style="margin-right: 20px;">
+            <el-option v-for="item in options" :key="item.value" :label="item.label" :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email" label-width="100px">
+          <el-input v-model="form.email"></el-input>
+        </el-form-item>
+        <el-form-item label="年龄" prop="age" label-width="100px">
+          <el-input-number v-model="form.age" :min="0"></el-input-number>
+        </el-form-item>
+        <el-form-item label="电话" prop="phone" label-width="100px">
+          <el-input v-model="form.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="姓名" prop="name" label-width="100px">
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" prop="password" label-width="100px">
+          <el-input type="password" v-model="form.password" autocomplete="new-password"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="confirmPassword" label-width="100px">
+          <el-input type="password" v-model="form.confirmPassword" autocomplete="new-password"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button @click="handleCancel" style="width: 48%;">取消</el-button>
+          <el-button type="primary" @click="addUser" style="width: 48%;margin-left:4%;">提交</el-button>
+        </el-form-item>
+      </el-form>
     </div>
   </div>
 </template>
@@ -55,10 +55,15 @@ export default {
       formRules: { // 表单校验规则
         username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
         role: [{ required: true, message: '请选择用户类型', trigger: 'change' }],
-        email: [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
+        email: [
+          { required: true, message: '请输入邮箱', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱格式', trigger: 'blur,change' }
+        ],
         age: [{ required: true, message: '请输入年龄', trigger: 'blur' }],
-        phone: [{ required: true, message: '请输入电话', trigger: 'blur' }],
-        address: [{ required: true, message: '请输入地址', trigger: 'blur' }],
+        phone: [
+          { required: true, message: '请输入电话', trigger: 'blur' },
+          { pattern: /^1[3-9]\d{9}$/, message: '请输入正确的11位电话号码', trigger: 'blur' }
+        ],
         name: [{ required: true, message: '请输入姓名', trigger: 'blur' }],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
@@ -89,6 +94,10 @@ export default {
               console.error('添加用户失败:', error);
             });
         }
+        else {
+          this.$message.error('请完善信息');
+          return false;
+        }
       });
     },
     resetForm() {
@@ -109,14 +118,31 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.el-form {
-  width: 40%;
-}
-.footer {
-  width: 40%;
+.AddBox {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  height: 80%;
+  .BOX {
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    .el-form {
+      width: auto;
+      padding: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      margin: auto;
+      .el-form-item {
+        flex: 0 0 calc(40% - 30px); /* 减去你想要的间距 */
+        margin-right: 30px; /* 添加你想要的间距 */
+      }
+    }
+  }
 }
 </style>

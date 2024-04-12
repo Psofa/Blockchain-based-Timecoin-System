@@ -1,7 +1,7 @@
 <template>
   <div class="main-container">
     <div class="image-container">
-      <!-- 这里放置你的图片 -->
+      <div class="system-title">时间币服务系统</div>
     </div>
     <div class="login-container">
       <div id="login-box" class="container" :class="{ 'right-panel-active': isRightPanelActive }">
@@ -32,14 +32,24 @@
             <div>
               <el-radio v-model="radio" label="1">老人</el-radio>
               <el-radio v-model="radio" label="2">志愿者</el-radio>
-              <el-radio v-model="radio" label="3">管理员</el-radio>
             </div>
             <el-button @click="signUp">注册</el-button>
+            <div class="loginIcon">
+              <div class="login-icon wechat"/>
+              <div class="login-icon QQ"/>
+              <div class="login-icon alipay"/>
+            </div>
           </form>
         </div>
         <div class="form-container sign-in-container">
           <form>
             <h1>登录</h1>
+            <div style="margin-top: 20px;margin-bottom: 20px;">登陆方式</div>
+            <div class="loginIcon">
+              <div class="login-icon wechat"/>
+              <div class="login-icon QQ"/>
+              <div class="login-icon alipay"/>
+            </div>
             <div class="txtb">
               <input v-model="signInUsername" type="text" placeholder="Username">
             </div>
@@ -205,7 +215,27 @@ body {
     height: 100vh;
     margin: -20px 0 50px;
 }
-
+.loginIcon {
+    display: flex;
+    justify-content: center;
+}
+.login-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 20px;
+  background: #f5f6f8;
+  background-size: cover;
+  margin: 10px;
+  &.wechat {
+    background-image: url('~@/assets/myResource/wechat.png');
+  }
+  &.QQ {
+    background-image: url('~@/assets/myResource/QQ.png');
+  }
+  &.alipay {
+    background-image: url('~@/assets/myResource/alipay.png');
+  }
+}
 h1 {
     font-weight: bold;
     margin: 0;
@@ -232,6 +262,7 @@ a {
 .image-container {
   width: 45%; /* 左边留 60% 的空间 */
   background: url("@/assets/myResource/login2.jpg") center center/cover;
+  text-align: center;
 }
 .login-container {
   background: url("@/assets/myResource/login1.jpg") center center/cover;
@@ -462,5 +493,16 @@ button.ghost {
 .container.container.right-panel-active .overlay-right {
     transform: translateY(20%);
 }
-
+.system-title {
+  color: #6190bf; /* 设置文字颜色为 Element UI 的主题色 */
+  font-size: 3em; /* 设置文字大小为 3em */
+  font-weight: bold; /* 设置文字为粗体 */
+  text-align: center; /* 设置文字居中对齐 */
+  text-shadow: 10px 10px 40px rgba(0, 0, 0, 0.5); /* 添加文字阴影 */
+  font-family: 'Arial', sans-serif; /* 改变字体 */
+  padding: 10px; /* 添加内边距 */
+  position: relative;
+  font-style: italic; /* 设置文字为斜体 */
+  top: 15%;
+}
 </style>
