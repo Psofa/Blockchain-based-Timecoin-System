@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.example.timecoinweb.mapper.VolMapper">
+    <!-- 对中间表进行更新,主要签到和完成-->
+    <update id="update">
+        update activity_volunteer
+        <set>
+            <if test="status!=null">
+                status=#{status},
+            </if>
+            <if test="sign!=null">
+                sign=#{sign},
+            </if>
+            <if test="updateTime!=null">
+                update_time=#{updateTime},
+            </if>
+        </set>
+        where volunteer_id=#{volId} and activity_id=#{activityId}
+    </update>
+
+    <delete id="deleteByUserIds">
+        delete
+        from volunteer
+        where volunteer.user_id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")" >
+            #{id}
+        </foreach>
+    </delete>
+
+<!--    根据活动id删除活动志愿者中间表对应项-->
+    <delete id="deleteVolActByActIds">
+        delete
+        from activity_volunteer
+        where activity_volunteer.activity_id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")" >
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <select id="volSelectPageActivity" resultType="org.example.pojo.Activity">
+        select distinct act.id, act.title , act.quota , act.deadline
+             , act.date , act.begin , act.end , act.address , act.old_id
+               , act.phone , act.description , act.status , act.administrator_id
+             , act.create_time , act.update_time , act.message , act.remain
+        from activity as act,activity_volunteer as av
+        <where>
+            <if test="oldId!=null">
+                act.old_id=#{oldId}
+            </if>
+            <if test="title!='' and title!=null">
+                and act.title like concat('%',#{title},'%')
+            </if>
+            <if test="date!=null">
+                and act.date =#{date}
+            </if>
+            <if test="begin!=null">
+                and act.begin &gt;= #{begin}
+            </if>
+            <if test="end!=null">
+                and act.end &lt;= #{end}
+            </if>
+            <if test="status!=null">
+                and act.status = #{status}
+            </if>
+            <if test="address!=null and address!=''">
+                and act.address like concat('%',#{address},'%')
+            </if>
+            <if test="ids != null and ids.size() > 0">
+                and act.id in
+                <foreach collection="ids" item="id" separator="," open="(" close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="volId!=null">
+                and av.volunteer_id=#{volId}
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+
+
+    <select id="volSelectNotActivity" resultType="org.example.pojo.Activity">
+        select *
+        from activity
+        <where>
+            <if test="ids != null and ids.size() > 0">
+                id not in
+                <foreach collection="ids" item="id" separator="," open="(" close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="title!='' and title!=null">
+                and title like concat('%',#{title},'%')
+            </if>
+            <if test="date!=null">
+                and date =#{date}
+            </if>
+            <if test="begin!=null">
+                and begin &gt;= #{begin}
+            </if>
+            <if test="end!=null">
+                and end &lt;= #{end}
+            </if>
+            <if test="status!=null">
+                and status = #{status}
+            </if>
+            <if test="address!=null and address!=''">
+                and address like concat('%',#{address},'%')
+            </if>
+            <if test="deadline!=null">
+                and deadline &gt;= #{deadline}
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+
+</mapper>
