@@ -11,12 +11,21 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+<<<<<<< HEAD
+//    @ExceptionHandler(DataIntegrityViolationException.class)
+//    public Result handleDataIntegrityViolationException(DataIntegrityViolationException ex){
+//        ex.printStackTrace();
+//
+//        return Result.error("用户名已存在");
+//    }
+=======
     @ExceptionHandler(DataIntegrityViolationException.class)
     public Result handleDataIntegrityViolationException(DataIntegrityViolationException ex){
         ex.printStackTrace();
 
         return Result.error("用户名已存在");
     }
+>>>>>>> c09fab713a5f284a2c783aa7635c72ace7d1f39f
 
 
     @ExceptionHandler(Exception.class)//捕获所有异常

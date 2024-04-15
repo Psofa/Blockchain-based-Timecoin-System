@@ -23,10 +23,26 @@ public class RegisterController {
     @PostMapping("/register")
     public Result register(@RequestBody User user){
         //用service保存到数据库
+<<<<<<< HEAD
+        String msg=registerService.register(user);
+        log.info("注册新用户");
+
+        if(msg.equals("1")){
+            return Result.success();
+        }
+
+        return Result.error(msg);
+    }
+
+    
+
+
+=======
         registerService.register(user);
         log.info("注册新用户");
 
         return Result.success();
     }
 
+>>>>>>> c09fab713a5f284a2c783aa7635c72ace7d1f39f
 }

@@ -31,11 +31,20 @@ public class LoginController {
         log.info("登录:{}",user);
         User u=registerService.login(user);
 
+<<<<<<< HEAD
+
+        //登录成功,生成令牌
+        if(u!=null&&((user.getRole()==u.getRole()&&user.getRole()==3)||user.getRole()==0)) {
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("id", u.getId());
+            claims.put("role", u.getRole());
+=======
         //登录成功,生成令牌
         if(u!=null) {
             Map<String, Object> claims = new HashMap<>();
             claims.put("id", u.getId());
             claims.put("name", u.getName());
+>>>>>>> c09fab713a5f284a2c783aa7635c72ace7d1f39f
             claims.put("username", u.getUsername());
 
             String jwt = JwtUtils.generateJwt(claims);
@@ -48,6 +57,10 @@ public class LoginController {
         }
 
         //登录失败
+<<<<<<< HEAD
+        return Result.error("用户名或密码或角色错误");
+=======
         return Result.error("用户名或密码错误");
+>>>>>>> c09fab713a5f284a2c783aa7635c72ace7d1f39f
     }
 }

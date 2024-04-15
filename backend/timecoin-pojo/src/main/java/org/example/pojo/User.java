@@ -10,16 +10,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-    private int id;
+    private Integer id;
     private String username;
     private String password;
-    private short role;
+    private Short role;
     private String email;
-    private short age;
+    private Short age;
     private String phone;
     private String address;
 
     private String name;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
+    private String image;
 }

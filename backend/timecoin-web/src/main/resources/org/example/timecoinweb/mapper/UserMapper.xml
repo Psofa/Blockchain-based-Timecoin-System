@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="org.example.timecoinweb.mapper.UserMapper">
+    <!--修改或更新用户数据-->
+    <update id="update">
+        update user
+        <set>
+            <if test="username!=null and username!=''">
+                username=#{username},
+            </if>
+            <if test="password!=null and password!=''">
+                password=#{password},
+            </if>
+            <if test="role!=null">
+                role=#{role},
+            </if>
+            <if test="email!=null and email!=''">
+                email=#{email},
+            </if>
+            <if test="age!=null">
+                age=#{age},
+            </if>
+            <if test="phone!=null and phone!=''">
+                phone=#{phone},
+            </if>
+            <if test="address!=null and address!=''">
+                address=#{address},
+            </if>
+            <if test="name!=null and name!=''">
+                name=#{name},
+            </if>
+            <if test="createTime!=null">
+                create_time=#{createTime},
+            </if>
+            <if test="updateTime!=null">
+                update_time=#{updateTime},
+            </if>
+            <if test="image!=null and image!=''">
+                image=#{image}
+            </if>
+        </set>
+        where id=#{id}
+    </update>
+
+    <!-- 批量删除用户操作-->
+    <delete id="deleteById">
+        delete
+        from user
+        where id in
+        <foreach collection="ids" item="id" separator="," open="(" close=")" >
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 条件查询用户-->
+    <select id="selectUsers" resultType="org.example.pojo.User">
+        select * from user
+        <where>
+            <if test="role!=null">
+                role=#{role}
+            </if>
+            <if test="address!='' and address!=null">
+                and address like concat('%',#{address},'%')
+            </if>
+            <if test="username!=null and username!=''">
+                and username like concat('%',#{username},'%')
+            </if>
+            <if test="minAge!=null">
+                and age&gt;=#{minAge}
+            </if>
+            <if test="maxAge!=null">
+                and age&lt;=#{maxAge}
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+
+</mapper>
