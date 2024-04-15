@@ -53,20 +53,31 @@
             <scope>test</scope>
         </dependency>
 
+<<<<<<< HEAD
         <!--实体类-->
+=======
+<!--        实体类-->
+>>>>>>> c09fab713a5f284a2c783aa7635c72ace7d1f39f
         <dependency>
             <groupId>org.example</groupId>
             <artifactId>timecoin-pojo</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 
+<<<<<<< HEAD
         <!--工具类-->
+=======
+<!--        工具类-->
+>>>>>>> c09fab713a5f284a2c783aa7635c72ace7d1f39f
         <dependency>
             <groupId>org.example</groupId>
             <artifactId>timecoin-utils</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+<<<<<<< HEAD
 
+=======
+>>>>>>> c09fab713a5f284a2c783aa7635c72ace7d1f39f
     </dependencies>
 
 

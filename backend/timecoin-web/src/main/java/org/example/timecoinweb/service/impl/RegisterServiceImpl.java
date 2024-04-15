@@ -1,5 +1,6 @@
 package org.example.timecoinweb.service.impl;
 
+<<<<<<< HEAD
 import lombok.extern.slf4j.Slf4j;
 import org.example.pojo.User;
 import org.example.timecoinweb.mapper.AdmiMapper;
@@ -15,11 +16,22 @@ import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 
 @Slf4j
+=======
+import org.example.pojo.User;
+import org.example.timecoinweb.mapper.RegisterMapper;
+import org.example.timecoinweb.service.RegisterService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+
+>>>>>>> c09fab713a5f284a2c783aa7635c72ace7d1f39f
 @Service
 public class RegisterServiceImpl implements RegisterService{
 
     @Autowired
     private RegisterMapper registerMapper;
+<<<<<<< HEAD
     @Autowired
     private AdmiMapper admiMapper;
     @Autowired
@@ -30,10 +42,16 @@ public class RegisterServiceImpl implements RegisterService{
 
     @Override
     public String register(User user) {
+=======
+
+    @Override
+    public void register(User user) {
+>>>>>>> c09fab713a5f284a2c783aa7635c72ace7d1f39f
         //调用对应的registermapper
         user.setCreateTime(LocalDateTime.now());
         user.setUpdateTime(LocalDateTime.now());
 
+<<<<<<< HEAD
         //将user存入到user表中
         try {
             registerMapper.register(user);
@@ -59,12 +77,16 @@ public class RegisterServiceImpl implements RegisterService{
         }
 
         return "1";
+=======
+        registerMapper.register(user);
+>>>>>>> c09fab713a5f284a2c783aa7635c72ace7d1f39f
     }
 
     @Override
     public User login(User user) {
         return registerMapper.getByUsernameAndPassword(user);
     }
+<<<<<<< HEAD
 
     @Override
     public User selectSelf(Integer id) {
@@ -72,4 +94,6 @@ public class RegisterServiceImpl implements RegisterService{
 
         return user;
     }
+=======
+>>>>>>> c09fab713a5f284a2c783aa7635c72ace7d1f39f
 }
