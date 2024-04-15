@@ -25,7 +25,7 @@
                         <div>
                             <el-statistic title="时间币总数">
                             <template slot="formatter">
-                                4
+                                8
                             </template>
                             </el-statistic>
                         </div>

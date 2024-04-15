@@ -8,7 +8,7 @@
       <div class="header-right">
         <el-dropdown>
           <span class="el-dropdown-link">
-            <div style="margin-rignt=10px;">
+            <div style="margin-right: 10px;">
                 <img v-if="squareUrl" class="avatar1" :src="squareUrl">
                 <span v-else class="username1">
                     <div style="font-size: 30px;">
@@ -20,13 +20,16 @@
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
-            <el-dropdown-item>个人中心</el-dropdown-item>
+            <el-dropdown-item>
+              <i class="el-icon-user"></i>个人中心
+            </el-dropdown-item>
             <el-dropdown-item>
               <button @click="logout" 
               style="background: none;
                     border: none;
                     padding: 0;
-                    cursor: pointer;">退出登录</button>
+                    cursor: pointer;">
+                    <i class="el-icon-switch-button"></i>退出登录</button>
             </el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
@@ -72,6 +75,28 @@
           <el-menu-item index="7">
             <i class="el-icon-chat-line-round"></i>
             <span v-if="!isCollapse" slot="title">人工服务</span> 
+          </el-menu-item>
+          <el-menu-item index="8">
+            <i class="el-icon-lock"></i>
+            <span v-if="!isCollapse" slot="title">权限管理</span> 
+          </el-menu-item>
+          <el-submenu index="9">
+            <template slot="title">
+              <i class="el-icon-video-camera"></i>
+              <span slot="title">系统监控</span>
+            </template>
+            <el-menu-item index="9-1">在线用户</el-menu-item>
+            <el-menu-item index="9-2">服务监控</el-menu-item>
+            <el-menu-item index="9-3">缓存监控</el-menu-item>
+            <el-menu-item index="9-4">数据监控</el-menu-item>
+          </el-submenu>
+          <el-menu-item index="10">
+            <i class="el-icon-data-analysis"></i>
+            <span v-if="!isCollapse" slot="title">统计</span> 
+          </el-menu-item>
+          <el-menu-item index="11">
+            <i class="el-icon-setting"></i>
+            <span v-if="!isCollapse" slot="title">设置</span> 
           </el-menu-item>
         </el-menu>
       </el-aside>
@@ -326,7 +351,7 @@ export default {
       backdrop-filter: blur(10px);
       border-radius: 20px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-
+      
       .el-menu-vertical-demo{
         backdrop-filter: blur(40px); /* 添加毛玻璃效果 */
         border-radius: 20px;

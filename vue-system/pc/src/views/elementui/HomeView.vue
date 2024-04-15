@@ -19,27 +19,19 @@
           <!-- 代办 -->
           <div class="todo-list">
             <div class="todo-item">
-              <span>组织总人数</span>
+              <span>时间币总个数</span>
               <!-- 起始值 终点值 动画时间 -->
               <count-to
                 :start-val="0"
-                :end-val="homeData.employeeTotal"
+                :end-val="homeData.coinTotal"
                 :duration="1000"
               />
             </div>
             <div class="todo-item">
-              <span>员工人数</span>
+              <span>注册人数</span>
               <count-to
                 :start-val="0"
-                :end-val="homeData.regularEmployeeTotal"
-                :duration="1000"
-              />
-            </div>
-            <div class="todo-item">
-              <span>系统参与人数</span>
-              <count-to
-                :start-val="0"
-                :end-val="homeData.toBeEmployed"
+                :end-val="homeData.registTotal"
                 :duration="1000"
               />
             </div>
@@ -47,7 +39,7 @@
               <span>活动个数</span>
               <count-to
                 :start-val="0"
-                :end-val="homeData.toBeConfirmed"
+                :end-val="homeData.ActivityTotal"
                 :duration="1000"
               />
             </div>
@@ -55,7 +47,7 @@
               <span>志愿者人数</span>
               <count-to
                 :start-val="0"
-                :end-val="homeData.toBeDismissed"
+                :end-val="homeData.volunteerTotal"
                 :duration="1000"
               />
             </div>
@@ -63,7 +55,7 @@
               <span>老人人数</span>
               <count-to
                 :start-val="0"
-                :end-val="homeData.toBeDismissed"
+                :end-val="homeData.oldManTotal"
                 :duration="1000"
               />
             </div>
@@ -72,6 +64,14 @@
               <count-to
                 :start-val="0"
                 :end-val="homeData.interfaceAccessTotal"
+                :duration="1000"
+              />
+            </div>
+            <div class="todo-item">
+              <span>在线人数</span>
+              <count-to
+                :start-val="0"
+                :end-val="homeData.onlineTotal"
                 :duration="1000"
               />
             </div>
@@ -117,7 +117,7 @@
                 <!-- homeData: {} -->
                 <count-to
                   :start-val="0"
-                  :end-val="homeData.socialInsurance?.declarationTotal"
+                  :end-val="homeData.registTotal"
                   :duration="1000"
                 />
               </div>
@@ -126,7 +126,7 @@
                   <span>志愿者(人)</span>
                   <count-to
                     :start-val="0"
-                    :end-val="homeData.socialInsurance?.toDeclareTotal"
+                    :end-val="homeData.volunteerTotal"
                     :duration="1000"
                   />
                 </div>
@@ -134,7 +134,7 @@
                   <span>老人(人)</span>
                   <count-to
                     :start-val="0"
-                    :end-val="homeData.socialInsurance?.declaringTotal"
+                    :end-val="homeData.oldManTotal"
                     :duration="1000"
                   />
                 </div>
@@ -142,7 +142,7 @@
                   <span>管理员(人)</span>
                   <count-to
                     :start-val="0"
-                    :end-val="homeData.socialInsurance?.declaredTotal"
+                    :end-val="homeData.AdministratorTotal"
                     :duration="1000"
                   />
                 </div>
@@ -162,7 +162,7 @@
                 <span>活动个数</span>
                 <count-to
                   :start-val="0"
-                  :end-val="homeData.providentFund?.declarationTotal"
+                  :end-val="homeData.ActivityTotal"
                   :duration="1000"
                 />
               </div>
@@ -171,7 +171,7 @@
                   <span>待审核(个)</span>
                   <count-to
                     :start-val="0"
-                    :end-val="homeData.providentFund?.toDeclareTotal"
+                    :end-val="homeData.processingActivityTotal"
                     :duration="1000"
                   />
                 </div>
@@ -179,7 +179,7 @@
                   <span>报名中(个)</span>
                   <count-to
                     :start-val="0"
-                    :end-val="homeData.providentFund?.declaringTotal"
+                    :end-val="homeData.siginActivityTotal"
                     :duration="1000"
                   />
                 </div>
@@ -187,7 +187,7 @@
                   <span>进行中(个)</span>
                   <count-to
                     :start-val="0"
-                    :end-val="homeData.providentFund?.declaredTotal"
+                    :end-val="homeData.continueActivityTotal"
                     :duration="1000"
                   />
                 </div>
@@ -195,7 +195,7 @@
                   <span>已结束(个)</span>
                   <count-to
                     :start-val="0"
-                    :end-val="homeData.providentFund?.declaredTotal"
+                    :end-val="homeData.endActivityTotal"
                     :duration="1000"
                   />
                 </div>
@@ -278,7 +278,22 @@ export default {
   },
   data() {
     return {
-      homeData: {}, // 存放首页数据的对象
+      homeData : {
+        coinTotal: 1000,
+        registTotal: 500,
+        ActivityTotal: 450,
+        interfaceAccessTotal: 5000,
+        onlineTotal: 213,
+        
+        volunteerTotal: 394,
+        oldManTotal: 98,
+        AdministratorTotal: 8,
+        
+        processingActivityTotal: 90,
+        siginActivityTotal: 135,
+        continueActivityTotal: 180,
+        endActivityTotal: 45,
+      }, // 存放首页数据的对象
       list: [],
       name: '张三',
       avatar: '',

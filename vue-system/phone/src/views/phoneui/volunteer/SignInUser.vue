@@ -52,7 +52,8 @@ export default {
           // 获取用户位置并设置地图中心点
           navigator.geolocation.getCurrentPosition(
             (position) => {
-              const { latitude, longitude } = position.coords;
+              let { latitude, longitude } = position.coords;
+              
               this.map = new AMap.Map("container", {
                 // 设置地图容器id
                 viewMode: "3D", // 是否为3D地图模式

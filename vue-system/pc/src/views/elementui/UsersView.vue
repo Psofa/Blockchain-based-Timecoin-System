@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <el-dialog
-      title="编辑"
+      title="查看详情"
       :visible.sync="dialogVisible1"
       width="45%"
       :append-to-body="true"

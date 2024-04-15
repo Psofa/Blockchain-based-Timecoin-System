@@ -42,11 +42,12 @@
       return {
         userInfo: {
           username: "stone",
-          coinBalance: 4,
+          coinBalance: 8,
           reputationScore: 0, // 假设当前信誉分数为10
         },
         transactions: [
           { id: 1, time: "2024-04-12 21:59", type: "服务成功", amount: "+4", details: "完成服务打扫房间" },
+          { id: 2, time: "2024-04-14 22:19", type: "服务成功", amount: "+4", details: "完成服务清洗房间" },
           // 更多交易记录...
         ],
       };
